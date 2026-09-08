@@ -1,0 +1,100 @@
+@charset "UTF-8";
+
+/* ============================================
+   Reset de estilos  / 
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* ============================================
+   Reset de estilos  / 
+   ============================================ */
+
+
+
+
+@font-face {
+    font-family: "LDF Comic Sans";
+    src: url("../fuentes/Ldfcomicsans-jj7l.ttf") format("truetype");
+}
+
+
+body {
+    font-family: "LDF Comic Sans", sans-serif;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1.6;
+}
+ body .nosotros .btn {
+    background-color: #f1efe8;
+    color: #000000;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+
+ }
