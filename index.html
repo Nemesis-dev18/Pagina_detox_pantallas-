@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DETOX_WEB</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
 </head>
 <body class="index">
    <header class="cabecera">
@@ -18,31 +19,31 @@
             </div>
         </div>
    </header>
-
    <aside id = "menu_lateral">
     <blockquote  class = "texto_menu"> OPCIONES  </blockquote>
-
    </aside>
-
-
+   <section class="contenido">
+        <main class="contenido-principal">
+            <h1 class = "titulo"> ¿Cuánto CONTROL TIENES SOBRE TU VIDA DIGITAL?</h1>
+            <p class="subtitulo">Una herramienta para conocerte, informarte y encontrar apoyo</p>
         </main>
-</main>
+   </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.texto_menu').forEach(function (el) {
-        const text = el.textContent.trim();
-        if (!text) return;
-        el.textContent = '';
-        // separar por carácter; para separar por palabra usa text.split(' ')
-        text.split('').forEach(function (ch) {
-            const span = document.createElement('span');
-            span.textContent = ch;
-            el.appendChild(span);
-        });
-    });
-});
-</script>
+   <div class="bloques">
+       <article class="contenedor_1">
+           <span>01</span>
+           <h2>CONOCETE</h2>
+       </article>
 
+       <article class="contenedor_2">
+           <span>02</span>
+           <h2>ENTIENDETE</h2>
+       </article>
+
+       <article class="contenedor_3">
+           <span>03</span>
+           <h2>ACTUA</h2>
+       </article>
+   </div>
 </body>
 </html>

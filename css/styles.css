@@ -20,6 +20,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  display: block;
 }
 
 img,
@@ -29,16 +30,6 @@ canvas,
 svg {
   display: block;
   max-width: 100%;
-  display: flex;
-  writing-mode: vertical-lr;
-  text-orientation: upright;
-  flex-direction: column;
-  justify-content: center; /* centra verticalmente */
-  align-items: center;     /* centra horizontalmente */
-  height: 100%;
-  gap: 1rem;
-  font: inherit;
-  color: inherit;
 }
 
 button {
@@ -82,55 +73,76 @@ table {
     font-family: "anton";
     src: url("../fuentes/Anton/Anton-Regular.ttf") format("truetype");
 }
-
-
-body {
-    font-family: "LDF Comic Sans", sans-serif;
-    background-color: #0a0a0a;
-    color: #ffffff;
-    font-size: 16px;
-    line-height: 1.6;
+.index {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #111;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
 }
+
 .cabecera {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 3px solid rgb(203, 11, 11);
-  background-color: #5f5f5f ;
-}
-#logo img {
-    width: 60px;
-    height: auto;
-    object-fit: contain;
-    display: block;
+  flex: 1 0 100%;
 }
 
 #menu_lateral {
-
-   padding: 3%;
-    margin: 20px ;
-    background-color: #ab3f3f;
-    float: left;
-    height: 1978px;
-    border: 3px solid rgb(203, 11, 11);
-    border-radius: 20px;
-    text-shadow: 2px 2px 5px rgb(45, 115, 53);
-    
-}
-.texto_menu {
-  font-family: "anton", sans-serif;
   display: flex;
-  writing-mode: vertical-lr;
-  text-orientation: upright;
-  flex-direction: column;
-  justify-content: space-between;
-  gap : 1rem;
-}
-.texto_menu > * {
-  flex: 1;                  /* cada hijo ocupa espacio igual */
-  display: flex;
+  flex: 0 0 120px;
+  margin: 20px;
+  padding: 20px;
+  background-color: rgb(203, 11, 11);
+  border-radius: 20px;
   align-items: center;
   justify-content: center;
 }
+
+.contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 20px 20px;
+}
+
+.contenido-principal {
+  max-width: 680px;
+}
+
+.bloques {
+  flex: 1 0 100%;
+  display: flex;
+  gap: 20px;
+  padding: 0 20px 40px;
+  margin-top: 10px;
+}
+
+
+.cabecera {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid rgb(203, 11, 11);
+  background-color: #5f5f5f;
+}
+
+#logo img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+}
+
+.texto_menu {
+  font-family: "anton", sans-serif;
+  display: flex;
+  writing-mode: vertical-rl; /* mostrar texto verticalmente, de arriba hacia abajo */
+  text-orientation: upright;
+  flex-direction: column;
+  justify-content: space-between; /* repartir por toda la altura */
+  align-items: center;
+  height: 100%;
+  gap: 1rem;
+}
+
 
 .hero {
   font-family:"anton", sans-serif;
@@ -170,4 +182,23 @@ body {
   padding: 8px 12px;
   border: 2px solid #fff;
   border-radius: 6px;
+}
+
+.titulo {
+  font-family: 'Anton', sans-serif;
+  text-transform: uppercase;
+  font-size: 3rem;
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+  max-width: 700px;
+}
+
+.subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: #d9d4c9;
+  max-width: 420px;
 }
