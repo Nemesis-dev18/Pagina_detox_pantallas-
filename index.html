@@ -7,25 +7,42 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="index">
-   <header id=" cabecera">
+   <header class="cabecera">
         <div class="hero">
-            <div id="logo" ><img src="/home/nemesis/PAG_WEB_PROYECTO_SEMESTRE/img/img1.jpeg" alt="Logo DETOX_WEB"></div>
-            <div class="hero-contenido">
-                <h1>Bienvenido a DETOX_WEB</h1>
-                <p>Tu fuente confiable para información sobre detoxificación y bienestar.</p>
+            <div class="hero-left" id="logo"><img src="/home/nemesis/PAG_WEB_PROYECTO_SEMESTRE/img/img1.jpeg" alt="Logo DETOX_WEB"></div>
+            <div class="hero-center">
+                <h1>TEXTO DE REFERENCIA POR AHORA</h1>
+            </div>
+            <div class="hero-right">
                 <a href="inicio_sesion.html" class="btn">Iniciar Sesión</a>
             </div>
         </div>
    </header>
+
    <aside id = "menu_lateral">
-    <blockquote #style = "  "> primer elemento  </blockquote>
-      <blockquote> segundo elemento  </blockquote>
-        <blockquote> tercer elemento  </blockquote>
+    <blockquote  class = "texto_menu"> OPCIONES  </blockquote>
 
    </aside>
 
 
         </main>
-    
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.texto_menu').forEach(function (el) {
+        const text = el.textContent.trim();
+        if (!text) return;
+        el.textContent = '';
+        // separar por carácter; para separar por palabra usa text.split(' ')
+        text.split('').forEach(function (ch) {
+            const span = document.createElement('span');
+            span.textContent = ch;
+            el.appendChild(span);
+        });
+    });
+});
+</script>
+
 </body>
 </html>
