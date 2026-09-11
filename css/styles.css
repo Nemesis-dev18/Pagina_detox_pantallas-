@@ -42,7 +42,8 @@ table { border-collapse: collapse; border-spacing: 0; }
   color: #fff;
   font-size: 16px;
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: 50vh;
+  max-height: 50%;
 }
 
 /* Cabecera (una sola definición) */
@@ -72,13 +73,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   border: 6px solid rgb(10, 7, 7);
   align-items: center;
   justify-content: center;
-  min-height: 300px;
-}
-
-.color_menu_lateral {
-  background-color: #adadad;
-  padding: 10px;
-  border-radius: 10px;
+  max-height: 80%;
 }
 
 .texto_menu {
@@ -92,10 +87,10 @@ table { border-collapse: collapse; border-spacing: 0; }
   height: 100%;
   gap: 1rem;
   font-size: 1.5rem;
-  letter-spacing: 0.3em; /* ← antes 200%, inlegible */
+  letter-spacing: 0.3em;
 }
 
-/* Contenido (sin max-width: 300px) */
+/* Contenido */
 .contenido {
   flex: 1;
   margin: 20px;
@@ -103,11 +98,36 @@ table { border-collapse: collapse; border-spacing: 0; }
   min-width: 0;
   background-color: rgb(23, 23, 21);
   border-radius: 10px;
-  overflow-y: auto;
-  max-height: calc(100vh - 140px); /* ← se ajusta a la ventana */
+
 }
 
-.contenido-principal { max-width: 680px; }
+.contenido-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.contenido-principal {
+  flex: 1 1 500px;
+  max-width: 520px;
+}
+
+.imagen2 {
+  flex: 1 1 420px;
+  display: flex;
+  justify-content: center;
+}
+
+.imagen2 img {
+  width: min(100%, 7000px);
+  height: 500px;
+  object-fit: cover;
+  border-radius: 60px;
+  border: 3px solid #d11c1c;
+  margin-right: 30px;
+}
 
 /* Bloques */
 .bloques {
@@ -116,10 +136,18 @@ table { border-collapse: collapse; border-spacing: 0; }
   flex-wrap: wrap;
   gap: 20px;
   padding: 0 20px 40px;
-  margin-top: 10px;
+  margin-top: 100px;
+  font-size: 1.5rem;
 }
 
-
+.contenedor_1, .contenedor_2, .contenedor_3 {
+  flex: 1 0 300px;
+  background-color: #5f5f5f;
+  border-radius: 10px;
+  padding: 20px;
+  color: #fff;
+  margin-top: 30px;
+}
 
 /* Hero */
 .hero {
@@ -164,7 +192,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   line-height: 2.05;
   letter-spacing: 6px;
   margin-bottom: 2rem;
-  max-width: 800px;
+  max-width: 450px;
 }
 
 .subtitulo {
@@ -209,4 +237,5 @@ table { border-collapse: collapse; border-spacing: 0; }
     padding-left: 0;
     text-align: center;
   }
+
 }   
