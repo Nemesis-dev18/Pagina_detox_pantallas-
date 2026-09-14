@@ -1,14 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+      <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
     <title>
+
 DETOX_WEB
     </title>
 </head>
-<body class="inicio_sesion"> >
-    
+<body class="inicio_sesion"> 
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo"><img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB"></div>
+            <div class="hero-center">
+                <h1>TEXTO DE REFERENCIA POR AHORA</h1>
+            </div>
+
+        </div>
+        </header>
+
+        <section class="texto_sesion" >
+            <div class="registro ">
+                <h2>Iniciar Sesión</h2>
+                <form action="procesar_login.php" method="POST">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">Iniciar Sesión</button>
+                </form>
+                <p>¿No tienes una cuenta? <a href="registro.html">Regístrate aquí</a></p>
+                <p>¿Olvidaste tu contraseña? <a href="recuperar_contraseña.html">Recupérala aquí</a></p>
+
+            </div>
+        </section>
+
+    <footer><p>&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p></footer>
 </body>
 </html>
