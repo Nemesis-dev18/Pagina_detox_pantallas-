@@ -258,17 +258,57 @@ table { border-collapse: collapse; border-spacing: 0; }
 .texto_sesion {
   flex: 0 0 100%;
   background-color: rgb(40, 40, 29);
-    font-family: "Anton", sans-serif;
-  text-orientation: upright;
+  font-family: "Anton", sans-serif;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 30px;
-  height: 100%;
-  gap: 1rem;
+  gap: 30px;
   font-size: 1.6rem;
+}
 
+.texto_sesion article {
+  flex: 1 1 500px;
+}
 
+.boton_sesion button {
+  background-color: #d11c1c;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  width: 220px;
+  height: 61px;
+  font: inherit;
+  cursor: pointer;
+  display: block;
+}
 
+.boton_sesion {
+  display: flex;
+  width: 220px;
+  height: 61px;
+  margin-left: 4rem;
+}
+.user,.contraseña , .titulo{ 
+  margin:2rem
+}
+.imagen2_sesion {
+  flex: 0 1 420px;
+  display: flex;
+  justify-content: flex-end;
+}
 
+.enlaces-sesion {
+  margin-top: 1rem;
+}
+
+.imagen2_sesion img {
+  width: min(100%, 420px);
+  height: 50%;
+  object-fit: cover;
+  border-radius: 60px;
+  border: 3px solid #d11c1c;
+  margin-right: 0;
 }
