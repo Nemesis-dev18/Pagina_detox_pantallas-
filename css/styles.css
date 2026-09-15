@@ -53,6 +53,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   text-align: center;
   border-bottom: 3px solid rgb(203, 11, 11);
   background-color: #262323;
+  height : 10%; ;
 }
 
 #logo img {
@@ -248,6 +249,26 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 
 /* Estilos específicos para la página de inicio de sesión */
+.inicio_sesion{
+ display : flex;
+ flex-wrap: wrap ; 
+
+}
+
 .texto_sesion {
-  background-color: beige;
+  flex: 0 0 100%;
+  background-color: rgb(40, 40, 29);
+    font-family: "Anton", sans-serif;
+  text-orientation: upright;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px;
+  height: 100%;
+  gap: 1rem;
+  font-size: 1.6rem;
+
+
+
+
 }
