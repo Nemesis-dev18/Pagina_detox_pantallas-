@@ -278,7 +278,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   color: #fff;
   border: 2px solid #fff;
   border-radius: 6px;
-  width: 220px;
+  width: 100%;
   height: 61px;
   font: inherit;
   cursor: pointer;
@@ -304,6 +304,9 @@ table { border-collapse: collapse; border-spacing: 0; }
   flex: 0 1 520px;
   display: flex;
   justify-content: flex-end;
+  border-left: 3px solid #d11c1c; /*linea vertical que separa la  imagen del texto */
+  padding-left: 30px;
+
 }
 
 .enlaces-sesion {
@@ -318,14 +321,15 @@ table { border-collapse: collapse; border-spacing: 0; }
   border-radius: 60px;
   border: 3px solid #d11c1c;
   margin-right: 0;
+  
 }
 .sesion{
   align-items: center;
  .boton_sesion{
    display: flex;
-  width: 220px;
-  height: 80%;
-
+  width: 70%;
+  height: 70%;
+   margin-left:40px;
 }
  }
   #correo , #password {
@@ -334,4 +338,21 @@ table { border-collapse: collapse; border-spacing: 0; }
   width: 80%;
     font-size: clamp(0.5rem, 1vw, 15px);
     padding : 10px; 
+}
+.enlaces-sesion{
+    margin-left: 20%;
+
+    .linkeo {
+       text-decoration: underline;
+
+    }
+}
+footer{
+padding-left: 40%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
 }
