@@ -375,6 +375,74 @@ margin: 7rem;
 
     }
 }
+
+.registro-cuenta {
+  flex: 1 1 500px;
+  width: min(100%, 620px);
+  max-width: 620px;
+  margin: 1rem auto;
+}
+
+.registro-cuenta .titulo {
+  margin: 0 0 1.5rem;
+  white-space: normal;
+  text-align: center;
+}
+
+.formulario-cuenta {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.45rem;
+  font-family: "Inter", sans-serif;
+  border-left: 3px solid #d11c1c;
+  border-right: 3px solid #d11c1c;
+  padding: 0 30px;
+}
+
+.formulario-cuenta label {
+  width: 100%;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.formulario-cuenta input {
+  width: 100%;
+  height: 50px;
+  padding: 10px 14px;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.formulario-cuenta input::placeholder {
+  font-family: "Inter", sans-serif;
+}
+
+.boton-cuenta {
+  width: 100%;
+  height: 56px;
+  margin-top: 1rem;
+  background-color: #d11c1c;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  font-family: "Anton", sans-serif;
+  font-size: 1.2rem;
+}
+
+.enlace-cuenta {
+  margin-top: 1rem;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+}
+
+.enlace-cuenta a {
+  color: #d11c1c;
+  text-decoration: underline;
+}
+
 footer{
 padding-left: 40%;
   height: 200px;
