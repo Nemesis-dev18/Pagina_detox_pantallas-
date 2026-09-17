@@ -25,7 +25,7 @@
                 <h2 class=" titulo">Bienvenido de nuevo</h2>
                 <form  class="sesion" action="procesar_login.php" method="POST">
                     <div class="user">
-                        <input type="text" placeholder='CORREO ELECTRONICO' id="correo" name="username" required>
+                        <input type="text"   placeholder='CORREO ELECTRONICO' id="correo" name="username" required>
                     </div >
                     <div class="contraseña">
                             <input type="password" placeholder='CONTRASEÑA' id="password" name="password" required>
@@ -35,8 +35,9 @@
                     </div>
                 </form>
                 <div class="enlaces-sesion">
-                    <p>¿No tienes una cuenta? <a href="registro.html">Crear cuenta</a></p>
+                   
                     <a href="recuperar_contraseña.html">¿Olvidaste tu contraseña?</a>
+                     <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
                 </div>
             </div>
         </article>
@@ -47,7 +48,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
+        <p class="pies">&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>
