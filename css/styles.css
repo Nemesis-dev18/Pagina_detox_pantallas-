@@ -33,7 +33,10 @@ table { border-collapse: collapse; border-spacing: 0; }
   font-family: "Anton";
   src: url("../fuentes/Anton/Anton-Regular.ttf") format("truetype");
 }
-
+@font-face {
+  font-family: "inter";
+  src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
+}
 /* Layout */
 .index , .inicio_sesion {
   display: flex;
@@ -301,7 +304,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   white-space: nowrap;
 }
 .imagen2_sesion {
-  flex: 0 1 520px;
+  flex: 0 1 680px;
   display: flex;
   justify-content: flex-end;
   border-left: 3px solid #d11c1c; /*linea vertical que separa la  imagen del texto */
@@ -336,15 +339,21 @@ table { border-collapse: collapse; border-spacing: 0; }
    margin-left:40px;
 }
  }
-  }
-
-  #correo , #password {
+   #correo , #password {
+    font-family: "Inter", sans-serif;
   border-radius: 10px;
-  height: 40px; 
+  height: 60px; 
   width: 80%;
     font-size: clamp(0.5rem, 1vw, 15px);
     padding : 10px; 
 }
+
+  #correo::placeholder, #password::placeholder {
+    font-family: "Inter", sans-serif;
+  }
+  }
+
+
 .enlaces-sesion{
     margin-left: 20%;
 
