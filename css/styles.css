@@ -312,6 +312,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 .enlaces-sesion {
   margin-top: 1rem;
   font-size: 1.2rem;
+  width:40% ;
 }
 
 .imagen2_sesion img {
@@ -323,8 +324,11 @@ table { border-collapse: collapse; border-spacing: 0; }
   margin-right: 0;
   
 }
-.sesion{
+.registro{
+    width: 50%;
+    .sesion{
   align-items: center;
+  
  .boton_sesion{
    display: flex;
   width: 70%;
@@ -332,6 +336,8 @@ table { border-collapse: collapse; border-spacing: 0; }
    margin-left:40px;
 }
  }
+  }
+
   #correo , #password {
   border-radius: 10px;
   height: 40px; 
