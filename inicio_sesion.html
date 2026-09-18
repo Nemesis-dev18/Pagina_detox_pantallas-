@@ -8,6 +8,7 @@
     <title>DETOX_WEB</title>
 </head>
 <body class="inicio_sesion">
+    <!-- Cabecera -->
     <header class="cabecera">
         <div class="hero">
             <div class="hero-left" id="logo">
@@ -19,34 +20,33 @@
         </div>
     </header>
 
+    <!-- Formulario de inicio de sesión -->
     <section class="texto_sesion">
-           
-            <div class="registro">
-                <h2 class=" titulo">Bienvenido de nuevo</h2>
-                <form  class="sesion" action="procesar_login.php" method="POST">
+        <div class="registro">
+            <h2 class="titulo">Bienvenido de nuevo</h2>
+            <form class="sesion" action="procesar_login.php" method="POST">
                     <div class="user">
                         <input type="text"   placeholder='CORREO ELECTRONICO' id="correo" name="username" required>
-                    </div >
+                    </div>
                     <div class="contraseña">
                             <input type="password" placeholder='CONTRASEÑA' id="password" name="password" required>
                     </div>
                     <div class="boton_sesion">
                         <button class="boton_s" type="submit">Iniciar Sesión</button>
                     </div>
-                </form>
-                <div class="enlaces-sesion">
-                   
-                    <a href="recuperar_contraseña.html">¿Olvidaste tu contraseña?</a>
-                     <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
-                </div>
+            </form>
+            <div class="enlaces-sesion">
+                <a href="recuperar_contraseña.html">¿Olvidaste tu contraseña?</a>
+                <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
             </div>
-       
+        </div>
 
         <div class="imagen2_sesion">
             <img src="img/img1.jpeg" alt="imagen provisional 2">
         </div>
     </section>
 
+    <!-- Pie de página -->
     <footer id="contacto">
         <p class="pies">&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
     </footer>
