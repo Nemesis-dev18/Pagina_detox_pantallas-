@@ -61,10 +61,12 @@ table { border-collapse: collapse; border-spacing: 0; }
 }
 
 #logo img {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   margin: 0 auto;
+  border-radius: 25px;
+  border: 3px solid #d11c1c;
 }
 
 /* Menu lateral */
@@ -358,9 +360,11 @@ margin: 7rem;
     padding : 10px; 
 }
 
-  #correo::placeholder, #password::placeholder {
-    font-family: "Inter", sans-serif;
-  }
+
+  
+  .registro input::placeholder {
+  font-family: "Inter", sans-serif;
+}
   }
 
 
@@ -451,4 +455,28 @@ padding-left: 40%;
   justify-content: center;
   align-items: center;
 
+}
+
+
+
+
+/*----------------------------------------------------------------------*/
+/* la parte de nosotros  */
+
+.cabecera_nosotros{
+  color: #fff;
+}
+
+.hero_nosotros {
+  height: 80px;
+  padding: 0 10px;
+  background-color: #fff;
+  color: #0f0202;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero_nosotros h1 {
+  color: #000000;
 }
