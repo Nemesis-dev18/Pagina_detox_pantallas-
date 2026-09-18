@@ -452,12 +452,13 @@ margin: 7rem;
 }
 
 footer{
-padding-left: 40%;
+  margin-top:5% ;
   height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 
 }
 
@@ -478,11 +479,22 @@ padding-left: 40%;
   color: #0f0202;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .hero_nosotros h1 {
   color: #000000;
+  width: auto;
+  margin-left: 50px;
+  white-space: nowrap;
+}
+.hero-center_nosotros {
+  width: max-content;
+  flex: 0 0 auto;
+}
+
+.hero_nosotros .linkeo {
+  margin-left: auto;
 }
 .imagen2_nosotros {
   flex: 1 1 1;
@@ -544,18 +556,23 @@ padding-left: 40%;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 0;
   min-width: 0;
 }
 
 .bloques_nosotros > div {
-  width: 70%;
+  width: 100%;
   min-height: 180px;
   padding: 20px;
-  border-radius: 10px;
-  background-color: antiquewhite;
+margin-top: 30px;
   border-color: #000000;
   font-size: 1.2rem;
+}
+
+.bloques_nosotros > div p {
+  max-width: 300px;
+  font-size: 1.5rem;
+  margin-left: 30px;
 }
 
 @media (max-width: 768px) {
@@ -567,4 +584,27 @@ padding-left: 40%;
     grid-column: auto;
     grid-template-columns: 1fr;
   }
+  
 }
+.pies{
+  display: flex;
+    flex: 1;
+    align-content: center;
+
+
+  }
+  .hero_nosotros ul a{
+      margin: 0 20px 20px 0 ;
+     border-left: 3px solid #000000;
+     border-right: 3px solid #000000;
+     font-size: 1.5rem;
+     padding: 0 20px 0 20px;
+
+    
+  }
+  .bloque_1,.bloque_2 {
+      margin: 0;
+     border-right: 3px solid #000000;
+     font-size: 1.5rem;
+     padding: 0 70px 0 70px;
+  }
