@@ -509,13 +509,24 @@ padding-left: 40%;
 }
 .imagen2_nosotros,
 .texto_nosotros {
-  
   flex: 1;
+}
+
+.texto_nosotros h1 {
+  width: 400px;
+  max-width: 100%;
+  font-size: 5em;
 }
 .texto_nosotros{
   margin-left: 0;
   width: auto;
+  padding-inline: 70px;
 }
+.texto_nosotros p {
+  padding: 10px 0 10px 0;
+  font-size: 1.2rem;
+}
+
 
 .informacion_relativa {
   
@@ -525,6 +536,7 @@ padding-left: 40%;
   gap: 40px;
   
   padding: 20px;
+
 }
 
 .bloques_nosotros {
@@ -543,6 +555,7 @@ padding-left: 40%;
   border-radius: 10px;
   background-color: antiquewhite;
   border-color: #000000;
+  font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {
