@@ -10,6 +10,7 @@
   font-display: swap;
 }
 
+/* Colores, medidas y sombras compartidas por todas las páginas. */
 :root {
   --ink: #f8f4ed;
   --muted: #aaa7a0;
@@ -25,6 +26,7 @@
   --shadow: 0 24px 70px rgba(0, 0, 0, .35);
 }
 
+/* Reset: elimina estilos del navegador para partir de una base consistente. */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
@@ -36,6 +38,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 body::before {
+  /* Cuadrícula decorativa muy sutil para dar profundidad al fondo. */
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -52,7 +55,9 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 ul, ol { list-style: none; }
 a { color: inherit; text-decoration: none; }
 
-/* Header compartido */
+/* 
+  CABECERA COMPARTIDA
+   */
 .index, .inicio_sesion, .mapa { display: flex; flex-wrap: wrap; align-content: flex-start; }
 .cabecera {
   flex: 1 0 100%;
@@ -100,7 +105,9 @@ a { color: inherit; text-decoration: none; }
 }
 .btn:hover, .boton_sesion button:hover, .boton-cuenta:hover { background: var(--accent-hot); box-shadow: 0 10px 28px rgba(240, 68, 50, .28); transform: translateY(-2px); }
 
-/* Portada */
+/* 
+  PORTADA / INDEX
+   */
 .contenedor_menu { display: contents; }
 #menu_lateral {
   display: flex;
@@ -146,7 +153,9 @@ a { color: inherit; text-decoration: none; }
 .bloques span { color: var(--accent-hot); font: 1.8rem "Anton", sans-serif; }
 .bloques h2 { margin-top: 35px; font: clamp(1.25rem, 2vw, 2rem) "Anton", sans-serif; letter-spacing: .05em; }
 
-/* Sesion, registro y recuperacion */
+/* 
+  SESIÓN, REGISTRO Y RECUPERACIÓN
+   */
 .texto_sesion { display: flex; flex: 1 0 100%; align-items: center; justify-content: center; gap: clamp(30px, 7vw, 110px); min-height: calc(100vh - 100px); padding: clamp(28px, 6vw, 80px); }
 .registro, .registro-cuenta { width: min(100%, 480px); }
 .registro .titulo, .registro-cuenta .titulo { padding: 0; font-size: clamp(2.4rem, 5vw, 4.8rem); }
@@ -167,7 +176,9 @@ a { color: inherit; text-decoration: none; }
 .enlace-cuenta { margin-top: 18px; text-align: center; color: var(--muted); font-size: .93rem; }
 footer { display: flex; flex: 1 0 100%; justify-content: center; padding: 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
 
-/* Nosotros */
+/* 
+  PÁGINA NOSOTROS
+   */
 .nosotros { background: #f0ede6; color: #151515; }
 .cabecera_nosotros { border-bottom: 1px solid rgba(0,0,0,.12); }
 .hero_nosotros { display: flex; align-items: center; min-height: 80px; gap: 20px; padding: 10px clamp(14px, 3vw, 40px); background: #f0ede6; }
@@ -186,6 +197,7 @@ footer { display: flex; flex: 1 0 100%; justify-content: center; padding: 28px; 
 .bloques_nosotros > div p { margin-top: 18px; font-size: 1rem; }
 
 @media (max-width: 768px) {
+  /* En móvil se apilan los bloques para evitar desbordamientos. */
   .hero { flex-wrap: wrap; }
   .hero-center { order: 3; flex-basis: 100%; padding: 12px 0 0; border-top: 1px solid var(--line); border-left: 0; }
   #menu_lateral { flex: 1 0 100%; min-height: 68px; margin: 16px; }
@@ -206,12 +218,15 @@ footer { display: flex; flex: 1 0 100%; justify-content: center; padding: 28px; 
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Respeta la preferencia de accesibilidad del usuario. */
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
-/* ================================================================
-  1. RESET Y ESTILOS BASE
-  ================================================================ */
+/* 
+  REGLAS HEREDADAS
+  Se conservan para no romper páginas o clases antiguas del proyecto.
+  Las reglas finales de abajo tienen prioridad cuando es necesario.
+   */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -248,9 +263,9 @@ table { border-collapse: collapse; border-spacing: 0; }
   font-family: "inter";
   src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
 }
-/* ================================================================
+/* 
   2. ESTRUCTURA GENERAL DE INICIO Y SESION
-  ================================================================ */
+   */
 .index , .inicio_sesion {
   /* Afecta al <body> de index.html y de las páginas de sesión. */
   display: flex;
@@ -498,9 +513,9 @@ table { border-collapse: collapse; border-spacing: 0; }
 }   
 
 
-/* ================================================================
+/* 
   3. PAGINAS DE INICIO DE SESION, REGISTRO Y RECUPERACION
-  ================================================================ */
+   */
 .inicio_sesion{
   display: flex;
   flex-wrap: wrap;
@@ -699,9 +714,9 @@ footer{
 
 
 
-/* ================================================================
+/* 
   4. PAGINA NOSOTROS
-  ================================================================ */
+   */
 
 .cabecera_nosotros{
   /* Afecta al header exclusivo de nosotros.html. */
@@ -892,7 +907,10 @@ footer{
 
   }
 
-/* Capa visual final: mantiene compatibilidad con las reglas antiguas del proyecto. */
+/* 
+  CAPA VISUAL FINAL
+  Corrige conflictos de cascada entre las reglas antiguas y el rediseño.
+   */
 body { background: var(--night) !important; color: var(--ink) !important; }
 .index, .inicio_sesion, .mapa { background: var(--night) !important; color: var(--ink) !important; min-height: 100vh !important; }
 .cabecera { padding: 12px clamp(14px, 3vw, 40px) !important; border-bottom: 1px solid var(--line) !important; background: rgba(12, 13, 13, .82) !important; min-height: 0 !important; }
@@ -924,7 +942,10 @@ body { background: var(--night) !important; color: var(--ink) !important; }
 .formulario-cuenta { border: 0 !important; padding: 0 !important; }
 footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !important; border-top: 1px solid var(--line) !important; color: var(--muted) !important; }
 
-/* Ajuste fluido: centra el contenido y evita desbordes al redimensionar. */
+/* 
+  RESPONSIVE FLUIDO
+  Centra el contenido, limita los anchos y evita scroll horizontal.
+   */
 .cabecera { width: 100% !important; }
 .hero { width: min(100%, 1440px) !important; margin-inline: auto !important; }
 .contenido { width: min(calc(100% - clamp(32px, 6vw, 84px)), 1440px) !important; margin-inline: auto !important; }
@@ -950,4 +971,76 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   .texto_sesion { width: 100% !important; margin-inline: 0 !important; }
   .imagen2_sesion { max-width: none !important; }
   .imagen2_sesion img { height: 280px !important; }
+}
+
+/* 
+  ACABADO DEL INDEX
+  Recupera la identidad rojo, negro y gris con profundidad y hover.
+   */
+.index #menu_lateral {
+  flex: 0 0 clamp(78px, 8vw, 112px) !important;
+  min-height: 190px !important;
+  margin: clamp(18px, 3vw, 42px) 0 clamp(18px, 3vw, 42px) clamp(16px, 3vw, 42px) !important;
+  border: 5px solid #0a0707 !important;
+  border-radius: 20px !important;
+  background: linear-gradient(160deg, #ed1c24, #a9090d) !important;
+  color: #111 !important;
+  box-shadow: 10px 14px 0 rgba(203, 11, 11, .18), 0 18px 38px rgba(0, 0, 0, .35) !important;
+}
+.index .texto_menu {
+  color: #111 !important;
+  font-size: clamp(.9rem, 1.4vw, 1.1rem) !important;
+  letter-spacing: .55em !important;
+  text-shadow: 1px 1px 0 rgba(255,255,255,.12) !important;
+}
+.index .contenido {
+  background: linear-gradient(135deg, #1a1b1b, #111212) !important;
+}
+.index .contenedor_1,
+.index .contenedor_2,
+.index .contenedor_3 {
+  position: relative !important;
+  overflow: hidden !important;
+  border-color: rgba(255,255,255,.16) !important;
+  background: linear-gradient(145deg, #5f5f5f, #3f4040) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 14px 24px rgba(0,0,0,.22) !important;
+}
+.index .contenedor_1::after,
+.index .contenedor_2::after,
+.index .contenedor_3::after {
+  position: absolute;
+  right: -28px;
+  bottom: -42px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(203, 11, 11, .24);
+  content: "";
+}
+.index .contenedor_1:hover,
+.index .contenedor_2:hover,
+.index .contenedor_3:hover {
+  border-color: #ed1c24 !important;
+  background: linear-gradient(145deg, #6a6a6a, #474747) !important;
+}
+
+@media (max-width: 768px) {
+  .index .contenedor_menu {
+    display: block !important;
+    flex: 1 0 100% !important;
+    width: 100% !important;
+  }
+  .index #menu_lateral {
+    display: flex !important;
+    flex: none !important;
+    width: calc(100% - 32px) !important;
+  }
+  .index #menu_lateral {
+    min-height: 72px !important;
+    margin: 16px !important;
+    border-radius: 18px !important;
+  }
+  .index .texto_menu {
+    letter-spacing: .3em !important;
+  }
 }
