@@ -51,14 +51,25 @@ func registro(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var existe bool
-    err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM usuarios WHERE correo = ?)", correo).Scan(&existe)
+    var existeCorreo bool
+    err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM usuarios WHERE correo = ?)", correo).Scan(&existeCorreo)
     if err != nil {
         http.Error(w, "No se pudo consultar la base de datos", http.StatusInternalServerError)
         return
     }
-    if existe {
+    if existeCorreo {
         http.Redirect(w, r, "/registro.html?error=correo", http.StatusSeeOther)
+        return
+    }
+
+    var existeNombre bool
+    err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM usuarios WHERE lower(nombre) = lower(?) )", nombre).Scan(&existeNombre)
+    if err != nil {
+        http.Error(w, "No se pudo consultar la base de datos", http.StatusInternalServerError)
+        return
+    }
+    if existeNombre {
+        http.Redirect(w, r, "/registro.html?error=usuario", http.StatusSeeOther)
         return
     }
 
