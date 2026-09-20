@@ -10,6 +10,31 @@
   font-display: swap;
 }
 
+/*
+   ÍNDICE DE AFECTACIÓN POR HTML
+   ---------------------------------------------------------------
+   COMPARTIDO: todos los HTML usan variables, fuentes, reset, body,
+   imágenes, enlaces, botones, footer y reglas responsive generales.
+
+   index.html: portada, menú lateral desplegable, tarjetas y hero
+   principal (.index, .contenido, #menu_lateral, .bloques).
+
+   inicio_sesion.html: formulario de acceso (.registro, .sesion,
+   .enlaces-sesion, .imagen2_sesion).
+
+   registro.html y recuperar_contraseña.html: formularios de cuenta
+   (.registro-cuenta, .formulario-cuenta, .boton-cuenta).
+
+   nosotros.html: página clara informativa (.nosotros, .hero_nosotros,
+   .informacion_relativa, .bloques_nosotros).
+
+   mapa.html: buscador y mapa de ayuda (.mapa-principal, .mapa-visual,
+   .recurso-destacado, .mapa-contenido).
+
+   comunidad.html, test.html y otras páginas futuras: reciben la base
+   compartida hasta que tengan componentes propios.
+    */
+
 /* Colores, medidas y sombras compartidas por todas las páginas. */
 :root {
   --ink: #f8f4ed;
@@ -55,8 +80,9 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 ul, ol { list-style: none; }
 a { color: inherit; text-decoration: none; }
 
-/* 
-  CABECERA COMPARTIDA
+/*
+  1. COMPARTIDO: index, sesión, registro, recuperación y mapa
+  Cabecera, logo, hero y botones usados por varias páginas.
    */
 .index, .inicio_sesion, .mapa { display: flex; flex-wrap: wrap; align-content: flex-start; }
 .cabecera {
@@ -105,8 +131,9 @@ a { color: inherit; text-decoration: none; }
 }
 .btn:hover, .boton_sesion button:hover, .boton-cuenta:hover { background: var(--accent-hot); box-shadow: 0 10px 28px rgba(240, 68, 50, .28); transform: translateY(-2px); }
 
-/* 
-  PORTADA / INDEX
+/*
+  2. EXCLUSIVO DE index.html
+  Portada, menú lateral, contenido principal y tarjetas de acciones.
    */
 .contenedor_menu { display: contents; }
 #menu_lateral {
@@ -153,8 +180,9 @@ a { color: inherit; text-decoration: none; }
 .bloques span { color: var(--accent-hot); font: 1.8rem "Anton", sans-serif; }
 .bloques h2 { margin-top: 35px; font: clamp(1.25rem, 2vw, 2rem) "Anton", sans-serif; letter-spacing: .05em; }
 
-/* 
-  SESIÓN, REGISTRO Y RECUPERACIÓN
+/*
+  3. COMPARTIDO: inicio_sesion, registro y recuperar_contraseña
+  Formularios, campos, enlaces y acciones de cuenta.
    */
 .texto_sesion { display: flex; flex: 1 0 100%; align-items: center; justify-content: center; gap: clamp(30px, 7vw, 110px); min-height: calc(100vh - 100px); padding: clamp(28px, 6vw, 80px); }
 .registro, .registro-cuenta { width: min(100%, 480px); }
@@ -176,8 +204,9 @@ a { color: inherit; text-decoration: none; }
 .enlace-cuenta { margin-top: 18px; text-align: center; color: var(--muted); font-size: .93rem; }
 footer { display: flex; flex: 1 0 100%; justify-content: center; padding: 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
 
-/* 
-  PÁGINA NOSOTROS
+/*
+  4. EXCLUSIVO DE nosotros.html
+  Cabecera clara, texto informativo, imagen y bloques de beneficios.
    */
 .nosotros { background: #f0ede6; color: #151515; }
 .cabecera_nosotros { border-bottom: 1px solid rgba(0,0,0,.12); }
@@ -223,9 +252,11 @@ footer { display: flex; flex: 1 0 100%; justify-content: center; padding: 28px; 
 }
 
 /* 
-  REGLAS HEREDADAS
-  Se conservan para no romper páginas o clases antiguas del proyecto.
-  Las reglas finales de abajo tienen prioridad cuando es necesario.
+  5. COMPATIBILIDAD CON EL CSS ANTERIOR
+  ---------------------------------------------------------------
+  Estas reglas antiguas se conservan porque algunas páginas todavía
+  dependen de sus clases. No son la fuente principal del diseño nuevo;
+  la capa final de compatibilidad las ajusta cuando hay conflictos.
    */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -254,7 +285,7 @@ ul, ol { list-style: none; }
 a { color: inherit; text-decoration: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 
-/* Fuentes del proyecto */
+/* COMPARTIDO: fuentes locales usadas por todos los HTML. */
 @font-face {
   font-family: "Anton";
   src: url("../fuentes/Anton/Anton-Regular.ttf") format("truetype");
@@ -277,7 +308,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   min-height: 50vh;
 }
 
-/* Cabecera de las páginas generales */
+/* COMPARTIDO: cabecera de index, sesión, registro, recuperación y mapa. */
 .cabecera {
   /* Afecta al <header class="cabecera">. */
   flex: 1 0 100%;
@@ -299,7 +330,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   border: 3px solid #d11c1c;
 }
 
-/* Menú lateral de la página de inicio */
+/* EXCLUSIVO: menú lateral y navegación de index.html. */
 #menu_lateral {
   /* Afecta al <aside id="menu_lateral"> de index.html. */
   display: flex;
@@ -332,7 +363,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   background-color: #5f5f5f;
 }
 
-/* Contenido principal de inicio */
+/* EXCLUSIVO: contenido principal de index.html. */
 .contenido {
   /* Afecta al contenedor general del contenido de index.html. */
   flex: 1;
@@ -385,7 +416,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   margin-right: 30px;
 }
 
-/* Bloques de la página de inicio */
+/* EXCLUSIVO: tarjetas de acciones de index.html. */
 .bloques {
   width: 100%;
   display: grid;
@@ -406,7 +437,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   margin-top: 30px;
 }
 
-/* Barra superior de las páginas generales */
+/* COMPARTIDO: barra superior de las páginas con .hero. */
 .hero {
   /* Afecta a la barra superior de index, sesión, registro y mapa. */
   font-family: "Anton", sans-serif;
@@ -446,7 +477,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   border-radius: 6px;
 }
 
-/* Tipografía reutilizable */
+/* COMPARTIDO: títulos y subtítulos reutilizables en varias páginas. */
 .titulo {
   /* Afecta a los títulos con class="titulo" de los formularios. */
   font-family: "Anton", sans-serif;
@@ -470,7 +501,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 }
 
 
-/* Responsive general */
+/* COMPARTIDO: adaptación de páginas generales a pantallas pequeñas. */
 @media (max-width: 768px) {
   /* Afecta a pantallas de 768px o menos. */
   #menu_lateral {
@@ -514,7 +545,8 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 
 /* 
-  3. PAGINAS DE INICIO DE SESION, REGISTRO Y RECUPERACION
+  COMPATIBILIDAD: inicio_sesion, registro y recuperar_contraseña
+  Reglas antiguas específicas de formularios.
    */
 .inicio_sesion{
   display: flex;
@@ -715,7 +747,8 @@ footer{
 
 
 /* 
-  4. PAGINA NOSOTROS
+  COMPATIBILIDAD: nosotros.html
+  Reglas antiguas de la página informativa clara.
    */
 
 .cabecera_nosotros{
@@ -908,8 +941,9 @@ footer{
   }
 
 /* 
-  CAPA VISUAL FINAL
-  Corrige conflictos de cascada entre las reglas antiguas y el rediseño.
+  6. CAPA FINAL COMPARTIDA
+  Afecta a index, sesión, registro, recuperación y mapa.
+  Corrige conflictos de cascada entre reglas antiguas y rediseño.
    */
 body { background: var(--night) !important; color: var(--ink) !important; }
 .index, .inicio_sesion, .mapa { background: var(--night) !important; color: var(--ink) !important; min-height: 100vh !important; }
@@ -943,8 +977,8 @@ body { background: var(--night) !important; color: var(--ink) !important; }
 footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !important; border-top: 1px solid var(--line) !important; color: var(--muted) !important; }
 
 /* 
-  RESPONSIVE FLUIDO
-  Centra el contenido, limita los anchos y evita scroll horizontal.
+  7. RESPONSIVE COMPARTIDO
+  Centra los contenidos y evita desbordamientos al cambiar la ventana.
    */
 .cabecera { width: 100% !important; }
 .hero { width: min(100%, 1440px) !important; margin-inline: auto !important; }
@@ -973,10 +1007,10 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   .imagen2_sesion img { height: 280px !important; }
 }
 
-/* ================================================================
-   MENÚ LATERAL DESPLEGABLE
-   En escritorio aparece hacia la derecha; en móvil ocupa la fila.
-   ================================================================ */
+/*
+  8. EXCLUSIVO DE index.html: menú lateral desplegable
+  La pestaña y sus opciones solo existen en la portada.
+   */
 .index #menu_lateral {
   position: relative !important;
   z-index: 10 !important;
@@ -1067,8 +1101,8 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   }
 }
 
-/* 
-  ACABADO DEL INDEX
+/*
+  9. EXCLUSIVO DE index.html: acabado visual
   Recupera la identidad rojo, negro y gris con profundidad y hover.
    */
 .index #menu_lateral {
@@ -1139,11 +1173,10 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   }
 }
 
-/* ================================================================
-   CAPA EXPANDIDA DEL MENÚ
-   Al entrar con el mouse, foco o clic, las opciones cubren la ventana
-   y se distribuyen como una navegación principal.
-   ================================================================ */
+/*
+  10. EXCLUSIVO DE index.html: capa expandida del menú
+  Al entrar con mouse, foco o clic, las opciones cubren la ventana.
+   */
 .index .menu-opciones {
   position: fixed !important;
   inset: 0 !important;
@@ -1240,10 +1273,77 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
 }
 
 /* ================================================================
-   COMPOSICIÓN DE MENÚ TIPO PANEL LATERAL
-   El rojo ocupa la izquierda y la portada queda visible, desenfocada,
-   en la mitad derecha, como una capa independiente.
+   MAPA / COMPOSICIÓN DEL MOCKUP
+   La columna izquierda contiene búsqueda, categorías y ficha;
+   el mapa ocupa la zona visual principal de la derecha.
    ================================================================ */
+.mapa-contenido {
+  grid-template-columns: minmax(280px, .85fr) minmax(0, 1.55fr) !important;
+  align-items: stretch;
+}
+.mapa-listado {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+.mapa-listado .mapa-herramientas {
+  display: block;
+  margin-bottom: 24px;
+}
+.mapa-listado .mapa-filtros {
+  display: grid;
+  justify-content: stretch;
+  gap: 8px;
+  margin-top: 14px;
+}
+.mapa-listado .filtro {
+  width: 100%;
+  border-radius: 8px;
+  text-align: left;
+}
+.mapa-categorias {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(248,244,237,.2);
+}
+.categoria {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(248,244,237,.2);
+  background: transparent;
+  color: var(--ink);
+  font: 1rem "Inter", sans-serif;
+  text-align: left;
+  transition: color .2s ease, padding-left .2s ease;
+}
+.categoria span { width: 28px; color: var(--accent-hot); font: 1rem "Anton", sans-serif; }
+.categoria:hover, .categoria.activa { padding-left: 16px; color: var(--accent-hot); }
+.mapa-visual {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-height: clamp(560px, 62vw, 760px);
+}
+.mapa-visual #mapa-real { min-height: clamp(560px, 62vw, 760px); }
+.recurso-destacado { grid-column: 1; grid-row: 2; align-self: start; min-height: 0; margin-top: 18px; }
+
+@media (max-width: 768px) {
+  .mapa-contenido { grid-template-columns: 1fr !important; }
+  .mapa-listado, .mapa-visual, .recurso-destacado { grid-column: 1; }
+  .mapa-listado { grid-row: 1; }
+  .mapa-visual { grid-row: 2; min-height: 420px; }
+  .mapa-visual #mapa-real { min-height: 420px; }
+  .recurso-destacado { grid-row: 3; margin-top: 0; }
+  .mapa-listado .mapa-filtros { display: flex; flex-wrap: wrap; }
+  .mapa-listado .filtro { width: auto; text-align: center; }
+}
+
+/*
+  11. EXCLUSIVO DE index.html: composición del panel lateral
+  El rojo ocupa la izquierda y la portada queda visible y desenfocada.
+   */
 .index .menu-opciones {
   display: flex !important;
   flex-direction: column !important;
@@ -1326,6 +1426,135 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
 .index .menu-opciones a:focus-visible::before,
 .index .menu-opciones a[aria-current="page"]::before {
   color: #111 !important;
+}
+
+/*
+  12. EXCLUSIVO DE mapa.html: encuentra ayuda
+  Vista local sin API externa; incluye buscador, filtros, mapa y ficha.
+   */
+.mapa-principal {
+  width: min(100% - 32px, 1440px);
+  margin: 0 auto;
+  padding: clamp(34px, 6vw, 82px) 0;
+}
+.mapa-encabezado {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 34px;
+}
+.mapa-etiqueta, .recurso-tipo {
+  margin-bottom: 12px;
+  color: var(--accent-hot);
+  font: .78rem "Inter", sans-serif;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.mapa-encabezado h2 {
+  font: clamp(3rem, 7vw, 7rem)/.88 "Anton", sans-serif;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.mapa-introduccion {
+  max-width: 360px;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+}
+.mapa-herramientas {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.mapa-busqueda span { display: block; margin-bottom: 8px; color: var(--muted); font-size: .82rem; }
+.mapa-busqueda input {
+  width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  border: 1px solid rgba(248,244,237,.3);
+  border-radius: 10px;
+  outline: none;
+  background: var(--panel);
+  color: var(--ink);
+  font: 1rem "Inter", sans-serif;
+}
+.mapa-busqueda input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(240,68,50,.14); }
+.mapa-busqueda input::placeholder { color: #777; }
+.mapa-filtros { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.filtro {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid rgba(248,244,237,.28);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: .85rem "Inter", sans-serif;
+}
+.filtro:hover, .filtro.activo { border-color: var(--accent); background: var(--accent); color: white; }
+.mapa-contenido { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, .7fr); gap: 18px; }
+.mapa-visual {
+  position: relative;
+  min-height: clamp(440px, 57vw, 680px);
+  overflow: hidden;
+  border: 1px solid rgba(248,244,237,.2);
+  border-radius: 22px;
+  background: #242829;
+  isolation: isolate;
+}
+.mapa-visual #mapa-real {
+  width: 100%;
+  height: 100%;
+  min-height: clamp(440px, 57vw, 680px);
+  filter: saturate(.72) contrast(1.05);
+}
+.mapa-visual .leaflet-control-zoom a {
+  background: var(--panel);
+  color: var(--ink);
+}
+.mapa-visual .leaflet-control-attribution {
+  background: rgba(12, 13, 13, .78);
+  color: var(--muted);
+}
+.mapa-visual .leaflet-control-attribution a { color: var(--accent-hot); }
+.mapa-visual .leaflet-popup-content-wrapper,
+.mapa-visual .leaflet-popup-tip {
+  background: var(--panel);
+  color: var(--ink);
+}
+.mapa-visual .leaflet-popup-content { font-family: "Inter", sans-serif; line-height: 1.5; }
+.mapa-visual::before {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  background: linear-gradient(120deg, transparent 47%, rgba(240,68,50,.25) 48%, rgba(240,68,50,.25) 49%, transparent 50%), linear-gradient(35deg, transparent 45%, rgba(248,244,237,.16) 46%, rgba(248,244,237,.16) 47%, transparent 48%);
+  background-size: 250px 180px, 180px 240px;
+  content: "";
+  transform: rotate(-8deg) scale(1.2);
+}
+.mapa-visual::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle at 20% 25%, rgba(240,68,50,.22) 0 5%, transparent 5.5%), radial-gradient(circle at 73% 68%, rgba(217,243,106,.18) 0 8%, transparent 8.5%);
+  content: "";
+}
+.mapa-zona { position: absolute; color: rgba(248,244,237,.34); font: clamp(2rem, 5vw, 5rem) "Anton", sans-serif; letter-spacing: .08em; }
+.zona-norte { top: 9%; left: 13%; }.zona-centro { top: 43%; left: 43%; }.zona-sur { right: 13%; bottom: 10%; }
+.calle { position: absolute; display: block; height: 2px; background: rgba(248,244,237,.22); transform-origin: left center; }
+.calle-1 { top: 23%; left: -5%; width: 110%; transform: rotate(22deg); }.calle-2 { top: 62%; left: -5%; width: 110%; transform: rotate(-18deg); }.calle-3 { top: -4%; left: 31%; width: 110%; transform: rotate(72deg); }.calle-4 { top: -8%; left: 72%; width: 115%; transform: rotate(106deg); }.calle-5 { top: 52%; left: 31%; width: 65%; transform: rotate(90deg); }
+.marcador { position: absolute; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--ink); border-radius: 50%; background: var(--accent); color: white; font: 1.6rem "Inter", sans-serif; box-shadow: 0 0 0 8px rgba(240,68,50,.18); transition: transform .2s ease; }
+.marcador:hover { transform: scale(1.14); }.marcador-principal { top: 48%; left: 43%; }.marcador-dos { top: 25%; right: 23%; }.marcador-tres { right: 18%; bottom: 19%; }
+.mapa-brujula { position: absolute; top: 20px; right: 24px; color: var(--ink); font: .8rem "Anton", sans-serif; text-align: center; }.mapa-brujula span { font-size: 1.5rem; }
+.recurso-destacado { align-self: end; min-height: 390px; padding: clamp(22px, 3vw, 38px); border: 1px solid rgba(240,68,50,.65); border-radius: 22px; background: linear-gradient(150deg, var(--panel-raised), var(--panel)); box-shadow: var(--shadow); }
+.recurso-icono { display: grid; place-items: center; width: 58px; height: 58px; margin-bottom: 30px; border: 1px solid var(--accent); border-radius: 14px; color: var(--accent-hot); font-size: 2rem; }
+.recurso-destacado h3 { max-width: 300px; font: clamp(2rem, 3.5vw, 3.5rem)/.95 "Anton", sans-serif; text-transform: uppercase; }
+.recurso-localidad { margin: 14px 0 24px; color: var(--ink); font-size: 1.05rem; }.recurso-destacado ul { display: grid; gap: 10px; color: var(--muted); font-size: .9rem; }.recurso-destacado li::before { margin-right: 9px; color: var(--accent-hot); content: "•"; }.recurso-contacto { display: inline-flex; margin-top: 30px; padding: 12px 16px; border-radius: 999px; background: var(--accent); color: white; font-weight: 700; }.recurso-contacto:hover { background: var(--accent-hot); }
+
+@media (max-width: 768px) {
+  .mapa-encabezado, .mapa-herramientas { display: grid; grid-template-columns: 1fr; align-items: start; }
+  .mapa-herramientas { gap: 14px; }.mapa-filtros { justify-content: flex-start; }.mapa-contenido { grid-template-columns: 1fr; }.mapa-visual, .mapa-visual #mapa-real { min-height: 420px; }.recurso-destacado { min-height: 0; }.mapa-introduccion { max-width: 500px; }
 }
 
 @media (max-width: 768px) {
