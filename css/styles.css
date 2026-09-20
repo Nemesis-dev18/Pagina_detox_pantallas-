@@ -1555,7 +1555,7 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
 .mapa-brujula { position: absolute; top: 20px; right: 24px; color: var(--ink); font: .8rem "Anton", sans-serif; text-align: center; }.mapa-brujula span { font-size: 1.5rem; }
 .recurso-destacado { align-self: end; min-height: 390px; padding: clamp(22px, 3vw, 38px); border: 1px solid rgba(240,68,50,.65); border-radius: 22px; background: linear-gradient(150deg, var(--panel-raised), var(--panel)); box-shadow: var(--shadow); }
 .recurso-icono { display: grid; place-items: center; width: 58px; height: 58px; margin-bottom: 30px; border: 1px solid var(--accent); border-radius: 14px; color: var(--accent-hot); font-size: 2rem; }
-.recurso-destacado h3 { max-width: 300px; font: clamp(2rem, 3.5vw, 3.5rem)/.95 "Anton", sans-serif; text-transform: uppercase; }
+.recurso-destacado h3 { max-width: 3020px; font: clamp(2rem, 3.5vw, 3.5rem)/.95 "Anton", sans-serif; text-transform: uppercase; }
 .recurso-localidad { margin: 14px 0 24px; color: var(--ink); font-size: 1.05rem; }.recurso-destacado ul { display: grid; gap: 10px; color: var(--muted); font-size: .9rem; }.recurso-destacado li::before { margin-right: 9px; color: var(--accent-hot); content: "•"; }.recurso-contacto { display: inline-flex; margin-top: 30px; padding: 12px 16px; border-radius: 999px; background: var(--accent); color: white; font-weight: 700; }.recurso-contacto:hover { background: var(--accent-hot); }
 
 @media (max-width: 768px) {
