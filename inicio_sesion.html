@@ -24,6 +24,7 @@
     <section class="texto_sesion">
         <div class="registro">
             <h2 class="titulo">Bienvenido de nuevo</h2>
+            <p id="mensaje-formulario" class="mensaje-formulario" role="alert"></p>
             <form class="sesion" action="/inicio_sesion" method="POST">
                     <div class="user">
                         <input type="text"   placeholder='CORREO ELECTRONICO' id="correo" name="username" required>
@@ -50,5 +51,15 @@
     <footer id="contacto">
         <p class="pies">&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
     </footer>
+    <script>
+        const mensajesLogin = {
+            credenciales: "El correo o la contraseña no son correctos.",
+            campos: "Escribe tu correo y contraseña."
+        };
+        const errorLogin = new URLSearchParams(window.location.search).get("error");
+        if (mensajesLogin[errorLogin]) {
+            document.querySelector("#mensaje-formulario").textContent = mensajesLogin[errorLogin];
+        }
+    </script>
 </body>
 </html>
