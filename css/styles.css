@@ -973,6 +973,100 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   .imagen2_sesion img { height: 280px !important; }
 }
 
+/* ================================================================
+   MENÚ LATERAL DESPLEGABLE
+   En escritorio aparece hacia la derecha; en móvil ocupa la fila.
+   ================================================================ */
+.index #menu_lateral {
+  position: relative !important;
+  z-index: 10 !important;
+  overflow: visible !important;
+}
+.index .menu-detalles {
+  position: relative;
+  width: 100%;
+}
+.index .menu-detalles > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.index .menu-detalles > summary::-webkit-details-marker { display: none; }
+.index .menu-detalles > summary::after {
+  position: absolute;
+  right: -3px;
+  bottom: 10px;
+  content: "+";
+  font: 1.4rem "Inter", sans-serif;
+  opacity: .75;
+  transition: transform .25s ease;
+}
+.index .menu-detalles[open] > summary::after { transform: rotate(45deg); }
+.index .menu-opciones {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 16px);
+  display: grid;
+  width: 220px;
+  padding: 10px;
+  border: 1px solid rgba(240, 68, 50, .55);
+  border-radius: 14px;
+  background: #171818;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .4);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-14px);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.index #menu_lateral:hover .menu-opciones,
+.index .menu-detalles:hover .menu-opciones,
+.index #menu_lateral:focus-within .menu-opciones,
+.index .menu-detalles[open] .menu-opciones {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+.index .menu-opciones a {
+  padding: 12px 14px;
+  border-radius: 9px;
+  color: var(--ink);
+  font: 700 .9rem "Inter", sans-serif;
+  transition: background .2s ease, color .2s ease, padding-left .2s ease;
+}
+.index .menu-opciones a:hover,
+.index .menu-opciones a:focus-visible,
+.index .menu-opciones a[aria-current="page"] {
+  outline: none;
+  background: var(--accent);
+  color: white;
+  padding-left: 19px;
+}
+
+@media (max-width: 768px) {
+  .index .menu-detalles > summary {
+    min-height: 38px;
+  }
+  .index .menu-detalles > summary::after {
+    right: 12px;
+    bottom: auto;
+  }
+  .index .menu-opciones {
+    position: static;
+    width: 100%;
+    margin-top: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    transform: translateY(-8px);
+  }
+  .index .menu-detalles[open] .menu-opciones,
+  .index #menu_lateral:focus-within .menu-opciones {
+    transform: translateY(0);
+  }
+}
+
 /* 
   ACABADO DEL INDEX
   Recupera la identidad rojo, negro y gris con profundidad y hover.
@@ -1042,5 +1136,216 @@ footer { min-height: 0 !important; margin-top: 0 !important; padding: 28px !impo
   }
   .index .texto_menu {
     letter-spacing: .3em !important;
+  }
+}
+
+/* ================================================================
+   CAPA EXPANDIDA DEL MENÚ
+   Al entrar con el mouse, foco o clic, las opciones cubren la ventana
+   y se distribuyen como una navegación principal.
+   ================================================================ */
+.index .menu-opciones {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100 !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  align-items: center !important;
+  gap: clamp(10px, 2vw, 30px) !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: clamp(120px, 18vh, 190px) clamp(24px, 8vw, 140px) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: linear-gradient(135deg, rgba(10, 10, 10, .9), rgba(42, 12, 12, .93)) !important;
+  backdrop-filter: blur(12px) saturate(.8) !important;
+  box-shadow: inset 0 0 0 1px rgba(240, 68, 50, .22), 0 30px 80px rgba(0,0,0,.55) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-100%) !important;
+  transition: opacity .28s ease, visibility .28s ease, transform .42s cubic-bezier(.22, 1, .36, 1) !important;
+}
+.index #menu_lateral:hover .menu-opciones,
+.index #menu_lateral:focus-within .menu-opciones,
+.index .menu-detalles[open] .menu-opciones {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+.index .menu-opciones::before {
+  position: absolute;
+  top: 9vh;
+  left: clamp(24px, 8vw, 140px);
+  color: var(--accent-hot);
+  content: "NAVEGACIÓN";
+  font: .8rem "Inter", sans-serif;
+  letter-spacing: .28em;
+}
+.index .menu-opciones::after {
+  position: absolute;
+  right: 4vw;
+  bottom: -2vh;
+  z-index: -1;
+  color: white;
+  content: "DETOX_WEB";
+  font: clamp(5rem, 17vw, 15rem)/.8 "Anton", sans-serif;
+  letter-spacing: .04em;
+  opacity: .045;
+  pointer-events: none;
+  transform: rotate(-90deg) translateY(100%);
+  transform-origin: bottom right;
+}
+.index .menu-opciones a {
+  display: grid !important;
+  place-items: center !important;
+  min-height: clamp(150px, 28vh, 280px) !important;
+  padding: 24px 12px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.055) !important;
+  color: var(--ink) !important;
+  font: clamp(1rem, 2vw, 1.5rem) "Anton", sans-serif !important;
+  letter-spacing: .08em !important;
+  text-align: center !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+  transition: transform .25s ease, border-color .25s ease, background .25s ease, color .25s ease !important;
+}
+.index .menu-opciones a:hover,
+.index .menu-opciones a:focus-visible,
+.index .menu-opciones a[aria-current="page"] {
+  border-color: var(--accent-hot) !important;
+  background: var(--accent) !important;
+  color: white !important;
+  outline: none !important;
+  transform: translateY(-10px) !important;
+}
+
+@media (max-width: 768px) {
+  .index .menu-opciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    padding: 120px 20px 28px !important;
+  }
+  .index .menu-opciones::before {
+    top: 80px;
+    left: 20px;
+  }
+  .index .menu-opciones a {
+    min-height: 110px !important;
+    font-size: 1.05rem !important;
+  }
+}
+
+/* ================================================================
+   COMPOSICIÓN DE MENÚ TIPO PANEL LATERAL
+   El rojo ocupa la izquierda y la portada queda visible, desenfocada,
+   en la mitad derecha, como una capa independiente.
+   ================================================================ */
+.index .menu-opciones {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: clamp(5px, 1vh, 12px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  min-width: 100vw !important;
+  padding: clamp(120px, 13vh, 145px) 48% clamp(70px, 10vh, 110px) clamp(42px, 8vw, 120px) !important;
+  background: linear-gradient(90deg, var(--accent-dark) 0%, var(--accent) 52%, rgba(13, 13, 13, .58) 52%, rgba(13, 13, 13, .7) 100%) !important;
+  backdrop-filter: blur(15px) saturate(.7) !important;
+}
+.index .menu-opciones::before {
+  top: clamp(30px, 5vh, 58px) !important;
+  left: clamp(42px, 8vw, 120px) !important;
+  color: white !important;
+  content: "×   OPCIONES" !important;
+  font: clamp(1rem, 2vw, 1.5rem) "Anton", sans-serif !important;
+  letter-spacing: .1em !important;
+  opacity: 1 !important;
+}
+.index .menu-opciones::after {
+  top: 50% !important;
+  right: 5vw !important;
+  bottom: auto !important;
+  z-index: 0 !important;
+  color: white !important;
+  content: "CONTROL DIGITAL" !important;
+  font: clamp(3.5rem, 8vw, 9rem)/.85 "Anton", sans-serif !important;
+  letter-spacing: .04em !important;
+  opacity: .14 !important;
+  transform: translateY(-50%) !important;
+  white-space: pre !important;
+}
+.index .menu-opciones a {
+  z-index: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: min(100%, 560px) !important;
+  min-height: 0 !important;
+  padding: clamp(14px, 1.8vh, 21px) 0 !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.8) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: white !important;
+  font: clamp(1.1rem, 2.4vw, 2rem) "Inter", sans-serif !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  text-align: left !important;
+  transform: none !important;
+}
+.index .menu-opciones a:last-child { border-bottom: 1px solid rgba(255,255,255,.8) !important; }
+.index .menu-opciones a::before {
+  width: 48px;
+  flex: 0 0 48px;
+  color: #111;
+  content: "";
+  font: 700 1rem "Anton", sans-serif;
+}
+.index .menu-opciones a:nth-child(1)::before { content: "01"; }
+.index .menu-opciones a:nth-child(2)::before { content: "02"; }
+.index .menu-opciones a:nth-child(3)::before { content: "03"; }
+.index .menu-opciones a:nth-child(4)::before { content: "04"; }
+.index .menu-opciones a:nth-child(5)::before { content: "05"; }
+.index .menu-opciones a:hover,
+.index .menu-opciones a:focus-visible,
+.index .menu-opciones a[aria-current="page"] {
+  border-color: white !important;
+  background: transparent !important;
+  color: white !important;
+  padding-left: 10px !important;
+  transform: none !important;
+}
+.index .menu-opciones a:hover::before,
+.index .menu-opciones a:focus-visible::before,
+.index .menu-opciones a[aria-current="page"]::before {
+  color: #111 !important;
+}
+
+@media (max-width: 768px) {
+  .index .menu-opciones {
+    align-items: flex-start !important;
+    padding: 115px 24px 42px !important;
+    background: var(--accent) !important;
+  }
+  .index .menu-opciones::before {
+    left: 24px !important;
+  }
+  .index .menu-opciones::after {
+    right: 18px !important;
+    bottom: 10vh !important;
+    top: auto !important;
+    font-size: 3.5rem !important;
+  }
+  .index .menu-opciones a {
+    width: min(100%, 520px) !important;
+    padding-block: 10px !important;
+    font-size: clamp(1rem, 5vw, 1.4rem) !important;
   }
 }
