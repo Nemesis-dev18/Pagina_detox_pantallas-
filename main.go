@@ -85,7 +85,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    http.Redirect(w, r, "/index.html?registrado=true", http.StatusSeeOther)
+    http.Redirect(w, r, "/?registrado=true", http.StatusSeeOther)
 }
 
 func inicioSesion(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +113,7 @@ func inicioSesion(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    http.Redirect(w, r, "/index.html?sesion=iniciada", http.StatusSeeOther)
+    http.Redirect(w, r, "/?sesion=iniciada", http.StatusSeeOther)
 }
 
 func main() {
@@ -124,6 +124,13 @@ func main() {
 
     http.HandleFunc("/registro", registro)
     http.HandleFunc("/inicio_sesion", inicioSesion)
+    http.HandleFunc("/sesion", func(w http.ResponseWriter, r *http.Request) {
+        if r.Method == http.MethodGet {
+            http.Redirect(w, r, "/inicio_sesion.html", http.StatusSeeOther)
+            return
+        }
+        inicioSesion(w, r)
+    })
 
     // Sirve tus HTML, CSS, imágenes y JavaScript.
     archivos := http.FileServer(http.Dir("."))
