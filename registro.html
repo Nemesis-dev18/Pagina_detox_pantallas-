@@ -24,6 +24,7 @@
 	<section class="texto_sesion">
 		<div class="registro-cuenta">
 			<h2 class="titulo">Crear cuenta</h2>
+			<p id="mensaje-formulario" class="mensaje-formulario" role="alert"></p>
 			<form class="formulario-cuenta" action="/registro" method="POST">
 				<label for="nombre">Nombre</label>
 				<input type="text" id="nombre" name="nombre" placeholder="NOMBRE" required>
@@ -48,5 +49,16 @@
 	<footer>
 		<p class="pies">&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
 	</footer>
+	<script>
+		const mensajesRegistro = {
+			correo: "El correo ya está en uso.",
+			confirmacion: "Las contraseñas no coinciden.",
+			campos: "Completa todos los campos."
+		};
+		const errorRegistro = new URLSearchParams(window.location.search).get("error");
+		if (mensajesRegistro[errorRegistro]) {
+			document.querySelector("#mensaje-formulario").textContent = mensajesRegistro[errorRegistro];
+		}
+	</script>
 </body>
 </html>
