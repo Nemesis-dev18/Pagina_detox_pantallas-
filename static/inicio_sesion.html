@@ -21,20 +21,20 @@
     </header>
 
     <!-- Formulario de inicio de sesión -->
-    <section class="texto_sesion">
-        <div class="registro">
-            <h2 class="titulo">Bienvenido de nuevo</h2>
-            <form class="sesion" action="procesar_login.php" method="POST">
-                    <div class="user">
-                        <input type="text"   placeholder='CORREO ELECTRONICO' id="correo" name="username" required>
-                    </div>
-                    <div class="contraseña">
-                            <input type="password" placeholder='CONTRASEÑA' id="password" name="password" required>
-                    </div>
-                    <div class="boton_sesion">
-                        <button class="boton_s" type="submit">Iniciar Sesión</button>
-                    </div>
-            </form>
+<section class="texto_sesion">
+  <div class="registro">
+    <h2 class="titulo">Bienvenido de nuevo</h2>
+    <form class="sesion" action="/login" method="POST">
+      <div class="user">
+        <input type="email" placeholder="CORREO ELECTRÓNICO" id="correo" name="username" required>
+      </div>
+      <div class="contraseña">
+        <input type="password" placeholder="CONTRASEÑA" id="password" name="password" required>
+      </div>
+      <div class="boton_sesion">
+        <button class="boton_s" type="submit">Iniciar Sesión</button>
+      </div>
+    </form>
             <div class="enlaces-sesion">
                 <a href="recuperar_contraseña.html">¿Olvidaste tu contraseña?</a>
                 <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
