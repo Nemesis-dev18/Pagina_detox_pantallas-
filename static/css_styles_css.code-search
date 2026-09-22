@@ -1,0 +1,44 @@
+# Query: css/styles.css
+# ContextLines: 1
+
+8 resultados - Archivos de 8
+
+static/comunidad.html:
+  5      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  6:     <link rel="stylesheet" href="../css/styles.css">
+  7      <title>
+
+static/index.html:
+  6      <title>DETOX_WEB</title>
+  7:     <link rel="stylesheet" href="../css/styles.css">
+  8      <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+
+static/inicio_sesion.html:
+  6      <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+  7:     <link rel="stylesheet" href="../css/styles.css">
+  8      <title>DETOX_WEB</title>
+
+static/mapa.html:
+  5      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  6:     <link rel="stylesheet" href="../css/styles.css">
+  7      <title>
+
+static/nosotros.html:
+  6      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  7:     <link rel="stylesheet" href="../css/styles.css">
+  8    
+
+static/recuperar_contraseña.html:
+  6      <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+  7:     <link rel="stylesheet" href="../css/styles.css">
+  8      <title>Recuperar contraseña | DETOX_WEB</title>
+
+static/registro.html:
+  6  	<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+  7: 	<link rel="stylesheet" href="../css/styles.css">
+  8  	<title>Crear cuenta | DETOX_WEB</title>
+
+static/test.html:
+  6      <title>Document</title>
+  7:     <link rel="stylesheet" href="../css/styles.css">
+  8  </head>
