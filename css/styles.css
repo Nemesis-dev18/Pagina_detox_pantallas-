@@ -133,16 +133,12 @@ table { border-collapse: collapse; border-spacing: 0; }
 .contenido-encabezado h1 {
   width: 100%;
   max-width: 520px;
-  
 }
 
 .contenido-principal {
   /* Afecta al bloque del título y subtítulo de inicio. */
   flex: 1 1 500px;
   max-width: 520px;
-}
-.contenido-principal p{
-  font-size: 1.5rem;
 }
 
 .imagen2 {
@@ -153,7 +149,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 .imagen2 img {
   /* Afecta a la imagen principal de index.html. */
-  width: min(100%, 850px);
+  width: min(100%, 700px);
   height: clamp(280px, 45vw, 500px);
   object-fit: cover;
   border-radius: 60px;
@@ -310,14 +306,10 @@ table { border-collapse: collapse; border-spacing: 0; }
   padding: clamp(15px, 4vw, 30px);
   gap: clamp(15px, 3vw, 30px);
   font-size: clamp(1.1rem, 2vw, 1.6rem);
-
 }
 
 .texto_sesion article {
   flex: 1 1 500px;
-}
-.titulo{
-  padding: clamp(15px, 4vw, 30px);;
 }
 
 .user,
@@ -338,21 +330,9 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 .registro .boton_sesion {
   display: flex;
-  width: min(70%, 420px);
-  margin-left: clamp(10px, 4vw, 40px);
-}
-
-.boton_sesion button {
-  /* Afecta al botón Iniciar Sesión del formulario de login. */
-  width: 100%;
-  min-height: 52px;
-  padding: 10px 16px;
-  background-color: #d11c1c;
-  color: #fff;
-  border: 2px solid #fff;
-  border-radius: 6px;
-  font: inherit;
-  cursor: pointer;
+  width: 70%;
+  height: 70%;
+  margin-left: 40px;
 }
 
 .registro #correo,
@@ -394,7 +374,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 .imagen2_sesion img {
   /* Afecta a la imagen de las páginas de sesión. */
-  width: min(100%, 820px);
+  width: min(100%, 720px);
   height: clamp(350px, 55vw, 660px);
   object-fit: cover;
   border-radius: 60px;
@@ -662,11 +642,11 @@ footer{
 .pies{
   /* Afecta al texto legal dentro del footer. */
   display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
+    flex: 1;
+    align-content: center;
+
+
+  }
   .hero_nosotros nav a {
       margin: 0 clamp(8px, 2vw, 20px) clamp(8px, 2vw, 20px) 0;
      border-left: 3px solid #000000;
