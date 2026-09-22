@@ -1,4 +1,4 @@
-# 🗣️ Foro Anónimo Esperanza
+# Foro Anónimo Esperanza
 
 > Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.
 > Componente del **Proyecto Esperanza** (nombre provisional: *Preventiva*).
@@ -10,23 +10,27 @@
 
 ---
 
-## 📋 Tabla de contenidos
+## Tabla de contenidos
 
-- [Sobre el proyecto](#-sobre-el-proyecto)
-- [Objetivos](#-objetivos)
-- [Alcance](#-alcance)
-- [Arquitectura por capas](#️-arquitectura-por-capas)
-- [Requisitos funcionales](#-requisitos-funcionales)
-- [Requisitos no funcionales](#️-requisitos-no-funcionales)
-- [Metodología de trabajo](#-metodología-de-trabajo)
-- [Entregables](#-entregables)
-- [Aviso importante](#️-aviso-importante)
-- [Autores](#-autores)
-- [Licencia](#-licencia)
+- [Foro Anónimo Esperanza](#foro-anónimo-esperanza)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+  - [Sobre el proyecto](#sobre-el-proyecto)
+  - [Objetivos](#objetivos)
+    - [Objetivo general](#objetivo-general)
+    - [Objetivos específicos](#objetivos-específicos)
+  - [Alcance](#alcance)
+  - [Arquitectura por capas](#arquitectura-por-capas)
+  - [Requisitos funcionales](#requisitos-funcionales)
+  - [Requisitos no funcionales](#requisitos-no-funcionales)
+  - [Metodología de trabajo](#metodología-de-trabajo)
+  - [Entregables](#entregables)
+  - [Aviso importante](#aviso-importante)
+  - [Autores](#autores)
+  - [Licencia](#licencia)
 
 ---
 
-## 🧭 Sobre el proyecto
+## Sobre el proyecto
 
 El uso excesivo del teléfono celular es cada vez más común, especialmente entre jóvenes y adultos jóvenes, y con frecuencia pasa desapercibido porque no existe un espacio adecuado para reflexionar sobre estos hábitos ni para compartirlos con otras personas en situaciones similares.
 
@@ -40,7 +44,7 @@ El **anonimato** es la característica central del espacio: busca que las person
 
 ---
 
-## 🎯 Objetivos
+##  Objetivos
 
 ### Objetivo general
 Diseñar y estructurar una propuesta de foro o comunidad anónima para la plataforma Esperanza, que permita a los usuarios compartir experiencias y reflexionar sobre el uso del teléfono celular, desarrollada bajo una arquitectura por capas.
@@ -53,7 +57,7 @@ Diseñar y estructurar una propuesta de foro o comunidad anónima para la plataf
 
 ---
 
-## 📦 Alcance
+##  Alcance
 
 **Incluye:**
 - Diseño de un foro/comunidad anónima integrado a la plataforma Esperanza.
@@ -72,13 +76,13 @@ Diseñar y estructurar una propuesta de foro o comunidad anónima para la plataf
 
 ---
 
-## 🏗️ Arquitectura por capas
+## Arquitectura por capas
 
 El sistema se organiza en tres capas, donde cada una se comunica únicamente con la capa inmediatamente adyacente:
 
 ```mermaid
 flowchart TD
-    U["👤 Usuario"] --> P
+    U[" Usuario"] --> P
     subgraph P["Capa de Presentación"]
         P1["Interfaz del foro: crear, ver y responder publicaciones"]
     end
@@ -102,7 +106,7 @@ El flujo de información sigue siempre el mismo camino: el usuario interactúa c
 
 ---
 
-## ✅ Requisitos funcionales
+##  Requisitos funcionales
 
 | ID | Descripción |
 |---|---|
@@ -121,7 +125,7 @@ El flujo de información sigue siempre el mismo camino: el usuario interactúa c
 
 ---
 
-## ⚙️ Requisitos no funcionales
+##  Requisitos no funcionales
 
 | ID | Categoría | Descripción |
 |---|---|---|
@@ -138,7 +142,7 @@ El flujo de información sigue siempre el mismo camino: el usuario interactúa c
 
 ---
 
-## 🔄 Metodología de trabajo
+##  Metodología de trabajo
 
 El desarrollo se propone bajo **Scrum**, dividiendo el trabajo en *sprints* cortos:
 
@@ -151,7 +155,7 @@ El desarrollo se propone bajo **Scrum**, dividiendo el trabajo en *sprints* cort
 
 ---
 
-## 📤 Entregables
+## Entregables
 
 - [ ] Documento de requisitos del sistema
 - [ ] Diseño general de la arquitectura
@@ -166,13 +170,13 @@ El desarrollo se propone bajo **Scrum**, dividiendo el trabajo en *sprints* cort
 
 ---
 
-## ⚠️ Aviso importante
+##  Aviso importante
 
 Este foro **no realiza diagnósticos médicos ni psicológicos**, **no reemplaza la atención de profesionales de la salud** y **no constituye una terapia ni un tratamiento**. Su finalidad es exclusivamente preventiva, educativa y de concientización.
 
 ---
 
-## 👥 Autores
+##  Autores
 
 Proyecto desarrollado en el marco de **Desarrollo de Software**, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.
 
@@ -184,7 +188,7 @@ Proyecto desarrollado en el marco de **Desarrollo de Software**, Corporación Te
 
 ---
 
-## 📄 Licencia
+##  Licencia
 
 *Por definir.*
 
