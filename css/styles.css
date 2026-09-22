@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
-/* 
+/* ================================================================
   1. RESET Y ESTILOS BASE
-   */
+  ================================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -39,9 +39,9 @@ table { border-collapse: collapse; border-spacing: 0; }
   font-family: "inter";
   src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
 }
-/* 
+/* ================================================================
   2. ESTRUCTURA GENERAL DE INICIO Y SESION
-   */
+  ================================================================ */
 .index , .inicio_sesion {
   /* Afecta al <body> de index.html y de las páginas de sesión. */
   display: flex;
@@ -285,9 +285,9 @@ table { border-collapse: collapse; border-spacing: 0; }
 }   
 
 
-/* 
+/* ================================================================
   3. PAGINAS DE INICIO DE SESION, REGISTRO Y RECUPERACION
-   */
+  ================================================================ */
 .inicio_sesion{
   display: flex;
   flex-wrap: wrap;
@@ -480,9 +480,9 @@ footer{
 
 
 
-/* 
+/* ================================================================
   4. PAGINA NOSOTROS
-   */
+  ================================================================ */
 
 .cabecera_nosotros{
   /* Afecta al header exclusivo de nosotros.html. */
