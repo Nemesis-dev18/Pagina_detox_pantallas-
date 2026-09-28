@@ -3,12 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/styles.css">
-    <title>
-DETOX_WEB
-    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Comunidad | DETOX_WEB</title>
+    <style>
+        [hidden] { display: none !important; }
+        .foro { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+        .foro input, .foro textarea, .foro select { width: 100%; box-sizing: border-box; margin: .3rem 0 1rem; padding: .6rem; font: inherit; }
+        .foro button { padding: .6rem 1.2rem; font: inherit; cursor: pointer; }
+        .publicacion { border: 1px solid currentColor; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+        .publicacion .meta { opacity: .7; font-size: .9rem; }
+        .publicacion .cuerpo { white-space: pre-wrap; }
+    </style>
 </head>
 <body class="comunidad">
-    <!-- Contenido de la comunidad pendiente de desarrollar -->
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+            </div>
+            <div class="hero-center">
+                <h1>DETOX_WEB</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="foro">
+        <h2>Comunidad</h2>
+
+        <p id="pide-login">Para publicar necesitas <a href="inicio_sesion.html">iniciar sesión</a>.</p>
+
+        <form id="form-publicar" hidden>
+            <p>Publicas como <strong id="mi-alias"></strong></p>
+
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" maxlength="120" required>
+
+            <label for="categoria">Categoría</label>
+            <select id="categoria" name="categoria" required>
+                <option value="experiencia">Experiencia</option>
+                <option value="pregunta">Pregunta</option>
+                <option value="consejo">Consejo</option>
+            </select>
+
+            <label for="contenido">Cuéntanos</label>
+            <textarea id="contenido" name="contenido" rows="5" maxlength="5000" required></textarea>
+
+            <button type="submit">Publicar</button>
+            <p id="mensaje"></p>
+        </form>
+
+        <section id="lista"></section>
+    </main>
+
+    <script>
+        const lista = document.getElementById('lista');
+        const formulario = document.getElementById('form-publicar');
+        const pideLogin = document.getElementById('pide-login');
+        const miAlias = document.getElementById('mi-alias');
+        const mensaje = document.getElementById('mensaje');
+
+        // ¿Hay sesión? Si sí, mostramos el formulario
+        async function comprobarSesion() {
+            const res = await fetch('/yo');
+            if (res.ok) {
+                const datos = await res.json();
+                miAlias.textContent = datos.alias;
+                pideLogin.hidden = true;
+                formulario.hidden = false;
+            }
+        }
+
+        async function cargarPublicaciones() {
+            const res = await fetch('/publicaciones');
+            const publicaciones = await res.json();
+
+            lista.replaceChildren();
+            if (publicaciones.length === 0) {
+                lista.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+                return;
+            }
+
+            for (const p of publicaciones) {
+                const art = document.createElement('article');
+                art.className = 'publicacion';
+
+                const titulo = document.createElement('h3');
+                titulo.textContent = p.titulo;
+
+                const meta = document.createElement('p');
+                meta.className = 'meta';
+                meta.textContent = p.alias + ' · ' + p.categoria + ' · ' + new Date(p.creado_en).toLocaleString('es-CO');
+
+                const cuerpo = document.createElement('p');
+                cuerpo.className = 'cuerpo';
+                cuerpo.textContent = p.contenido;
+
+                art.append(titulo, meta, cuerpo);
+                lista.append(art);
+            }
+        }
+
+        formulario.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch('/publicaciones', {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(formulario))
+            });
+            if (res.ok) {
+                formulario.reset();
+                mensaje.textContent = '';
+                cargarPublicaciones();
+            } else {
+                mensaje.textContent = await res.text();
+            }
+        });
+
+        comprobarSesion();
+        cargarPublicaciones();
+    </script>
 </body>
 </html>
