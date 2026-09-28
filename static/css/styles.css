@@ -404,6 +404,20 @@ button:focus-visible {
   padding: clamp(15px, 4vw, 30px);
 }
 
+.titulo_recuperar{
+  /* Afecta a los títulos con class="titulo" de los formularios. */
+  font-family: "Anton", sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(2rem, 4vw, 5rem);
+  line-height: 1.2;
+  letter-spacing: 5px;
+  margin-bottom: 2rem;
+  width: 100%;
+ 
+  padding: clamp(15px, 4vw, 30px);
+}
+
+
 .subtitulo {
   /* Afecta al texto descriptivo debajo del título de inicio. */
   font-family: "Inter", sans-serif;
@@ -639,7 +653,7 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0.45rem;
+  gap: 0.30rem;
   font-family: "Inter", sans-serif;
   border-left: 3px solid #d11c1c;
   border-right: 3px solid #d11c1c;
@@ -664,7 +678,7 @@ button:focus-visible {
 }
 
 .formulario-cuenta input::placeholder {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", sans-serif
 }
 
 .boton-cuenta {
@@ -695,14 +709,15 @@ button:focus-visible {
 
 footer{
   /* Afecta a todos los pies de página. */
-  margin-top: clamp(2rem, 5vw, 5%);
-  min-height: clamp(120px, 20vw, 200px);
+  margin-top: clamp(2rem, 5vw, 8%);
+  min-height: clamp(180px, 20vw, 200px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   margin: auto;
+  max-height:300px ;
 
 }
 
