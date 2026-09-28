@@ -1,0 +1,421 @@
+=====================================================================
+ DETOX_WEB - COMANDOS Y CONSULTAS PARA VER LA BASE DE DATOS (PostgreSQL)
+=====================================================================
+Cómo leer este archivo:
+  - Las líneas que empiezan con  #   son comandos para la TERMINAL (bash).
+  - Las líneas que empiezan con  \   son comandos de psql (los que se
+    escriben DENTRO de psql, no llevan punto y coma al final).
+  - Las líneas que empiezan con  --  son comentarios de SQL.
+  - Todo lo demás (SELECT ... ;) es SQL y SÍ termina con punto y coma.
+
+Tablas que usa tu proyecto (según handlers.go):
+  usuarios        -> id, alias, correo, password_hash, creado_en
+  sesiones        -> token_hash, usuario_id, expira_en   (login con cookie)
+  recuperaciones  -> token_hash, usuario_id, expira_en, usado
+  publicaciones   -> id, autor_id, titulo, contenido, categoria, creado_en
+  comentarios     -> id, publicacion_id, autor_id, contenido, creado_en
+
+Índice:
+  1. Conectarse a la base
+  2. Comandos de psql (los que empiezan con \)
+  3. Ver la estructura de las tablas
+  4. Consultas para VER datos (solo lectura, no cambian nada)
+  5. Las mismas consultas que hace tu app Go
+  6. Ver qué queries se están ejecutando / registrar queries
+  7. Limpiar datos de prueba (con cuidado)
+  8. Exportar resultados a un archivo
+  9. Probar la API con curl (lo que ve la página)
+ 10. Notas importantes
+
+
+=====================================================================
+ 1. CONECTARSE A LA BASE
+=====================================================================
+
+# Tu programa Go se conecta con la variable de entorno DATABASE_URL.
+# Mira si la tienes definida en esta terminal:
+echo $DATABASE_URL
+
+# Formato de esa variable (cambia usuario, clave y nombre_bd por los tuyos):
+#   postgres://usuario:clave@localhost:5432/nombre_bd?sslmode=disable
+export DATABASE_URL="postgres://usuario:clave@localhost:5432/nombre_bd?sslmode=disable"
+
+# Entrar a psql usando esa misma variable (la forma más fácil):
+psql "$DATABASE_URL"
+
+# Entrar a psql indicando los datos a mano:
+psql -h localhost -U usuario -d nombre_bd
+
+# Entrar como el superusuario "postgres" en Linux (sin clave):
+sudo -u postgres psql
+
+# Entrar directo a una base específica como "postgres":
+sudo -u postgres psql -d nombre_bd
+
+# Ver si el servicio de PostgreSQL está corriendo:
+sudo systemctl status postgresql
+
+# Encenderlo / reiniciarlo si está apagado:
+sudo systemctl start postgresql
+sudo systemctl restart postgresql
+
+# Ejecutar UNA consulta sin entrar a psql (útil para pruebas rápidas):
+psql "$DATABASE_URL" -c "SELECT alias, creado_en FROM usuarios;"
+
+# Ejecutar un archivo .sql completo:
+psql "$DATABASE_URL" -f archivo.sql
+
+
+=====================================================================
+ 2. COMANDOS DE PSQL (se escriben dentro de psql)
+=====================================================================
+\?                  -- ayuda con TODOS los comandos de psql
+\h SELECT           -- ayuda de un comando SQL (cambia SELECT por otro)
+\conninfo           -- muestra a qué base y con qué usuario estás conectado
+\l                  -- lista todas las bases de datos
+\c nombre_bd        -- cambia de base de datos
+\dt                 -- lista las tablas de la base actual
+\dt+                -- lista las tablas con su tamaño
+\d usuarios         -- estructura de la tabla usuarios (columnas y tipos)
+\d+ publicaciones   -- estructura con más detalle
+\di                 -- lista los índices
+\du                 -- lista los usuarios (roles) de PostgreSQL
+\dx                 -- extensiones instaladas
+\x                  -- activa/desactiva vista vertical (un dato por línea)
+\x auto             -- vista vertical solo cuando la fila no cabe en pantalla
+\timing             -- muestra cuánto tarda cada consulta
+\pset pager off     -- que no use "less" para mostrar resultados largos
+\e                  -- abre la última consulta en un editor
+\i archivo.sql      -- ejecuta un archivo .sql
+\o salida.txt       -- guarda los resultados en un archivo (\o solo, para parar)
+\watch 2            -- repite la última consulta cada 2 segundos
+\q                  -- salir de psql
+
+
+=====================================================================
+ 3. VER LA ESTRUCTURA DE LAS TABLAS
+=====================================================================
+-- Dentro de psql:
+\dt
+\d usuarios
+\d sesiones
+\d recuperaciones
+\d publicaciones
+\d comentarios
+
+-- Con SQL normal (funciona en cualquier programa, no solo psql):
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
+
+-- Columnas de una tabla (cambia 'publicaciones' por la que quieras):
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'publicaciones'
+ORDER BY ordinal_position;
+
+
+=====================================================================
+ 4. CONSULTAS PARA VER DATOS (solo lectura)
+=====================================================================
+
+-- ---------- Resumen general ----------
+
+-- Cuántas filas hay en cada tabla:
+SELECT 'usuarios'      AS tabla, COUNT(*) AS filas FROM usuarios
+UNION ALL
+SELECT 'sesiones',      COUNT(*) FROM sesiones
+UNION ALL
+SELECT 'publicaciones', COUNT(*) FROM publicaciones
+UNION ALL
+SELECT 'comentarios',   COUNT(*) FROM comentarios;
+
+-- ---------- Usuarios ----------
+
+-- Ver usuarios SIN mostrar el password_hash (mejor no listarlo):
+SELECT id, alias, correo, creado_en
+FROM usuarios
+ORDER BY creado_en DESC;
+
+-- Buscar un usuario por alias (parte del nombre, sin importar mayúsculas):
+SELECT id, alias, correo, creado_en
+FROM usuarios
+WHERE alias ILIKE '%nemesis%';
+
+-- Usuarios registrados hoy:
+SELECT alias, correo, creado_en
+FROM usuarios
+WHERE creado_en >= CURRENT_DATE
+ORDER BY creado_en DESC;
+
+-- Usuarios y cuántas publicaciones ha hecho cada uno:
+SELECT u.alias, COUNT(p.id) AS publicaciones
+FROM usuarios u
+LEFT JOIN publicaciones p ON p.autor_id = u.id
+GROUP BY u.id
+ORDER BY publicaciones DESC;
+
+-- ---------- Publicaciones ----------
+
+-- Todas las publicaciones con el alias de quien las escribió:
+SELECT p.id, u.alias, p.titulo, p.categoria, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+ORDER BY p.creado_en DESC;
+
+-- Lo mismo pero con el contenido completo (usa \x para leerlo mejor):
+SELECT p.id, u.alias, p.titulo, p.contenido, p.categoria, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+ORDER BY p.creado_en DESC
+LIMIT 10;
+
+-- Cuántas publicaciones hay por categoría:
+SELECT COALESCE(categoria, '(sin categoría)') AS categoria, COUNT(*) AS total
+FROM publicaciones
+GROUP BY 1
+ORDER BY total DESC;
+
+-- Solo una categoría (experiencia, pregunta o consejo):
+SELECT p.titulo, u.alias, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+WHERE p.categoria = 'pregunta'
+ORDER BY p.creado_en DESC;
+
+-- Publicaciones de las últimas 24 horas:
+SELECT p.titulo, u.alias, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+WHERE p.creado_en > now() - interval '24 hours'
+ORDER BY p.creado_en DESC;
+
+-- Buscar una palabra en título o contenido (como el buscador de la página):
+SELECT p.titulo, u.alias, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+WHERE p.titulo ILIKE '%tiktok%' OR p.contenido ILIKE '%tiktok%';
+
+-- Publicaciones con su número de comentarios:
+SELECT p.id, p.titulo, u.alias, COUNT(c.id) AS comentarios, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+LEFT JOIN comentarios c ON c.publicacion_id = p.id
+GROUP BY p.id, u.alias
+ORDER BY p.creado_en DESC;
+
+-- Publicaciones que NO tienen ningún comentario todavía:
+SELECT p.titulo, u.alias, p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+LEFT JOIN comentarios c ON c.publicacion_id = p.id
+WHERE c.id IS NULL
+ORDER BY p.creado_en DESC;
+
+-- ---------- Comentarios ----------
+
+-- Todos los comentarios con el título de la publicación y el alias:
+SELECT p.titulo AS publicacion, u.alias, c.contenido, c.creado_en
+FROM comentarios c
+JOIN publicaciones p ON p.id = c.publicacion_id
+JOIN usuarios u ON u.id = c.autor_id
+ORDER BY c.creado_en DESC;
+
+-- Comentarios de UNA publicación (pega el id real donde dice el UUID):
+SELECT u.alias, c.contenido, c.creado_en
+FROM comentarios c
+JOIN usuarios u ON u.id = c.autor_id
+WHERE c.publicacion_id = '00000000-0000-0000-0000-000000000000'
+ORDER BY c.creado_en ASC;
+
+-- ---------- Sesiones y recuperación de contraseña ----------
+
+-- Quién tiene la sesión iniciada ahora (no se muestra el token):
+SELECT u.alias, s.expira_en
+FROM sesiones s
+JOIN usuarios u ON u.id = s.usuario_id
+WHERE s.expira_en > now()
+ORDER BY s.expira_en DESC;
+
+-- Enlaces de recuperación de contraseña recientes (no se muestra el token):
+SELECT u.alias, r.expira_en, r.usado
+FROM recuperaciones r
+JOIN usuarios u ON u.id = r.usuario_id
+ORDER BY r.expira_en DESC
+LIMIT 20;
+
+
+=====================================================================
+ 5. LAS MISMAS CONSULTAS QUE HACE TU APP GO (handlers.go)
+=====================================================================
+-- Sirven para comprobar qué devolvería cada ruta de tu servidor.
+
+-- GET /publicaciones  (función listarPublicaciones):
+SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en
+FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+ORDER BY p.creado_en DESC
+LIMIT 50;
+
+-- GET /publicaciones/{id}/comentarios  (función listarComentarios):
+SELECT c.id, u.alias, c.contenido, c.creado_en
+FROM comentarios c
+JOIN usuarios u ON u.id = c.autor_id
+WHERE c.publicacion_id = '00000000-0000-0000-0000-000000000000'   -- pon un id real
+ORDER BY c.creado_en ASC;
+
+-- GET /yo  (función usuarioActual): busca la sesión por token_hash.
+-- No se puede probar a mano porque el token real viaja en la cookie
+-- "sesion" y en la base solo se guarda su hash. Para ver si hay sesiones
+-- válidas usa la consulta de "Quién tiene la sesión iniciada ahora".
+
+
+=====================================================================
+ 6. VER QUÉ QUERIES SE ESTÁN EJECUTANDO / REGISTRAR QUERIES
+=====================================================================
+
+-- Queries que están corriendo o conectadas ahora mismo en tu base:
+SELECT pid, usename, state, now() - query_start AS duracion, query
+FROM pg_stat_activity
+WHERE datname = current_database()
+  AND pid <> pg_backend_pid()
+ORDER BY query_start;
+
+-- Cancelar una query que se quedó pegada (cambia 12345 por el pid):
+SELECT pg_cancel_backend(12345);
+
+-- Ver el plan de una consulta (cómo la ejecuta PostgreSQL):
+EXPLAIN SELECT * FROM publicaciones ORDER BY creado_en DESC LIMIT 50;
+
+-- Ver el plan Y ejecutarla midiendo tiempos reales:
+EXPLAIN ANALYZE SELECT * FROM publicaciones ORDER BY creado_en DESC LIMIT 50;
+
+-- Hacer que PostgreSQL ESCRIBA en su registro TODAS las queries que llegan
+-- (así ves cada consulta que hace tu app Go cuando usas la página):
+ALTER SYSTEM SET log_statement = 'all';
+SELECT pg_reload_conf();
+
+# Ver el registro en vivo (Linux con systemd):
+sudo journalctl -u postgresql -f
+
+-- Dónde están los archivos de registro, por si no usas journalctl:
+SHOW data_directory;
+SHOW log_directory;
+
+-- APAGAR el registro de todas las queries cuando termines:
+ALTER SYSTEM RESET log_statement;
+SELECT pg_reload_conf();
+
+-- OJO: con log_statement = 'all' el registro puede incluir correos y
+-- hashes de contraseña que envía tu app. Úsalo solo en tu computador
+-- mientras desarrollas y apágalo después.
+
+
+=====================================================================
+ 7. LIMPIAR DATOS DE PRUEBA (con cuidado)
+=====================================================================
+-- Estos comandos BORRAN datos. Usa siempre una transacción:
+--   BEGIN;     empieza (nada es definitivo todavía)
+--   ROLLBACK;  deshace todo
+--   COMMIT;    confirma y ya no hay vuelta atrás
+-- Primero corre el SELECT para ver qué vas a borrar.
+
+-- Borrar publicaciones de prueba de un alias. Los comentarios se borran
+-- primero porque la tabla comentarios depende de publicaciones:
+SELECT p.id, p.titulo FROM publicaciones p
+JOIN usuarios u ON u.id = p.autor_id
+WHERE u.alias = 'nemesis 3';                       -- cambia el alias
+
+BEGIN;
+DELETE FROM comentarios
+WHERE publicacion_id IN (
+    SELECT p.id FROM publicaciones p
+    JOIN usuarios u ON u.id = p.autor_id
+    WHERE u.alias = 'nemesis 3'
+);
+DELETE FROM publicaciones
+WHERE autor_id = (SELECT id FROM usuarios WHERE alias = 'nemesis 3');
+-- Revisa cuántas filas dijo que borró. Si está bien:
+COMMIT;
+-- Si algo no cuadra, en lugar de COMMIT escribe:  ROLLBACK;
+
+-- Borrar UNA publicación por su id (y sus comentarios):
+BEGIN;
+DELETE FROM comentarios   WHERE publicacion_id = '00000000-0000-0000-0000-000000000000';
+DELETE FROM publicaciones WHERE id             = '00000000-0000-0000-0000-000000000000';
+COMMIT;
+
+-- Borrar sesiones vencidas (seguro, no afecta sesiones activas):
+DELETE FROM sesiones WHERE expira_en < now();
+
+-- Cerrar TODAS las sesiones (todos tendrán que volver a iniciar sesión):
+DELETE FROM sesiones;
+
+
+=====================================================================
+ 8. EXPORTAR RESULTADOS A UN ARCHIVO
+=====================================================================
+-- Guardar el resultado de una consulta en un CSV (se crea en la carpeta
+-- desde donde abriste psql). Va en UNA sola línea:
+\copy (SELECT p.titulo, u.alias, p.categoria, p.creado_en FROM publicaciones p JOIN usuarios u ON u.id = p.autor_id ORDER BY p.creado_en DESC) TO 'publicaciones.csv' CSV HEADER
+
+# Lo mismo desde la terminal, guardando en un txt:
+psql "$DATABASE_URL" -c "SELECT alias, creado_en FROM usuarios;" -o usuarios.txt
+
+# Copia de seguridad de toda la base (por si vas a borrar o cambiar cosas):
+pg_dump "$DATABASE_URL" > respaldo.sql
+
+# Restaurar esa copia en una base vacía:
+psql "$DATABASE_URL" -f respaldo.sql
+
+
+=====================================================================
+ 9. PROBAR LA API CON CURL (lo que recibe la página)
+=====================================================================
+# Primero enciende el servidor en otra terminal:  go run .
+
+# Lista de publicaciones (lo que carga la página Comunidad):
+curl http://localhost:8080/publicaciones
+
+# Lo mismo, pero con formato bonito (necesita jq: sudo dnf install jq):
+curl -s http://localhost:8080/publicaciones | jq
+
+# Comentarios de una publicación (pon un id real):
+curl -s http://localhost:8080/publicaciones/00000000-0000-0000-0000-000000000000/comentarios | jq
+
+# Ver si hay sesión (sin cookie debe responder 401 "no has iniciado sesión"):
+curl -i http://localhost:8080/yo
+
+# Iniciar sesión y guardar la cookie en un archivo (cambia correo y clave):
+curl -i -c cookies.txt -d "username=tucorreo@ejemplo.com" -d "password=tuclave" http://localhost:8080/login
+
+# Ahora /yo usando esa cookie (debe devolver tu alias):
+curl -s -b cookies.txt http://localhost:8080/yo
+
+# Crear una publicación con esa sesión:
+curl -i -b cookies.txt -d "titulo=Prueba" -d "categoria=consejo" -d "contenido=Texto de prueba" http://localhost:8080/publicaciones
+
+
+=====================================================================
+ 10. NOTAS IMPORTANTES
+=====================================================================
+* El archivo baseD.db de tu proyecto es un script SQL (aunque se llame
+  .db). Empieza con DROP TABLE, así que si lo ejecutas BORRA todas las
+  tablas y datos. No lo corras sobre tu base real sin hacer antes un
+  respaldo (pg_dump, sección 8).
+
+* Ese baseD.db está desactualizado respecto al código:
+    - La tabla sesiones tiene la columna "token", pero handlers.go usa
+      "token_hash".
+    - No incluye la tabla "recuperaciones" que usa la recuperación de
+      contraseña.
+  Como tu login ya funciona, tu base real seguramente está corregida; para
+  comprobarlo usa:   \d sesiones   y   \d recuperaciones
+
+* La columna publicaciones.categoria puede traer valores que el foro nuevo
+  no filtra (por ejemplo "general"); se ven en "Todas", pero no en los
+  botones de Experiencias, Preguntas o Consejos.
+
+* Nunca compartas ni publiques el password_hash, los tokens ni tu
+  DATABASE_URL (lleva tu clave).
