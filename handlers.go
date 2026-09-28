@@ -12,19 +12,35 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var categoriasValidas = map[string]bool{
+	"pregunta":    true,
+	"experiencia": true,
+	"consejo":     true,
+}
+
 type Publicacion struct {
-	ID        string `json:"id"`
-	Titulo    string `json:"titulo"`
-	Contenido string `json:"contenido"`
+	ID        string    `json:"id"`
+	Alias     string    `json:"alias"`
+	Titulo    string    `json:"titulo"`
+	Contenido string    `json:"contenido"`
+	Categoria string    `json:"categoria"`
+	CreadoEn  time.Time `json:"creado_en"`
 }
 
 func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
-	rows, err := pool.Query(r.Context(), "SELECT id, titulo, contenido FROM publicaciones")
+	rows, err := pool.Query(r.Context(), `
+		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en
+		FROM publicaciones p
+		JOIN usuarios u ON u.id = p.autor_id
+		ORDER BY p.creado_en DESC
+		LIMIT 50`)
 	if err != nil {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
@@ -34,15 +50,64 @@ func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 	publicaciones := []Publicacion{}
 	for rows.Next() {
 		var p Publicacion
-		if err := rows.Scan(&p.ID, &p.Titulo, &p.Contenido); err != nil {
+		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
 		publicaciones = append(publicaciones, p)
 	}
+	if err := rows.Err(); err != nil {
+		http.Error(w, "error leyendo datos", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(publicaciones)
+}
+
+func crearPublicacion(w http.ResponseWriter, r *http.Request) {
+	// Sin sesión no se publica
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "debes iniciar sesión para publicar", http.StatusUnauthorized)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // máximo 1 MB por petición
+
+	titulo := strings.TrimSpace(r.FormValue("titulo"))
+	contenido := strings.TrimSpace(r.FormValue("contenido"))
+	categoria := strings.TrimSpace(r.FormValue("categoria"))
+
+	if titulo == "" || contenido == "" {
+		http.Error(w, "el título y el contenido son obligatorios", http.StatusBadRequest)
+		return
+	}
+	if len([]rune(titulo)) > 120 {
+		http.Error(w, "el título es muy largo (máximo 120 caracteres)", http.StatusBadRequest)
+		return
+	}
+	if len([]rune(contenido)) > 5000 {
+		http.Error(w, "el contenido es muy largo (máximo 5000 caracteres)", http.StatusBadRequest)
+		return
+	}
+	if !categoriasValidas[categoria] {
+		http.Error(w, "categoría no válida", http.StatusBadRequest)
+		return
+	}
+
+	var id string
+	err = pool.QueryRow(r.Context(),
+		"INSERT INTO publicaciones (autor_id, titulo, contenido, categoria) VALUES ($1, $2, $3, $4) RETURNING id",
+		u.ID, titulo, contenido, categoria).Scan(&id)
+	if err != nil {
+		http.Error(w, "error guardando la publicación", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"id": id})
 }
 func registrar(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -219,4 +284,112 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/static/inicio_sesion.html", http.StatusSeeOther)
+}
+
+// ---------- Login y sesiones ----------
+
+// Se usa cuando el correo no existe, para que el login tarde lo mismo
+var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
+
+type Usuario struct {
+	ID    string
+	Alias string
+}
+
+// Devuelve quién es el usuario según la cookie, o un error si no hay sesión válida
+func usuarioActual(r *http.Request) (*Usuario, error) {
+	c, err := r.Cookie("sesion")
+	if err != nil {
+		return nil, err
+	}
+
+	var u Usuario
+	err = pool.QueryRow(r.Context(),
+		`SELECT u.id, u.alias
+		 FROM sesiones s
+		 JOIN usuarios u ON u.id = s.usuario_id
+		 WHERE s.token_hash = $1 AND s.expira_en > now()`,
+		hashToken(c.Value)).Scan(&u.ID, &u.Alias)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func iniciarSesion(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// El campo del formulario se llama "username", pero trae el correo
+	correo := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
+	password := r.FormValue("password")
+
+	var id, hash string
+	encontrado := true
+	err := pool.QueryRow(r.Context(),
+		"SELECT id, password_hash FROM usuarios WHERE correo = $1", correo).Scan(&id, &hash)
+	if errors.Is(err, pgx.ErrNoRows) {
+		encontrado = false
+		hash = string(hashFalso)
+	} else if err != nil {
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+
+	coincide := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
+	if !encontrado || !coincide {
+		http.Error(w, "correo o contraseña incorrectos", http.StatusUnauthorized)
+		return
+	}
+
+	token, err := generarToken()
+	if err != nil {
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+	_, err = pool.Exec(r.Context(),
+		"INSERT INTO sesiones (token_hash, usuario_id, expira_en) VALUES ($1, $2, now() + interval '30 days')",
+		hashToken(token), id)
+	if err != nil {
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "sesion",
+		Value:    token,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * 24 * time.Hour), // los mismos 30 días de la base
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		// Secure: true, // activar cuando el sitio se publique con HTTPS
+	})
+	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+}
+
+func cerrarSesion(w http.ResponseWriter, r *http.Request) {
+	if c, err := r.Cookie("sesion"); err == nil {
+		pool.Exec(r.Context(), "DELETE FROM sesiones WHERE token_hash = $1", hashToken(c.Value))
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "sesion",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // le dice al navegador que borre la cookie
+		HttpOnly: true,
+	})
+	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+}
+
+// Ruta de prueba: dice quién eres según tu sesión
+func yo(w http.ResponseWriter, r *http.Request) {
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "no has iniciado sesión", http.StatusUnauthorized)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"alias": u.Alias})
 }
