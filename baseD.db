@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS comentarios, publicaciones, respuestas_cuestionario, sesiones, usuarios;
+DRiP TABLE IF EXISTS comentarios, publicaciones, respuestas_cuestionario, sesiones, usuarios;
 
 CREATE TABLE usuarios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
