@@ -1,0 +1,33 @@
+-- Usuarios anónimos (no hay login tradicional, solo una identidad de sesión)
+CREATE TABLE usuarios (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    creado_en TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Respuestas al cuestionario de hábitos digitales
+CREATE TABLE respuestas_cuestionario (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    usuario_id UUID NOT NULL REFERENCES usuarios(id),
+    pregunta TEXT NOT NULL,
+    respuesta TEXT NOT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Publicaciones del foro
+CREATE TABLE publicaciones (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    autor_id UUID NOT NULL REFERENCES usuarios(id),
+    titulo TEXT NOT NULL,
+    contenido TEXT NOT NULL,
+    categoria TEXT,
+    creado_en TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Comentarios (pertenecen a una publicación)
+CREATE TABLE comentarios (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    publicacion_id UUID NOT NULL REFERENCES publicaciones(id),
+    autor_id UUID NOT NULL REFERENCES usuarios(id),
+    contenido TEXT NOT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT now()
+);

@@ -1,36 +1,44 @@
 package main
 
 import (
-    "database/sql"
-    "log"
-    "net/http"
-    "os"
+	"context"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var db *sql.DB
-
 func main() {
-    db = initDB()
-    defer db.Close()
+	ctx := context.Background()
 
-    mux := http.NewServeMux()
-    // servir index y estáticos (asume carpeta static/)
-    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "./static/index.html")
-    })
-    fs := http.FileServer(http.Dir("./static"))
-    mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	// La URL de conexión: usuario, contraseña, host, puerto, base de datos
+	dbURL := os.Getenv("DATABASE_URL")
 
-    // handlers deben estar definidos en handlers.go
-    mux.HandleFunc("/login", loginHandler)
-    mux.HandleFunc("/register", registerHandler)
-    mux.HandleFunc("/request-password-reset", requestResetHandler)
-    mux.HandleFunc("/reset-password", resetPasswordHandler)
+	pool, err := pgxpool.New(ctx, dbURL)
+	if err != nil {
+		log.Fatal("no se pudo crear el pool: ", err)
+	}
+	defer pool.Close()
 
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
-    log.Printf("Listening on :%s", port)
-    log.Fatal(http.ListenAndServe(":"+port, mux))
+	// Probamos que la conexión realmente responde
+	if err := pool.Ping(ctx); err != nil {
+		log.Fatal("no hay conexión con la base de datos: ", err)
+	}
+	fmt.Println("Conectado a Postgres")
+
+	// Leemos las publicaciones
+	rows, err := pool.Query(ctx, "SELECT id, titulo, contenido FROM publicaciones")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id, titulo, contenido string
+		if err := rows.Scan(&id, &titulo, &contenido); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(id, "|", titulo, "|", contenido)
+	}
 }
