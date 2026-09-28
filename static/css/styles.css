@@ -39,6 +39,26 @@ table { border-collapse: collapse; border-spacing: 0; }
   font-family: "inter";
   src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
 }
+
+/* Colores del proyecto (los mismos de siempre, ahora en un solo lugar) */
+:root {
+  --rojo: #d11c1c;
+  --rojo-fuerte: rgb(203, 11, 11);
+  --rojo-hover: #a80f0f;
+  --fondo: #111;
+  --superficie: #262323;
+  --superficie-2: rgb(23, 23, 21);
+  --gris: #5f5f5f;
+  --texto-suave: #d9d4c9;
+}
+
+/* Foco visible para quien navega con teclado */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
 /* ================================================================
   2. ESTRUCTURA GENERAL DE INICIO Y SESION
   ================================================================ */
@@ -46,11 +66,17 @@ table { border-collapse: collapse; border-spacing: 0; }
   /* Afecta al <body> de index.html y de las páginas de sesión. */
   display: flex;
   flex-wrap: wrap;
-  background-color: #111;
+  background-color: var(--fondo);
   color: #fff;
   font-size: 16px;
   line-height: 1.6;
   min-height: 50vh;
+}
+
+.index {
+  /* Solo index.html: ocupa toda la pantalla sin estirar las filas. */
+  min-height: 100vh;
+  align-content: flex-start;
 }
 
 /* Cabecera de las páginas generales */
@@ -59,53 +85,148 @@ table { border-collapse: collapse; border-spacing: 0; }
   flex: 1 0 100%;
   padding: clamp(10px, 2vw, 20px);
   text-align: center;
-  border-bottom: 3px solid rgb(203, 11, 11);
-  background-color: #262323;
+  border-bottom: 3px solid var(--rojo-fuerte);
+  background-color: var(--superficie);
   min-height: 80px;
-
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
 #logo img {
   /* Afecta a la imagen dentro de #logo: tamaño y borde del logo. */
   width: 80px;
   height: 70px;
-
+  object-fit: cover;
   margin: 0 auto;
   border-radius: 25px;
-  border: 3px solid #d11c1c;
+  border: 3px solid var(--rojo);
 }
 
 /* Menú lateral de la página de inicio */
+.contenedor_menu {
+  /* Columna del menú. Es la referencia para el menú desplegable. */
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(100px, 12vw, 130px);
+  background-color: var(--superficie);
+  z-index: 20;
+}
+
 #menu_lateral {
-  /* Afecta al <aside id="menu_lateral"> de index.html. */
+  /* Afecta al <aside id="menu_lateral"> de index.html (la pastilla roja). */
   display: flex;
-  flex: 0 0 clamp(90px, 12vw, 120px);
   margin: clamp(10px, 2vw, 20px);
-  padding: clamp(10px, 2vw, 20px);
-  background-color: rgb(203, 11, 11);
+  padding: clamp(10px, 2vw, 20px) 0;
+  background-color: var(--rojo-fuerte);
   border-radius: 20px;
   border: 6px solid rgb(10, 7, 7);
   align-items: center;
   justify-content: center;
-  max-height: 80%;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#menu_lateral:hover,
+.contenedor_menu.abierto #menu_lateral {
+  background-color: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.35);
 }
 
 .texto_menu {
-  /* Afecta al texto OPCIONES del menú lateral. */
-  font-family: "Anton", sans-serif;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
+  /* Afecta al botón OPCIONES del menú lateral. */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  height: 100%;
-  gap: 1rem;
+  gap: 1.2rem;
+  width: 100%;
+  padding: 0.4rem 0;
+  color: #fff;
+  font-family: "Anton", sans-serif;
   font-size: 1.6rem;
-  letter-spacing: 2.6rem ; 
 }
-.contenedor_menu{
-  background-color: #5f5f5f;
+
+.texto_menu_letras {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.35rem;
+}
+
+.flecha {
+  /* Flechita que gira cuando el menú se abre. */
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
+  transform: rotate(45deg);
+  transition: transform 0.35s ease;
+}
+
+.contenedor_menu.abierto .flecha {
+  transform: rotate(225deg);
+}
+
+/* Menú desplegable (se desliza al presionar OPCIONES) */
+.menu_desplegable {
+  position: absolute;
+  top: clamp(10px, 2vw, 20px);
+  left: calc(100% - 6px);
+  min-width: 250px;
+  padding: 12px;
+  background-color: var(--superficie);
+  border: 2px solid var(--rojo);
+  border-radius: 20px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65);
+
+  /* Cerrado: recortado desde la izquierda y sin poder hacer clic */
+  clip-path: inset(0 100% 0 0 round 20px);
+  opacity: 0;
+  transform: translateX(-16px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: clip-path 0.4s ease, opacity 0.3s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+}
+
+.contenedor_menu.abierto .menu_desplegable {
+  clip-path: inset(0 0 0 0 round 20px);
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.menu_desplegable ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu_desplegable a {
+  display: block;
+  padding: 12px 18px;
+  border-left: 4px solid transparent;
+  border-radius: 10px;
+  color: #fff;
+  font-family: "Anton", sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, border-color 0.2s ease, padding-left 0.2s ease;
+}
+
+.menu_desplegable a:hover,
+.menu_desplegable a:focus-visible {
+  background-color: var(--rojo-fuerte);
+  padding-left: 24px;
+}
+
+.menu_desplegable a[aria-current="page"] {
+  border-left-color: var(--rojo);
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.menu_desplegable .separador {
+  height: 1px;
+  margin: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.14);
 }
 
 /* Contenido principal de inicio */
@@ -116,9 +237,8 @@ table { border-collapse: collapse; border-spacing: 0; }
   padding: clamp(20px, 3vw, 30px) clamp(12px, 2vw, 20px);
   min-width: 0;
   max-height: 10000px;
-  background-color: rgb(23, 23, 21);
+  background-color: var(--superficie-2);
   border-radius: 10px;
-
 }
 
 .contenido-encabezado {
@@ -133,32 +253,42 @@ table { border-collapse: collapse; border-spacing: 0; }
 .contenido-encabezado h1 {
   width: 100%;
   max-width: 520px;
-  
 }
 
 .contenido-principal {
   /* Afecta al bloque del título y subtítulo de inicio. */
-  flex: 1 1 500px;
+  flex: 1 1 400px;
   max-width: 520px;
+  min-width: 0;
 }
-.contenido-principal p{
-  font-size: 1.5rem;
+
+.contenido-principal .titulo {
+  /* En inicio el título va alineado con el subtítulo. */
+  padding: 0;
+  margin-bottom: 1.2rem;
+}
+
+.contenido-principal .subtitulo {
+  padding-left: 1rem;
+  border-left: 4px solid var(--rojo);
 }
 
 .imagen2 {
-  flex: 1 1 420px;
+  flex: 1 1 380px;
+  min-width: 0;
   display: flex;
-  justify-content:left;
+  justify-content: center;
 }
 
 .imagen2 img {
   /* Afecta a la imagen principal de index.html. */
-  width: min(100%, 850px);
+  width: 100%;
+  max-width: 850px;
   height: clamp(280px, 45vw, 500px);
   object-fit: cover;
   border-radius: 60px;
-  border: 3px solid #d11c1c;
-  margin-right: 30px;
+  border: 3px solid var(--rojo);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
 }
 
 /* Bloques de la página de inicio */
@@ -174,19 +304,49 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 .contenedor_1, .contenedor_2, .contenedor_3 {
   /* Afecta a cada una de las tres tarjetas de index.html. */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
   min-height: clamp(140px, 20vw, 180px);
-  background-color: #5f5f5f;
+  background-color: var(--gris);
   border-radius: 10px;
+  border-bottom: 4px solid var(--rojo);
   padding: clamp(12px, 2vw, 20px);
   color: #fff;
-  margin-top: 30px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contenedor_1:hover, .contenedor_2:hover, .contenedor_3:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5);
+}
+
+.bloques span {
+  /* Número de cada tarjeta (01, 02, 03). */
+  align-self: flex-start;
+  padding: 0 12px;
+  background-color: var(--rojo-fuerte);
+  border-radius: 999px;
+  font-family: "Anton", sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  line-height: 1.8;
+}
+
+.bloques h2 {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  letter-spacing: 1px;
+  line-height: 1.1;
 }
 
 /* Barra superior de las páginas generales */
 .hero {
   /* Afecta a la barra superior de index, sesión, registro y mapa. */
   font-family: "Anton", sans-serif;
-  background-color: #262323;
+  background-color: var(--superficie);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -217,9 +377,16 @@ table { border-collapse: collapse; border-spacing: 0; }
   /* Afecta al enlace con apariencia de botón. */
   background: transparent;
   color: #fff;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border: 2px solid #fff;
   border-radius: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--rojo);
+  border-color: var(--rojo);
+  transform: translateY(-2px);
 }
 
 /* Tipografía reutilizable */
@@ -233,6 +400,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   margin-bottom: 2rem;
   width: 100%;
   max-width: 520px;
+  padding: clamp(15px, 4vw, 30px);
 }
 
 .subtitulo {
@@ -241,7 +409,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   font-weight: 400;
   font-size: clamp(1rem, 2.5vw, 1.5rem);
   line-height: 1.4;
-  color: #d9d4c9;
+  color: var(--texto-suave);
   max-width: 420px;
 }
 
@@ -249,19 +417,52 @@ table { border-collapse: collapse; border-spacing: 0; }
 /* Responsive general */
 @media (max-width: 768px) {
   /* Afecta a pantallas de 768px o menos. */
-  #menu_lateral {
+  .contenedor_menu {
     flex: 1 0 100%;
-    min-height: 80px;
+    width: 100%;
+  }
+
+  #menu_lateral {
     margin: 10px;
+    padding: 6px 16px;
+    min-height: 64px;
     border-radius: 100px;
   }
 
   .texto_menu {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .texto_menu_letras {
     writing-mode: horizontal-tb;
     text-orientation: mixed;
-    flex-direction: row;
-    height: auto;
-    font-size: 1.2rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .flecha {
+    transform: rotate(135deg);
+  }
+
+  .contenedor_menu.abierto .flecha {
+    transform: rotate(-45deg);
+  }
+
+  /* En el celular el menú se despliega hacia abajo */
+  .menu_desplegable {
+    top: calc(100% - 4px);
+    left: 10px;
+    right: 10px;
+    min-width: 0;
+    clip-path: inset(0 0 100% 0 round 20px);
+    transform: translateY(-12px);
+  }
+
+  .contenedor_menu.abierto .menu_desplegable {
+    clip-path: inset(0 0 0 0 round 20px);
+    transform: translateY(0);
   }
 
   .contenido {
@@ -274,19 +475,35 @@ table { border-collapse: collapse; border-spacing: 0; }
     height: auto;
     padding: 15px 10px;
     gap: 10px;
-    background-color: #262323;
+    background-color: var(--superficie);
   }
 
   .hero-center {
     padding-left: 0;
     text-align: center;
+    border-left: 0;
+    margin-left: 0;
+  }
+
+  .imagen2 img {
+    border-radius: 40px;
   }
 
   .bloques {
     grid-template-columns: 1fr;
+    padding-inline: 0;
   }
+}
 
-}   
+/* Menos movimiento para quien lo prefiere así */
+@media (prefers-reduced-motion: reduce) {
+  .menu_desplegable,
+  .flecha,
+  .btn,
+  .contenedor_1, .contenedor_2, .contenedor_3 {
+    transition: none;
+  }
+}
 
 
 /* ================================================================
@@ -487,7 +704,36 @@ footer{
 
 }
 
+/* Estados hover y foco de los formularios */
+.registro #correo,
+.registro #password,
+.formulario-cuenta input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
+.registro #correo:focus,
+.registro #password:focus,
+.formulario-cuenta input:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
+}
+
+.boton_sesion button,
+.boton-cuenta {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.boton_sesion button:hover,
+.boton-cuenta:hover {
+  background-color: var(--rojo-hover);
+  transform: translateY(-2px);
+}
+
+.enlaces-sesion a:hover,
+.enlace-cuenta a:hover {
+  color: #fff;
+}
 
 
 /* ================================================================
@@ -682,3 +928,91 @@ footer{
   border-radius: 25px;
 
   }
+
+
+/* ================================================================
+  5. PAGINA COMUNIDAD (foro)
+  ================================================================ */
+.comunidad {
+  /* Mismo fondo oscuro del resto del sitio. */
+  background-color: var(--fondo);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.comunidad .foro h2 {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.comunidad .foro a {
+  color: var(--rojo);
+  text-decoration: underline;
+}
+
+.comunidad .foro a:hover {
+  color: #fff;
+}
+
+.comunidad .foro input,
+.comunidad .foro textarea,
+.comunidad .foro select {
+  background-color: #fff;
+  color: #111;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comunidad .foro input:focus,
+.comunidad .foro textarea:focus,
+.comunidad .foro select:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
+}
+
+.comunidad .foro button {
+  background-color: var(--rojo);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  font-family: "Anton", sans-serif;
+  letter-spacing: 1px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.comunidad .foro button:hover {
+  background-color: var(--rojo-hover);
+  transform: translateY(-2px);
+}
+
+.comunidad .publicacion {
+  background-color: var(--superficie);
+  border: 0;
+  border-left: 4px solid var(--rojo);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.comunidad .publicacion h3 {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+
+.comunidad .publicacion .meta {
+  color: var(--texto-suave);
+}
+
+.comunidad .respuestas {
+  border-left: 3px solid var(--rojo);
+}
