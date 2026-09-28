@@ -20,7 +20,9 @@ func main() {
 
 	// Tu API
 	http.HandleFunc("/publicaciones", listarPublicaciones)
-http.HandleFunc("/registro", registrar)
+	http.HandleFunc("/recuperar", recuperar)
+    http.HandleFunc("/restablecer", restablecer)
+    http.HandleFunc("/registro", registrar)
 	fmt.Println("Servidor en http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
