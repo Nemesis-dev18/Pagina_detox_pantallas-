@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Nueva contraseña | DETOX_WEB</title>
+</head>
+<body class="inicio_sesion">
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+            </div>
+            <div class="hero-center">
+                <h1>DETOX_WEB</h1>
+            </div>
+        </div>
+    </header>
+
+    <section class="texto_sesion">
+        <div class="registro-cuenta">
+            <h2 class="titulo">Elige tu nueva contraseña</h2>
+            <form class="formulario-cuenta" action="/restablecer" method="POST">
+                <input type="hidden" id="token" name="token">
+
+                <label for="password">Nueva contraseña</label>
+                <input type="password" id="password" name="password" placeholder="NUEVA CONTRASEÑA" minlength="8" required>
+
+                <label for="confirmar-password">Confirmar contraseña</label>
+                <input type="password" id="confirmar-password" name="confirmar_password" placeholder="CONFIRMAR CONTRASEÑA" minlength="8" required>
+
+                <button class="boton-cuenta" type="submit">Guardar contraseña</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p class="pies">&copy; 2024 DETOX_WEB. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Toma el token de la dirección (?token=...) y lo mete en el formulario
+        const token = new URLSearchParams(window.location.search).get('token');
+        document.getElementById('token').value = token || '';
+    </script>
+</body>
+</html>
