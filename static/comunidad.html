@@ -3,26 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <title>Comunidad | DETOX_WEB</title>
-    <style>
-        [hidden] { display: none !important; }
-        .foro { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
-        .foro input, .foro textarea, .foro select { width: 100%; box-sizing: border-box; margin: .3rem 0 1rem; padding: .6rem; font: inherit; }
-        .foro button { padding: .6rem 1.2rem; font: inherit; cursor: pointer; }
-        .publicacion { border: 1px solid currentColor; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
-        .publicacion .meta { opacity: .7; font-size: .9rem; }
-        .publicacion .cuerpo { white-space: pre-wrap; }
-        .respuestas { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid currentColor; }
-        .comentario { margin: .8rem 0; }
-    </style>
 </head>
 <body class="comunidad">
     <header class="cabecera">
         <div class="hero">
             <div class="hero-left" id="logo">
-                <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                </a>
             </div>
             <div class="hero-center">
                 <h1>DETOX_WEB</h1>
@@ -31,51 +22,116 @@
     </header>
 
     <main class="foro">
-        <h2>Comunidad</h2>
+        <h2 class="foro_titulo">Comunidad</h2>
 
-        <p id="pide-login">Para publicar necesitas <a href="inicio_sesion.html">iniciar sesión</a>.</p>
+        <div class="foro_rejilla">
+            <!-- Filtros por categoría (las mismas del foro: experiencia, pregunta, consejo) -->
+            <nav class="filtros" aria-label="Filtrar por categoría">
+                <button type="button" class="filtro activo" data-categoria="" aria-pressed="true">Todas</button>
+                <button type="button" class="filtro" data-categoria="experiencia" aria-pressed="false">Experiencias</button>
+                <button type="button" class="filtro" data-categoria="pregunta" aria-pressed="false">Preguntas</button>
+                <button type="button" class="filtro" data-categoria="consejo" aria-pressed="false">Consejos</button>
+            </nav>
 
-        <form id="form-publicar" hidden>
-            <p>Publicas como <strong id="mi-alias"></strong></p>
+            <!-- Buscador y botón para crear publicación -->
+            <div class="zona_barra">
+                <div class="barra">
+                    <label for="buscador" class="solo_lectores">Buscar publicaciones</label>
+                    <input type="search" id="buscador" class="buscador" placeholder="Buscar..." autocomplete="off">
+                    <button type="button" id="btn-crear" class="btn_crear">+ Crear publicación</button>
+                </div>
+                <p id="pide-login" class="aviso_login">Para publicar y responder necesitas <a href="inicio_sesion.html">iniciar sesión</a>.</p>
+            </div>
 
-            <label for="titulo">Título</label>
-            <input type="text" id="titulo" name="titulo" maxlength="120" required>
+            <!-- Lista de publicaciones -->
+            <section class="zona_lista" aria-label="Publicaciones">
+                <div id="lista" class="lista_pub"></div>
+                <p id="vacio" class="vacio" hidden></p>
+            </section>
 
-            <label for="categoria">Categoría</label>
-            <select id="categoria" name="categoria" required>
-                <option value="experiencia">Experiencia</option>
-                <option value="pregunta">Pregunta</option>
-                <option value="consejo">Consejo</option>
-            </select>
-
-            <label for="contenido">Cuéntanos</label>
-            <textarea id="contenido" name="contenido" rows="5" maxlength="5000" required></textarea>
-
-            <button type="submit">Publicar</button>
-            <p id="mensaje"></p>
-        </form>
-
-        <section id="lista"></section>
+            <!-- Especialistas (contenido de ejemplo, todavía sin base de datos) -->
+            <aside class="especialistas" aria-label="Especialistas verificadas">
+                <h3>Especialistas verificadas</h3>
+                <ul>
+                    <li class="especialista">
+                        <div class="avatar" aria-hidden="true">L</div>
+                        <div>
+                            <p class="especialista_nombre">Laura Gimenez</p>
+                            <p class="especialista_cargo">Psicóloga</p>
+                        </div>
+                    </li>
+                    <li class="especialista">
+                        <div class="avatar" aria-hidden="true">L</div>
+                        <div>
+                            <p class="especialista_nombre">Laura Gimenez</p>
+                            <p class="especialista_cargo">Psicóloga</p>
+                        </div>
+                    </li>
+                </ul>
+                <p class="ver_todos">Ver todos</p>
+            </aside>
+        </div>
     </main>
+
+    <!-- Ventana para crear una publicación (mismo formulario de antes) -->
+    <dialog id="modal-publicar" class="modal" aria-labelledby="modal-titulo">
+        <div class="modal_caja">
+            <div class="modal_cabecera">
+                <h3 id="modal-titulo">Crear publicación</h3>
+                <button type="button" id="btn-cerrar" class="cerrar" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <form id="form-publicar">
+                <p>Publicas como <strong id="mi-alias"></strong></p>
+
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo" maxlength="120" required>
+
+                <label for="categoria">Categoría</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="experiencia">Experiencia</option>
+                    <option value="pregunta">Pregunta</option>
+                    <option value="consejo">Consejo</option>
+                </select>
+
+                <label for="contenido">Cuéntanos</label>
+                <textarea id="contenido" name="contenido" rows="5" maxlength="5000" required></textarea>
+
+                <div class="modal_pie">
+                    <button type="submit" class="boton_rojo">Publicar</button>
+                    <p id="mensaje" class="mensaje"></p>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <p id="toast" class="toast" role="status" aria-live="polite"></p>
+
 <script>
     const lista = document.getElementById('lista');
+    const vacio = document.getElementById('vacio');
+    const buscador = document.getElementById('buscador');
+    const btnCrear = document.getElementById('btn-crear');
+    const btnCerrar = document.getElementById('btn-cerrar');
+    const modal = document.getElementById('modal-publicar');
     const formulario = document.getElementById('form-publicar');
     const pideLogin = document.getElementById('pide-login');
     const miAlias = document.getElementById('mi-alias');
     const mensaje = document.getElementById('mensaje');
+    const toast = document.getElementById('toast');
+    const filtros = document.querySelectorAll('.filtro');
+
+    const ETIQUETAS = { experiencia: 'Experiencia', pregunta: 'Pregunta', consejo: 'Consejo' };
+    const ICONO_COMENTAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
+    const ICONO_COMPARTIR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>';
+
     let haySesion = false;
+    let filtroCategoria = '';
+    let elementos = [];          // { id, art, categoria, texto, alternar }
+    let hashRevisado = false;
+    let temporizadorAviso;
 
-    async function comprobarSesion() {
-        const res = await fetch('/yo');
-        if (res.ok) {
-            const datos = await res.json();
-            miAlias.textContent = datos.alias;
-            pideLogin.hidden = true;
-            formulario.hidden = false;
-            haySesion = true;
-        }
-    }
-
+    /* ---------- Utilidades ---------- */
     function crearElemento(etiqueta, clase, texto) {
         const el = document.createElement(etiqueta);
         if (clase) el.className = clase;
@@ -83,13 +139,61 @@
         return el;
     }
 
+    function crearBotonIcono(etiqueta, svg) {
+        const boton = crearElemento('button', 'icono_btn');
+        boton.type = 'button';
+        boton.setAttribute('aria-label', etiqueta);
+        boton.title = etiqueta;
+        boton.innerHTML = svg;   // solo SVG fijo de arriba, nunca texto de usuarios
+        return boton;
+    }
+
     function formatearFecha(iso) {
         return new Date(iso).toLocaleString('es-CO');
     }
 
+    function hace(iso) {
+        const seg = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+        if (seg < 60) return 'Hace un momento';
+        const min = Math.floor(seg / 60);
+        if (min < 60) return 'Hace ' + min + (min === 1 ? ' minuto' : ' minutos');
+        const h = Math.floor(min / 60);
+        if (h < 24) return 'Hace ' + h + (h === 1 ? ' hora' : ' horas');
+        const d = Math.floor(h / 24);
+        if (d < 7) return 'Hace ' + d + (d === 1 ? ' día' : ' días');
+        return new Date(iso).toLocaleDateString('es-CO');
+    }
+
+    function normalizar(texto) {
+        return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function avisar(texto) {
+        toast.textContent = texto;
+        toast.classList.add('visible');
+        clearTimeout(temporizadorAviso);
+        temporizadorAviso = setTimeout(() => toast.classList.remove('visible'), 2200);
+    }
+
+    /* ---------- Sesión ---------- */
+    async function comprobarSesion() {
+        try {
+            const res = await fetch('/yo');
+            if (res.ok) {
+                const datos = await res.json();
+                miAlias.textContent = datos.alias;
+                pideLogin.hidden = true;
+                haySesion = true;
+            }
+        } catch (err) {
+            // sin conexión con el servidor: se queda como visitante
+        }
+    }
+
+    /* ---------- Comentarios ---------- */
     async function cargarComentarios(publicacionId, contenedor) {
         const res = await fetch('/publicaciones/' + publicacionId + '/comentarios');
-        const comentarios = await res.json();
+        const comentarios = (await res.json()) || [];
 
         contenedor.replaceChildren();
         if (comentarios.length === 0) {
@@ -108,7 +212,6 @@
 
     function crearBloqueRespuestas(publicacionId) {
         const bloque = crearElemento('div', 'respuestas');
-        bloque.hidden = true;
 
         const listaComentarios = crearElemento('div');
         bloque.append(listaComentarios);
@@ -121,7 +224,7 @@
             caja.maxLength = 2000;
             caja.required = true;
             caja.placeholder = 'Escribe tu respuesta...';
-            const boton = crearElemento('button', '', 'Responder');
+            const boton = crearElemento('button', 'boton_rojo', 'Responder');
             boton.type = 'submit';
             const aviso = crearElemento('p', 'meta');
             form.append(caja, boton, aviso);
@@ -147,40 +250,153 @@
         return bloque;
     }
 
-    async function cargarPublicaciones() {
-        const res = await fetch('/publicaciones');
-        const publicaciones = await res.json();
+    /* ---------- Publicaciones ---------- */
+    function crearPublicacion(p) {
+        const art = crearElemento('article', 'publicacion');
+        art.id = 'p-' + p.id;
 
-        lista.replaceChildren();
-        if (publicaciones.length === 0) {
-            lista.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+        const cabecera = crearElemento('div', 'pub_cabecera');
+        const avatar = crearElemento('div', 'avatar', (p.alias || '?').charAt(0).toUpperCase());
+        avatar.setAttribute('aria-hidden', 'true');
+
+        const info = crearElemento('div', 'pub_info');
+        const titulo = crearElemento('button', 'pub_titulo', p.titulo);
+        titulo.type = 'button';
+        titulo.setAttribute('aria-expanded', 'false');
+        titulo.setAttribute('aria-controls', 'detalle-' + p.id);
+        const meta = crearElemento('p', 'meta',
+            p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
+        meta.title = formatearFecha(p.creado_en);
+        info.append(titulo, meta);
+
+        const acciones = crearElemento('div', 'acciones');
+        const btnResponder = crearBotonIcono('Ver respuestas', ICONO_COMENTAR);
+        btnResponder.setAttribute('aria-expanded', 'false');
+        btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
+        const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
+        acciones.append(btnResponder, btnCompartir);
+
+        cabecera.append(avatar, info, acciones);
+
+        const detalle = crearElemento('div', 'pub_detalle');
+        detalle.id = 'detalle-' + p.id;
+        detalle.hidden = true;
+        const bloque = crearBloqueRespuestas(p.id);
+        const listaComentarios = bloque.firstChild;
+        detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
+
+        function alternar(forzar) {
+            const abrir = forzar === undefined ? detalle.hidden : forzar;
+            detalle.hidden = !abrir;
+            titulo.setAttribute('aria-expanded', String(abrir));
+            btnResponder.setAttribute('aria-expanded', String(abrir));
+            btnResponder.title = abrir ? 'Ocultar respuestas' : 'Ver respuestas';
+            if (abrir) cargarComentarios(p.id, listaComentarios);
+        }
+
+        titulo.addEventListener('click', () => alternar());
+        btnResponder.addEventListener('click', () => alternar());
+        btnCompartir.addEventListener('click', async () => {
+            const enlace = location.href.split('#')[0] + '#p-' + p.id;
+            try {
+                await navigator.clipboard.writeText(enlace);
+                avisar('Enlace copiado');
+            } catch (err) {
+                window.prompt('Copia este enlace:', enlace);
+            }
+        });
+
+        art.append(cabecera, detalle);
+        return {
+            id: p.id,
+            art: art,
+            categoria: p.categoria,
+            texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
+            alternar: alternar
+        };
+    }
+
+    function aplicarFiltros() {
+        const consulta = normalizar(buscador.value.trim());
+        let visibles = 0;
+        for (const e of elementos) {
+            const coincide = (!filtroCategoria || e.categoria === filtroCategoria)
+                && (!consulta || e.texto.includes(consulta));
+            e.art.hidden = !coincide;
+            if (coincide) visibles++;
+        }
+        lista.hidden = visibles === 0;
+        if (elementos.length === 0) {
+            vacio.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+            vacio.hidden = false;
+        } else if (visibles === 0) {
+            vacio.textContent = 'No encontramos publicaciones con ese filtro.';
+            vacio.hidden = false;
+        } else {
+            vacio.hidden = true;
+        }
+    }
+
+    function abrirDesdeHash() {
+        if (hashRevisado) return;
+        hashRevisado = true;
+        if (!location.hash.startsWith('#p-')) return;
+        const id = location.hash.slice(3);
+        const e = elementos.find((x) => x.id === id);
+        if (e) {
+            e.alternar(true);
+            e.art.scrollIntoView({ block: 'center' });
+        }
+    }
+
+    async function cargarPublicaciones() {
+        let publicaciones = [];
+        try {
+            const res = await fetch('/publicaciones');
+            publicaciones = (await res.json()) || [];
+        } catch (err) {
+            vacio.textContent = 'No se pudieron cargar las publicaciones.';
+            vacio.hidden = false;
+            lista.hidden = true;
             return;
         }
 
-        for (const p of publicaciones) {
-            const art = crearElemento('article', 'publicacion');
-            const bloque = crearBloqueRespuestas(p.id);
-            const listaComentarios = bloque.firstChild;
-
-            const boton = crearElemento('button', '', 'Ver respuestas');
-            boton.addEventListener('click', () => {
-                bloque.hidden = !bloque.hidden;
-                if (!bloque.hidden) {
-                    cargarComentarios(p.id, listaComentarios);
-                }
-                boton.textContent = bloque.hidden ? 'Ver respuestas' : 'Ocultar respuestas';
-            });
-
-            art.append(
-                crearElemento('h3', '', p.titulo),
-                crearElemento('p', 'meta', p.alias + ' · ' + p.categoria + ' · ' + formatearFecha(p.creado_en)),
-                crearElemento('p', 'cuerpo', p.contenido),
-                boton,
-                bloque
-            );
-            lista.append(art);
-        }
+        lista.replaceChildren();
+        elementos = publicaciones.map(crearPublicacion);
+        for (const e of elementos) lista.append(e.art);
+        aplicarFiltros();
+        abrirDesdeHash();
     }
+
+    /* ---------- Filtros, búsqueda y ventana de crear ---------- */
+    for (const boton of filtros) {
+        boton.addEventListener('click', () => {
+            filtroCategoria = boton.dataset.categoria;
+            for (const b of filtros) {
+                const activo = b === boton;
+                b.classList.toggle('activo', activo);
+                b.setAttribute('aria-pressed', String(activo));
+            }
+            aplicarFiltros();
+        });
+    }
+
+    buscador.addEventListener('input', aplicarFiltros);
+
+    btnCrear.addEventListener('click', () => {
+        if (!haySesion) {
+            window.location.href = 'inicio_sesion.html';
+            return;
+        }
+        mensaje.textContent = '';
+        modal.showModal();
+        document.getElementById('titulo').focus();
+    });
+
+    btnCerrar.addEventListener('click', () => modal.close());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.close();   // clic en el fondo oscuro
+    });
 
     formulario.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -191,6 +407,7 @@
         if (res.ok) {
             formulario.reset();
             mensaje.textContent = '';
+            modal.close();
             cargarPublicaciones();
         } else {
             mensaje.textContent = await res.text();

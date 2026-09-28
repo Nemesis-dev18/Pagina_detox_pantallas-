@@ -933,8 +933,14 @@ footer{
 /* ================================================================
   5. PAGINA COMUNIDAD (foro)
   ================================================================ */
+[hidden] { display: none !important; }
+
 .comunidad {
-  /* Mismo fondo oscuro del resto del sitio. */
+  /* Afecta al <body> de comunidad.html. */
+  --rojo-oscuro: #7d1212;
+  --borde: #666;
+  --gris-oscuro: #2e2e2e;
+  --avatar: 60px;
   background-color: var(--fondo);
   color: #fff;
   font-size: 16px;
@@ -942,77 +948,427 @@ footer{
   min-height: 100vh;
 }
 
-.comunidad .foro h2 {
-  font-family: "Anton", sans-serif;
+.solo_lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.foro {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 28px) 3rem;
+}
+
+.foro_titulo {
+  font-family: "Inter", sans-serif;
   font-weight: 400;
-  font-size: clamp(2rem, 4vw, 3rem);
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 1.2;
   margin-bottom: 1rem;
 }
 
-.comunidad .foro a {
+.foro_rejilla {
+  /* Filtros arriba; buscador y lista a la izquierda; especialistas a la derecha. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-areas:
+    "filtros filtros"
+    "barra   lateral"
+    "lista   lateral";
+  column-gap: clamp(16px, 3vw, 32px);
+  row-gap: 1.5rem;
+  align-items: start;
+}
+
+/* Filtros por categoría */
+.filtros {
+  grid-area: filtros;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem clamp(0.6rem, 2vw, 1.5rem);
+}
+
+.filtro {
+  padding: 0.25rem clamp(1rem, 2.5vw, 1.8rem);
+  border: 2px solid var(--borde);
+  border-radius: 999px;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.filtro:hover {
+  border-color: #fff;
+}
+
+.filtro.activo {
+  background-color: var(--rojo-oscuro);
+  border-color: var(--rojo);
+}
+
+/* Buscador y botón de crear */
+.zona_barra { grid-area: barra; }
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.buscador {
+  flex: 1 1 240px;
+  min-width: 0;
+  height: 54px;
+  padding: 0 1.2rem 0 3.2rem;
+  background-color: #0d0d0d;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 1rem center;
+  background-size: 22px;
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.buscador::placeholder { color: #bdbdbd; }
+
+.btn_crear {
+  flex: 0 0 auto;
+  height: 54px;
+  padding: 0 1.5rem;
+  background-color: var(--rojo-oscuro);
+  border: 2px solid var(--rojo);
+  border-radius: 12px;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  white-space: nowrap;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn_crear:hover {
+  background-color: var(--rojo-fuerte);
+  transform: translateY(-2px);
+}
+
+.aviso_login {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+}
+
+.aviso_login a {
   color: var(--rojo);
   text-decoration: underline;
 }
 
-.comunidad .foro a:hover {
-  color: #fff;
+.aviso_login a:hover { color: #fff; }
+
+/* Lista de publicaciones */
+.zona_lista { grid-area: lista; min-width: 0; }
+
+.lista_pub {
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: #0d0d0d;
 }
 
-.comunidad .foro input,
-.comunidad .foro textarea,
-.comunidad .foro select {
-  background-color: #fff;
-  color: #111;
-  border: 2px solid #fff;
+.publicacion:not([hidden]) ~ .publicacion:not([hidden]) {
+  border-top: 2px solid var(--borde);
+}
+
+.pub_cabecera {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.avatar {
+  width: var(--avatar);
+  height: var(--avatar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  font-family: "Anton", sans-serif;
+  font-size: 1.5rem;
+}
+
+.pub_titulo {
+  display: block;
+  text-align: left;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.pub_titulo:hover { text-decoration: underline; text-decoration-color: var(--rojo); }
+
+.meta {
+  color: var(--texto-suave);
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+}
+
+.acciones {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.icono_btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  color: #fff;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.icono_btn:hover {
+  background-color: var(--rojo-fuerte);
+  transform: translateY(-2px);
+}
+
+.pub_detalle {
+  padding: 0 1rem 1.1rem calc(var(--avatar) + 2rem);
+}
+
+.cuerpo {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.respuestas {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rojo);
+}
+
+.comentario { margin: 0.8rem 0; }
+
+.respuestas textarea {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.7rem 0.9rem;
+  background-color: #0d0d0d;
+  color: #fff;
+  border: 2px solid var(--borde);
   border-radius: 10px;
+  font: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.comunidad .foro input:focus,
-.comunidad .foro textarea:focus,
-.comunidad .foro select:focus {
-  outline: none;
-  border-color: var(--rojo);
-  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
+.vacio {
+  padding: 2rem 1.2rem;
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+  text-align: center;
+  color: var(--texto-suave);
 }
 
-.comunidad .foro button {
+/* Especialistas verificadas */
+.especialistas {
+  grid-area: lateral;
+  position: sticky;
+  top: 16px;
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: #0d0d0d;
+}
+
+.especialistas h3 {
+  padding: 1.2rem 1.2rem 0.8rem;
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+.especialista {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1.2rem;
+}
+
+.especialista_nombre { font-weight: 600; line-height: 1.3; }
+.especialista_cargo { color: var(--texto-suave); line-height: 1.3; }
+
+.ver_todos {
+  margin-top: 0.5rem;
+  padding: 0.9rem 1.2rem;
+  border-top: 2px solid var(--borde);
+  font-weight: 600;
+}
+
+/* Ventana de crear publicación */
+.modal {
+  margin: auto;
+  width: min(560px, calc(100% - 24px));
+  padding: 0;
+  border: 2px solid var(--rojo);
+  border-radius: 18px;
+  background-color: var(--superficie-2);
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.modal::backdrop { background-color: rgba(0, 0, 0, 0.72); }
+
+.modal_caja { padding: clamp(16px, 3vw, 28px); }
+
+.modal_cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal h3 {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.cerrar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+}
+
+.cerrar:hover { background-color: var(--rojo-fuerte); }
+
+.modal label {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.7rem 0.9rem;
+  background-color: #0d0d0d;
+  color: #fff;
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal_pie {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.mensaje { color: #ff8a8a; }
+
+.boton_rojo {
+  padding: 0.55rem 1.5rem;
   background-color: var(--rojo);
   color: #fff;
   border: 2px solid #fff;
   border-radius: 6px;
   font-family: "Anton", sans-serif;
+  font-size: 1.1rem;
   letter-spacing: 1px;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.comunidad .foro button:hover {
+.boton_rojo:hover {
   background-color: var(--rojo-hover);
   transform: translateY(-2px);
 }
 
-.comunidad .publicacion {
-  background-color: var(--superficie);
-  border: 0;
-  border-left: 4px solid var(--rojo);
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+/* Foco en campos */
+.buscador:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus,
+.respuestas textarea:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
 }
 
-.comunidad .publicacion h3 {
-  font-family: "Anton", sans-serif;
-  font-weight: 400;
-  font-size: 1.5rem;
-  letter-spacing: 1px;
-  margin-bottom: 0.25rem;
+/* Aviso "Enlace copiado" */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px);
+  padding: 0.6rem 1.4rem;
+  background-color: var(--rojo-fuerte);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
 }
 
-.comunidad .publicacion .meta {
-  color: var(--texto-suave);
+.toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
-.comunidad .respuestas {
-  border-left: 3px solid var(--rojo);
+/* Comunidad en pantallas medianas y celular */
+@media (max-width: 900px) {
+  .comunidad { --avatar: 48px; }
+
+  .foro_rejilla {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "filtros"
+      "barra"
+      "lista"
+      "lateral";
+  }
+
+  .especialistas { position: static; }
+
+  .pub_cabecera { grid-template-columns: auto minmax(0, 1fr); }
+
+  .acciones { grid-column: 2; }
+
+  .pub_detalle { padding-left: 1rem; }
+
+  .btn_crear { flex: 1 1 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filtro, .btn_crear, .icono_btn, .boton_rojo, .toast { transition: none; }
 }
