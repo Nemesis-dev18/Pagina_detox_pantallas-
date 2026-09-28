@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -392,4 +393,91 @@ func yo(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"alias": u.Alias})
+}
+// ---------- Comentarios ----------
+
+var reUUID = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
+
+type Comentario struct {
+	ID        string    `json:"id"`
+	Alias     string    `json:"alias"`
+	Contenido string    `json:"contenido"`
+	CreadoEn  time.Time `json:"creado_en"`
+}
+
+func listarComentarios(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if !reUUID.MatchString(id) {
+		http.Error(w, "publicación no encontrada", http.StatusNotFound)
+		return
+	}
+
+	rows, err := pool.Query(r.Context(), `
+		SELECT c.id, u.alias, c.contenido, c.creado_en
+		FROM comentarios c
+		JOIN usuarios u ON u.id = c.autor_id
+		WHERE c.publicacion_id = $1
+		ORDER BY c.creado_en ASC`, id)
+	if err != nil {
+		http.Error(w, "error consultando la base", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	comentarios := []Comentario{}
+	for rows.Next() {
+		var c Comentario
+		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn); err != nil {
+			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
+			return
+		}
+		comentarios = append(comentarios, c)
+	}
+	if err := rows.Err(); err != nil {
+		http.Error(w, "error leyendo datos", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(comentarios)
+}
+
+func crearComentario(w http.ResponseWriter, r *http.Request) {
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "debes iniciar sesión para responder", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("id")
+	if !reUUID.MatchString(id) {
+		http.Error(w, "publicación no encontrada", http.StatusNotFound)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+	contenido := strings.TrimSpace(r.FormValue("contenido"))
+	if contenido == "" {
+		http.Error(w, "escribe algo para responder", http.StatusBadRequest)
+		return
+	}
+	if len([]rune(contenido)) > 2000 {
+		http.Error(w, "la respuesta es muy larga (máximo 2000 caracteres)", http.StatusBadRequest)
+		return
+	}
+
+	_, err = pool.Exec(r.Context(),
+		"INSERT INTO comentarios (publicacion_id, autor_id, contenido) VALUES ($1, $2, $3)",
+		id, u.ID, contenido)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
+			http.Error(w, "la publicación no existe", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "error guardando la respuesta", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }

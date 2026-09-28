@@ -21,6 +21,8 @@ func main() {
 	// Tu API
 http.HandleFunc("GET /publicaciones", listarPublicaciones)
 http.HandleFunc("POST /publicaciones", crearPublicacion)
+http.HandleFunc("GET /publicaciones/{id}/comentarios", listarComentarios)
+http.HandleFunc("POST /publicaciones/{id}/comentarios", crearComentario)
 	http.HandleFunc("/recuperar", recuperar)
     http.HandleFunc("/restablecer", restablecer)
     http.HandleFunc("/registro", registrar)

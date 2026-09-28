@@ -14,6 +14,8 @@
         .publicacion { border: 1px solid currentColor; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
         .publicacion .meta { opacity: .7; font-size: .9rem; }
         .publicacion .cuerpo { white-space: pre-wrap; }
+        .respuestas { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid currentColor; }
+        .comentario { margin: .8rem 0; }
     </style>
 </head>
 <body class="comunidad">
@@ -55,72 +57,151 @@
 
         <section id="lista"></section>
     </main>
+<script>
+    const lista = document.getElementById('lista');
+    const formulario = document.getElementById('form-publicar');
+    const pideLogin = document.getElementById('pide-login');
+    const miAlias = document.getElementById('mi-alias');
+    const mensaje = document.getElementById('mensaje');
+    let haySesion = false;
 
-    <script>
-        const lista = document.getElementById('lista');
-        const formulario = document.getElementById('form-publicar');
-        const pideLogin = document.getElementById('pide-login');
-        const miAlias = document.getElementById('mi-alias');
-        const mensaje = document.getElementById('mensaje');
-
-        // ¿Hay sesión? Si sí, mostramos el formulario
-        async function comprobarSesion() {
-            const res = await fetch('/yo');
-            if (res.ok) {
-                const datos = await res.json();
-                miAlias.textContent = datos.alias;
-                pideLogin.hidden = true;
-                formulario.hidden = false;
-            }
+    async function comprobarSesion() {
+        const res = await fetch('/yo');
+        if (res.ok) {
+            const datos = await res.json();
+            miAlias.textContent = datos.alias;
+            pideLogin.hidden = true;
+            formulario.hidden = false;
+            haySesion = true;
         }
+    }
 
-        async function cargarPublicaciones() {
-            const res = await fetch('/publicaciones');
-            const publicaciones = await res.json();
+    function crearElemento(etiqueta, clase, texto) {
+        const el = document.createElement(etiqueta);
+        if (clase) el.className = clase;
+        if (texto !== undefined) el.textContent = texto;
+        return el;
+    }
 
-            lista.replaceChildren();
-            if (publicaciones.length === 0) {
-                lista.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
-                return;
-            }
+    function formatearFecha(iso) {
+        return new Date(iso).toLocaleString('es-CO');
+    }
 
-            for (const p of publicaciones) {
-                const art = document.createElement('article');
-                art.className = 'publicacion';
+    async function cargarComentarios(publicacionId, contenedor) {
+        const res = await fetch('/publicaciones/' + publicacionId + '/comentarios');
+        const comentarios = await res.json();
 
-                const titulo = document.createElement('h3');
-                titulo.textContent = p.titulo;
-
-                const meta = document.createElement('p');
-                meta.className = 'meta';
-                meta.textContent = p.alias + ' · ' + p.categoria + ' · ' + new Date(p.creado_en).toLocaleString('es-CO');
-
-                const cuerpo = document.createElement('p');
-                cuerpo.className = 'cuerpo';
-                cuerpo.textContent = p.contenido;
-
-                art.append(titulo, meta, cuerpo);
-                lista.append(art);
-            }
+        contenedor.replaceChildren();
+        if (comentarios.length === 0) {
+            contenedor.append(crearElemento('p', 'meta', 'Aún no hay respuestas.'));
+            return;
         }
+        for (const c of comentarios) {
+            const item = crearElemento('div', 'comentario');
+            item.append(
+                crearElemento('p', 'meta', c.alias + ' · ' + formatearFecha(c.creado_en)),
+                crearElemento('p', 'cuerpo', c.contenido)
+            );
+            contenedor.append(item);
+        }
+    }
 
-        formulario.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const res = await fetch('/publicaciones', {
-                method: 'POST',
-                body: new URLSearchParams(new FormData(formulario))
+    function crearBloqueRespuestas(publicacionId) {
+        const bloque = crearElemento('div', 'respuestas');
+        bloque.hidden = true;
+
+        const listaComentarios = crearElemento('div');
+        bloque.append(listaComentarios);
+
+        if (haySesion) {
+            const form = document.createElement('form');
+            const caja = document.createElement('textarea');
+            caja.name = 'contenido';
+            caja.rows = 3;
+            caja.maxLength = 2000;
+            caja.required = true;
+            caja.placeholder = 'Escribe tu respuesta...';
+            const boton = crearElemento('button', '', 'Responder');
+            boton.type = 'submit';
+            const aviso = crearElemento('p', 'meta');
+            form.append(caja, boton, aviso);
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const res = await fetch('/publicaciones/' + publicacionId + '/comentarios', {
+                    method: 'POST',
+                    body: new URLSearchParams(new FormData(form))
+                });
+                if (res.ok) {
+                    form.reset();
+                    aviso.textContent = '';
+                    cargarComentarios(publicacionId, listaComentarios);
+                } else {
+                    aviso.textContent = await res.text();
+                }
             });
-            if (res.ok) {
-                formulario.reset();
-                mensaje.textContent = '';
-                cargarPublicaciones();
-            } else {
-                mensaje.textContent = await res.text();
-            }
-        });
+            bloque.append(form);
+        } else {
+            bloque.append(crearElemento('p', 'meta', 'Inicia sesión para responder.'));
+        }
+        return bloque;
+    }
 
-        comprobarSesion();
+    async function cargarPublicaciones() {
+        const res = await fetch('/publicaciones');
+        const publicaciones = await res.json();
+
+        lista.replaceChildren();
+        if (publicaciones.length === 0) {
+            lista.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+            return;
+        }
+
+        for (const p of publicaciones) {
+            const art = crearElemento('article', 'publicacion');
+            const bloque = crearBloqueRespuestas(p.id);
+            const listaComentarios = bloque.firstChild;
+
+            const boton = crearElemento('button', '', 'Ver respuestas');
+            boton.addEventListener('click', () => {
+                bloque.hidden = !bloque.hidden;
+                if (!bloque.hidden) {
+                    cargarComentarios(p.id, listaComentarios);
+                }
+                boton.textContent = bloque.hidden ? 'Ver respuestas' : 'Ocultar respuestas';
+            });
+
+            art.append(
+                crearElemento('h3', '', p.titulo),
+                crearElemento('p', 'meta', p.alias + ' · ' + p.categoria + ' · ' + formatearFecha(p.creado_en)),
+                crearElemento('p', 'cuerpo', p.contenido),
+                boton,
+                bloque
+            );
+            lista.append(art);
+        }
+    }
+
+    formulario.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const res = await fetch('/publicaciones', {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(formulario))
+        });
+        if (res.ok) {
+            formulario.reset();
+            mensaje.textContent = '';
+            cargarPublicaciones();
+        } else {
+            mensaje.textContent = await res.text();
+        }
+    });
+
+    // Primero sabemos si hay sesión, después dibujamos las publicaciones
+    (async () => {
+        await comprobarSesion();
         cargarPublicaciones();
-    </script>
+    })();
+</script>
 </body>
 </html>
