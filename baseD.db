@@ -1,10 +1,20 @@
--- Usuarios anónimos (no hay login tradicional, solo una identidad de sesión)
+DROP TABLE IF EXISTS comentarios, publicaciones, respuestas_cuestionario, sesiones, usuarios;
+
 CREATE TABLE usuarios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    alias TEXT NOT NULL UNIQUE,
+    correo TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
     creado_en TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Respuestas al cuestionario de hábitos digitales
+CREATE TABLE sesiones (
+    token TEXT PRIMARY KEY,
+    usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    creado_en TIMESTAMP NOT NULL DEFAULT now(),
+    expira_en TIMESTAMP NOT NULL
+);
+
 CREATE TABLE respuestas_cuestionario (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     usuario_id UUID NOT NULL REFERENCES usuarios(id),
@@ -13,7 +23,6 @@ CREATE TABLE respuestas_cuestionario (
     creado_en TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Publicaciones del foro
 CREATE TABLE publicaciones (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     autor_id UUID NOT NULL REFERENCES usuarios(id),
@@ -23,7 +32,6 @@ CREATE TABLE publicaciones (
     creado_en TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Comentarios (pertenecen a una publicación)
 CREATE TABLE comentarios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     publicacion_id UUID NOT NULL REFERENCES publicaciones(id),
