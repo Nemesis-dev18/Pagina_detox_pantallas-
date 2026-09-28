@@ -1,34 +1,33 @@
 
-/* 1. Mostrar elementos al hacer scroll */
-const revealObserver = new IntersectionObserver(
-    entries => entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target);
+// Menú desplegable de OPCIONES.
+// Para usarlo en otra página: mismo HTML del menú + <script src="js/menu.js" defer></script>
+document.addEventListener('DOMContentLoaded', () => {
+    const contenedor = document.querySelector('.contenedor_menu');
+    const boton = document.getElementById('boton_menu');
+    if (!contenedor || !boton) return;
+ 
+    function estaAbierto() {
+        return contenedor.classList.contains('abierto');
+    }
+ 
+    function fijarEstado(abierto) {
+        contenedor.classList.toggle('abierto', abierto);
+        boton.setAttribute('aria-expanded', String(abierto));
+    }
+ 
+    boton.addEventListener('click', () => fijarEstado(!estaAbierto()));
+ 
+    // Se cierra al hacer clic fuera del menú
+    document.addEventListener('click', (e) => {
+        if (estaAbierto() && !contenedor.contains(e.target)) fijarEstado(false);
+    });
+ 
+    // Se cierra con la tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && estaAbierto()) {
+            fijarEstado(false);
+            boton.focus();
         }
-    }),
-    { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
-);
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-/* 2. Sombra en la barra de navegación al hacer scroll */
-const header = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 30);
-}, { passive: true });
-
-/* 3. Enlace activo en la navegación */
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-const sectionObserver = new IntersectionObserver(
-    entries => entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-            if (link) link.classList.add('active');
-        }
-    }),
-    { threshold: 0.35 }
-);
-sections.forEach(sec => sectionObserver.observe(sec));
+    });
+});
+ 
