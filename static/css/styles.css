@@ -344,6 +344,15 @@ button:focus-visible {
 }
 
 /* Barra superior de las páginas generales */
+.mapa {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  background-color: var(--fondo, #111);
+  color: #fff;
+  min-height: 100vh;
+}
 .hero {
   /* Afecta a la barra superior de index, sesión, registro y mapa. */
   font-family: "Anton", sans-serif;
@@ -971,9 +980,11 @@ footer{
 
         [hidden] { display: none !important; }
 
-        .comunidad {
-          /* Afecta al <body> de comunidad.html. */
-          --rojo: #d11c1c;
+       .comunidad {
+             display: flex;
+            flex-wrap: wrap;
+             align-content: flex-start;
+
           --rojo-fuerte: rgb(203, 11, 11);
           --rojo-hover: #a80f0f;
           --fondo: #111;
@@ -1003,6 +1014,8 @@ footer{
         }
 
         .foro {
+          flex: 1;
+          min-width: 0;
           max-width: 1240px;
           margin: 0 auto;
           padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 28px) 3rem;
