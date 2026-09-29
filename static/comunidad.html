@@ -312,140 +312,138 @@
     }
 
     /* ---------- Publicaciones ---------- */
- function crearPublicacion(p) {
-    const art = crearElemento('article', 'publicacion');
+    function crearPublicacion(p) {
+        const art = crearElemento('article', 'publicacion');
 
-    art.id = 'p-' + p.id;
+        art.id = 'p-' + p.id;
 
-    const cabecera = crearElemento('div', 'pub_cabecera');
-    const avatar = crearElemento('div', 'avatar', (p.alias || '?').charAt(0).toUpperCase());
-    avatar.setAttribute('aria-hidden', 'true');
+        const cabecera = crearElemento('div', 'pub_cabecera');
+        const avatar = crearElemento('div', 'avatar', (p.alias || '?').charAt(0).toUpperCase());
+        avatar.setAttribute('aria-hidden', 'true');
 
-    const info = crearElemento('div', 'pub_info');
-    const titulo = crearElemento('button', 'pub_titulo', p.titulo);
-    titulo.type = 'button';
-    titulo.setAttribute('aria-expanded', 'false');
-    titulo.setAttribute('aria-controls', 'detalle-' + p.id);
-    const meta = crearElemento('p', 'meta',
-        p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
-    meta.title = formatearFecha(p.creado_en);
-    info.append(titulo, meta);
+        const info = crearElemento('div', 'pub_info');
+        const titulo = crearElemento('button', 'pub_titulo', p.titulo);
+        titulo.type = 'button';
+        titulo.setAttribute('aria-expanded', 'false');
+        titulo.setAttribute('aria-controls', 'detalle-' + p.id);
+        const meta = crearElemento('p', 'meta',
+            p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
+        meta.title = formatearFecha(p.creado_en);
+        info.append(titulo, meta);
 
-    const acciones = crearElemento('div', 'acciones');
-    const btnResponder = crearBotonIcono('Ver respuestas', ICONO_COMENTAR);
-    btnResponder.setAttribute('aria-expanded', 'false');
-    btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
-    const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
-    acciones.append(btnResponder, btnCompartir);
+        const acciones = crearElemento('div', 'acciones');
+        const btnResponder = crearBotonIcono('Ver respuestas', ICONO_COMENTAR);
+        btnResponder.setAttribute('aria-expanded', 'false');
+        btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
+        const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
+        acciones.append(btnResponder, btnCompartir);
 
-    // Solo el autor ve el botón de borrar
-    if (haySesion && p.alias === miAlias.textContent) {
-        const btnBorrar = crearBotonIcono('Eliminar', ICONO_ELIMINAR);
-        btnBorrar.addEventListener('click', async () => {
-            if (!confirm('¿Eliminar esta publicación?')) return;
-            const res = await fetch('/publicaciones/' + p.id, { method: 'DELETE' });
-            if (res.ok) {
-                cargarPublicaciones();
-            } else {
-                alert(await res.text());
+        // Solo el autor ve el botón de borrar
+        if (haySesion && p.alias === miAlias.textContent) {
+            const btnBorrar = crearBotonIcono('Eliminar', ICONO_ELIMINAR);
+            btnBorrar.addEventListener('click', async () => {
+                if (!confirm('¿Eliminar esta publicación?')) return;
+                const res = await fetch('/publicaciones/' + p.id, { method: 'DELETE' });
+                if (res.ok) {
+                    cargarPublicaciones();
+                } else {
+                    alert(await res.text());
+                }
+            });
+            acciones.append(btnBorrar);
+        }
+
+        cabecera.append(avatar, info, acciones);
+
+        const detalle = crearElemento('div', 'pub_detalle');
+        detalle.id = 'detalle-' + p.id;
+        detalle.hidden = true;
+        const bloque = crearBloqueRespuestas(p.id);
+        const listaComentarios = bloque.firstChild;
+        detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
+
+        function alternar(forzar) {
+            const abrir = forzar === undefined ? detalle.hidden : forzar;
+            detalle.hidden = !abrir;
+            titulo.setAttribute('aria-expanded', String(abrir));
+            btnResponder.setAttribute('aria-expanded', String(abrir));
+            btnResponder.title = abrir ? 'Ocultar respuestas' : 'Ver respuestas';
+            if (abrir) cargarComentarios(p.id, listaComentarios);
+        }
+
+        titulo.addEventListener('click', () => alternar());
+        btnResponder.addEventListener('click', () => alternar());
+        btnCompartir.addEventListener('click', async () => {
+            const enlace = location.href.split('#')[0] + '#p-' + p.id;
+            try {
+                await navigator.clipboard.writeText(enlace);
+                avisar('Enlace copiado');
+            } catch (err) {
+                window.prompt('Copia este enlace:', enlace);
             }
         });
-        acciones.append(btnBorrar);
+
+        return {
+            id: p.id,
+            art: art,
+            categoria: p.categoria,
+            texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
+            alternar: alternar
+        };
     }
 
-    cabecera.append(avatar, info, acciones);
-
-    const detalle = crearElemento('div', 'pub_detalle');
-    detalle.id = 'detalle-' + p.id;
-    detalle.hidden = true;
-    const bloque = crearBloqueRespuestas(p.id);
-    const listaComentarios = bloque.firstChild;
-    detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
-
-    function alternar(forzar) {
-        const abrir = forzar === undefined ? detalle.hidden : forzar;
-        detalle.hidden = !abrir;
-        titulo.setAttribute('aria-expanded', String(abrir));
-        btnResponder.setAttribute('aria-expanded', String(abrir));
-        btnResponder.title = abrir ? 'Ocultar respuestas' : 'Ver respuestas';
-        if (abrir) cargarComentarios(p.id, listaComentarios);
-    }
-
-    titulo.addEventListener('click', () => alternar());
-    btnResponder.addEventListener('click', () => alternar());
-    btnCompartir.addEventListener('click', async () => {
-        const enlace = location.href.split('#')[0] + '#p-' + p.id;
-        try {
-            await navigator.clipboard.writeText(enlace);
-            avisar('Enlace copiado');
-        } catch (err) {
-            window.prompt('Copia este enlace:', enlace);
-        }
-    });
-
-    return {
-        id: p.id,
-        art: art,
-        categoria: p.categoria,
-        texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
-        alternar: alternar
-    };
-}
-
-function aplicarFiltros() {
     function aplicarFiltros() {
-    const consulta = normalizar(buscador.value.trim());
-    let visibles = 0;
-    for (const e of elementos) {
-        const coincide = (!filtroCategoria || e.categoria === filtroCategoria)
-            && (!consulta || e.texto.includes(consulta));
-        e.art.hidden = !coincide;
-        if (coincide) visibles++;
-    }
-    lista.hidden = visibles === 0;
-    if (elementos.length === 0) {
-        vacio.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
-        vacio.hidden = false;
-    } else if (visibles === 0) {
-        vacio.textContent = 'No encontramos publicaciones con ese filtro.';
-        vacio.hidden = false;
-    } else {
-        vacio.hidden = true;
-    }
-}
-
-function abrirDesdeHash() {
-    if (hashRevisado) return;
-    hashRevisado = true;
-    if (!location.hash.startsWith('#p-')) return;
-    const id = location.hash.slice(3);
-    const e = elementos.find((x) => x.id === id);
-    if (e) {
-        e.alternar(true);
-        e.art.scrollIntoView({ block: 'center' });
-    }
-}
-
-async function cargarPublicaciones() {
-    let publicaciones = [];
-    try {
-        const res = await fetch('/publicaciones');
-        publicaciones = (await res.json()) || [];
-    } catch (err) {
-        vacio.textContent = 'No se pudieron cargar las publicaciones.';
-        vacio.hidden = false;
-        lista.hidden = true;
-        return;
+        const consulta = normalizar(buscador.value.trim());
+        let visibles = 0;
+        for (const e of elementos) {
+            const coincide = (!filtroCategoria || e.categoria === filtroCategoria)
+                && (!consulta || e.texto.includes(consulta));
+            e.art.hidden = !coincide;
+            if (coincide) visibles++;
+        }
+        lista.hidden = visibles === 0;
+        if (elementos.length === 0) {
+            vacio.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+            vacio.hidden = false;
+        } else if (visibles === 0) {
+            vacio.textContent = 'No encontramos publicaciones con ese filtro.';
+            vacio.hidden = false;
+        } else {
+            vacio.hidden = true;
+        }
     }
 
-    lista.replaceChildren();
-    elementos = publicaciones.map(crearPublicacion);
-    for (const e of elementos) lista.append(e.art);
-    aplicarFiltros();
-    abrirDesdeHash();
+    function abrirDesdeHash() {
+        if (hashRevisado) return;
+        hashRevisado = true;
+        if (!location.hash.startsWith('#p-')) return;
+        const id = location.hash.slice(3);
+        const e = elementos.find((x) => x.id === id);
+        if (e) {
+            e.alternar(true);
+            e.art.scrollIntoView({ block: 'center' });
+        }
+    }
 
-}
-}
+    async function cargarPublicaciones() {
+        let publicaciones = [];
+        try {
+            const res = await fetch('/publicaciones');
+            publicaciones = (await res.json()) || [];
+        } catch (err) {
+            vacio.textContent = 'No se pudieron cargar las publicaciones.';
+            vacio.hidden = false;
+            lista.hidden = true;
+            return;
+        }
+
+        lista.replaceChildren();
+        elementos = publicaciones.map(crearPublicacion);
+        for (const e of elementos) lista.append(e.art);
+        aplicarFiltros();
+        abrirDesdeHash();
+    }
+
     /* ---------- Filtros, búsqueda y ventana de crear ---------- */
     for (const boton of filtros) {
         boton.addEventListener('click', () => {
