@@ -291,10 +291,10 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 // Se usa cuando el correo no existe, para que el login tarde lo mismo
 var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
-
 type Usuario struct {
-	ID    string
-	Alias string
+	ID      string
+	Alias   string
+	EsAdmin bool
 }
 
 // Devuelve quién es el usuario según la cookie, o un error si no hay sesión válida
@@ -306,17 +306,16 @@ func usuarioActual(r *http.Request) (*Usuario, error) {
 
 	var u Usuario
 	err = pool.QueryRow(r.Context(),
-		`SELECT u.id, u.alias
+		`SELECT u.id, u.alias, u.es_admin
 		 FROM sesiones s
 		 JOIN usuarios u ON u.id = s.usuario_id
 		 WHERE s.token_hash = $1 AND s.expira_en > now()`,
-		hashToken(c.Value)).Scan(&u.ID, &u.Alias)
+		hashToken(c.Value)).Scan(&u.ID, &u.Alias, &u.EsAdmin)
 	if err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
-
 func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
@@ -396,7 +395,10 @@ func yo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"alias": u.Alias})
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"alias":    u.Alias,
+		"es_admin": u.EsAdmin,
+	})
 }
 // ---------- Comentarios ----------
 
@@ -498,9 +500,13 @@ func borrarPublicacion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Solo borra si el id Y el autor coinciden con quien está pidiendo el borrado
-	tag, err := pool.Exec(r.Context(),
-		"DELETE FROM publicaciones WHERE id = $1 AND autor_id = $2", id, u.ID)
+	var tag pgconn.CommandTag
+	if u.EsAdmin {
+		tag, err = pool.Exec(r.Context(), "DELETE FROM publicaciones WHERE id = $1", id)
+	} else {
+		tag, err = pool.Exec(r.Context(),
+			"DELETE FROM publicaciones WHERE id = $1 AND autor_id = $2", id, u.ID)
+	}
 	if err != nil {
 		http.Error(w, "error borrando la publicación", http.StatusInternalServerError)
 		return
