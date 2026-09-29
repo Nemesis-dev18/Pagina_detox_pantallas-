@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	cargarEnv(".env")
+
 	if err := conectarDB(context.Background()); err != nil {
 		log.Fatal("no se pudo conectar a la base: ", err)
 	}
