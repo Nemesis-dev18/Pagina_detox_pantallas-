@@ -383,8 +383,6 @@
         }
     });
 
-    art.append(cabecera, detalle);
-
     return {
         id: p.id,
         art: art,
@@ -392,6 +390,9 @@
         texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
         alternar: alternar
     };
+}
+
+function aplicarFiltros() {
     function aplicarFiltros() {
     const consulta = normalizar(buscador.value.trim());
     let visibles = 0;
@@ -442,9 +443,9 @@ async function cargarPublicaciones() {
     for (const e of elementos) lista.append(e.art);
     aplicarFiltros();
     abrirDesdeHash();
-}
-}
 
+}
+}
     /* ---------- Filtros, búsqueda y ventana de crear ---------- */
     for (const boton of filtros) {
         boton.addEventListener('click', () => {
@@ -498,4 +499,4 @@ async function cargarPublicaciones() {
     })();
 </script>
 </body>
-</html>
+</html>  
