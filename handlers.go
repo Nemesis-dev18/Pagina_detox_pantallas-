@@ -481,3 +481,30 @@ func crearComentario(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 }
+func borrarPublicacion(w http.ResponseWriter, r *http.Request) {
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "debes iniciar sesión", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("id")
+	if !reUUID.MatchString(id) {
+		http.Error(w, "publicación no encontrada", http.StatusNotFound)
+		return
+	}
+
+	// Solo borra si el id Y el autor coinciden con quien está pidiendo el borrado
+	tag, err := pool.Exec(r.Context(),
+		"DELETE FROM publicaciones WHERE id = $1 AND autor_id = $2", id, u.ID)
+	if err != nil {
+		http.Error(w, "error borrando la publicación", http.StatusInternalServerError)
+		return
+	}
+	if tag.RowsAffected() == 0 {
+		http.Error(w, "no encontrada, o no es tuya", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

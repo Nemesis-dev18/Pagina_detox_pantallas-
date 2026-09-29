@@ -27,6 +27,60 @@
         </div>
     </header>
 
+       <!-- Menú lateral con menú desplegable -->
+    <section class="contenedor_menu">
+        <aside id="menu_lateral">
+            <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
+                <span class="texto_menu_letras">OPCIONES</span>
+                <span class="flecha" aria-hidden="true"></span>
+            </button>
+        </aside>
+
+        <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
+            <ul>
+                <li><a href="index.html" aria-current="page">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="comunidad.html">Comunidad</a></li>
+                <li><a href="mapa.html">Mapa</a></li>
+                <li class="separador" role="separator"></li>
+               <!--  <li><a href="inicio_sesion.html">Iniciar sesión</a></li>  <li><a href="registro.html">Crear cuenta</a></li> --> 
+            </ul>
+        </nav>
+    </section>
+
+    <!-- Menú desplegable de OPCIONES (va aquí adentro para no depender de otro archivo) -->
+    <script>
+        (function () {
+            var contenedor = document.querySelector('.contenedor_menu');
+            var boton = document.getElementById('boton_menu');
+            if (!contenedor || !boton) return;
+
+            function fijarEstado(abierto) {
+                contenedor.classList.toggle('abierto', abierto);
+                boton.setAttribute('aria-expanded', String(abierto));
+            }
+
+            boton.addEventListener('click', function () {
+                fijarEstado(!contenedor.classList.contains('abierto'));
+            });
+
+            // Se cierra al hacer clic fuera del menú
+            document.addEventListener('click', function (e) {
+                if (!contenedor.contains(e.target)) fijarEstado(false);
+            });
+
+            // Se cierra con la tecla Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    fijarEstado(false);
+                    boton.focus();
+                }
+            });
+        })();
+    </script>
+    
+
+
     <main class="foro">
         <h2 class="foro_titulo">Comunidad</h2>
 
@@ -130,6 +184,7 @@
     const ETIQUETAS = { experiencia: 'Experiencia', pregunta: 'Pregunta', consejo: 'Consejo' };
     const ICONO_COMENTAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
     const ICONO_COMPARTIR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>';
+    const ICONO_ELIMINAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
 
     let haySesion = false;
     let filtroCategoria = '';
@@ -257,122 +312,138 @@
     }
 
     /* ---------- Publicaciones ---------- */
-    function crearPublicacion(p) {
-        const art = crearElemento('article', 'publicacion');
-        art.id = 'p-' + p.id;
+ function crearPublicacion(p) {
+    const art = crearElemento('article', 'publicacion');
 
-        const cabecera = crearElemento('div', 'pub_cabecera');
-        const avatar = crearElemento('div', 'avatar', (p.alias || '?').charAt(0).toUpperCase());
-        avatar.setAttribute('aria-hidden', 'true');
+    art.id = 'p-' + p.id;
 
-        const info = crearElemento('div', 'pub_info');
-        const titulo = crearElemento('button', 'pub_titulo', p.titulo);
-        titulo.type = 'button';
-        titulo.setAttribute('aria-expanded', 'false');
-        titulo.setAttribute('aria-controls', 'detalle-' + p.id);
-        const meta = crearElemento('p', 'meta',
-            p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
-        meta.title = formatearFecha(p.creado_en);
-        info.append(titulo, meta);
+    const cabecera = crearElemento('div', 'pub_cabecera');
+    const avatar = crearElemento('div', 'avatar', (p.alias || '?').charAt(0).toUpperCase());
+    avatar.setAttribute('aria-hidden', 'true');
 
-        const acciones = crearElemento('div', 'acciones');
-        const btnResponder = crearBotonIcono('Ver respuestas', ICONO_COMENTAR);
-        btnResponder.setAttribute('aria-expanded', 'false');
-        btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
-        const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
-        acciones.append(btnResponder, btnCompartir);
+    const info = crearElemento('div', 'pub_info');
+    const titulo = crearElemento('button', 'pub_titulo', p.titulo);
+    titulo.type = 'button';
+    titulo.setAttribute('aria-expanded', 'false');
+    titulo.setAttribute('aria-controls', 'detalle-' + p.id);
+    const meta = crearElemento('p', 'meta',
+        p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
+    meta.title = formatearFecha(p.creado_en);
+    info.append(titulo, meta);
 
-        cabecera.append(avatar, info, acciones);
+    const acciones = crearElemento('div', 'acciones');
+    const btnResponder = crearBotonIcono('Ver respuestas', ICONO_COMENTAR);
+    btnResponder.setAttribute('aria-expanded', 'false');
+    btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
+    const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
+    acciones.append(btnResponder, btnCompartir);
 
-        const detalle = crearElemento('div', 'pub_detalle');
-        detalle.id = 'detalle-' + p.id;
-        detalle.hidden = true;
-        const bloque = crearBloqueRespuestas(p.id);
-        const listaComentarios = bloque.firstChild;
-        detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
-
-        function alternar(forzar) {
-            const abrir = forzar === undefined ? detalle.hidden : forzar;
-            detalle.hidden = !abrir;
-            titulo.setAttribute('aria-expanded', String(abrir));
-            btnResponder.setAttribute('aria-expanded', String(abrir));
-            btnResponder.title = abrir ? 'Ocultar respuestas' : 'Ver respuestas';
-            if (abrir) cargarComentarios(p.id, listaComentarios);
-        }
-
-        titulo.addEventListener('click', () => alternar());
-        btnResponder.addEventListener('click', () => alternar());
-        btnCompartir.addEventListener('click', async () => {
-            const enlace = location.href.split('#')[0] + '#p-' + p.id;
-            try {
-                await navigator.clipboard.writeText(enlace);
-                avisar('Enlace copiado');
-            } catch (err) {
-                window.prompt('Copia este enlace:', enlace);
+    // Solo el autor ve el botón de borrar
+    if (haySesion && p.alias === miAlias.textContent) {
+        const btnBorrar = crearBotonIcono('Eliminar', ICONO_ELIMINAR);
+        btnBorrar.addEventListener('click', async () => {
+            if (!confirm('¿Eliminar esta publicación?')) return;
+            const res = await fetch('/publicaciones/' + p.id, { method: 'DELETE' });
+            if (res.ok) {
+                cargarPublicaciones();
+            } else {
+                alert(await res.text());
             }
         });
-
-        art.append(cabecera, detalle);
-        return {
-            id: p.id,
-            art: art,
-            categoria: p.categoria,
-            texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
-            alternar: alternar
-        };
+        acciones.append(btnBorrar);
     }
 
-    function aplicarFiltros() {
-        const consulta = normalizar(buscador.value.trim());
-        let visibles = 0;
-        for (const e of elementos) {
-            const coincide = (!filtroCategoria || e.categoria === filtroCategoria)
-                && (!consulta || e.texto.includes(consulta));
-            e.art.hidden = !coincide;
-            if (coincide) visibles++;
-        }
-        lista.hidden = visibles === 0;
-        if (elementos.length === 0) {
-            vacio.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
-            vacio.hidden = false;
-        } else if (visibles === 0) {
-            vacio.textContent = 'No encontramos publicaciones con ese filtro.';
-            vacio.hidden = false;
-        } else {
-            vacio.hidden = true;
-        }
+    cabecera.append(avatar, info, acciones);
+
+    const detalle = crearElemento('div', 'pub_detalle');
+    detalle.id = 'detalle-' + p.id;
+    detalle.hidden = true;
+    const bloque = crearBloqueRespuestas(p.id);
+    const listaComentarios = bloque.firstChild;
+    detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
+
+    function alternar(forzar) {
+        const abrir = forzar === undefined ? detalle.hidden : forzar;
+        detalle.hidden = !abrir;
+        titulo.setAttribute('aria-expanded', String(abrir));
+        btnResponder.setAttribute('aria-expanded', String(abrir));
+        btnResponder.title = abrir ? 'Ocultar respuestas' : 'Ver respuestas';
+        if (abrir) cargarComentarios(p.id, listaComentarios);
     }
 
-    function abrirDesdeHash() {
-        if (hashRevisado) return;
-        hashRevisado = true;
-        if (!location.hash.startsWith('#p-')) return;
-        const id = location.hash.slice(3);
-        const e = elementos.find((x) => x.id === id);
-        if (e) {
-            e.alternar(true);
-            e.art.scrollIntoView({ block: 'center' });
-        }
-    }
-
-    async function cargarPublicaciones() {
-        let publicaciones = [];
+    titulo.addEventListener('click', () => alternar());
+    btnResponder.addEventListener('click', () => alternar());
+    btnCompartir.addEventListener('click', async () => {
+        const enlace = location.href.split('#')[0] + '#p-' + p.id;
         try {
-            const res = await fetch('/publicaciones');
-            publicaciones = (await res.json()) || [];
+            await navigator.clipboard.writeText(enlace);
+            avisar('Enlace copiado');
         } catch (err) {
-            vacio.textContent = 'No se pudieron cargar las publicaciones.';
-            vacio.hidden = false;
-            lista.hidden = true;
-            return;
+            window.prompt('Copia este enlace:', enlace);
         }
+    });
 
-        lista.replaceChildren();
-        elementos = publicaciones.map(crearPublicacion);
-        for (const e of elementos) lista.append(e.art);
-        aplicarFiltros();
-        abrirDesdeHash();
+    art.append(cabecera, detalle);
+
+    return {
+        id: p.id,
+        art: art,
+        categoria: p.categoria,
+        texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
+        alternar: alternar
+    };
+    function aplicarFiltros() {
+    const consulta = normalizar(buscador.value.trim());
+    let visibles = 0;
+    for (const e of elementos) {
+        const coincide = (!filtroCategoria || e.categoria === filtroCategoria)
+            && (!consulta || e.texto.includes(consulta));
+        e.art.hidden = !coincide;
+        if (coincide) visibles++;
     }
+    lista.hidden = visibles === 0;
+    if (elementos.length === 0) {
+        vacio.textContent = 'Aún no hay publicaciones. ¡Sé la primera persona!';
+        vacio.hidden = false;
+    } else if (visibles === 0) {
+        vacio.textContent = 'No encontramos publicaciones con ese filtro.';
+        vacio.hidden = false;
+    } else {
+        vacio.hidden = true;
+    }
+}
+
+function abrirDesdeHash() {
+    if (hashRevisado) return;
+    hashRevisado = true;
+    if (!location.hash.startsWith('#p-')) return;
+    const id = location.hash.slice(3);
+    const e = elementos.find((x) => x.id === id);
+    if (e) {
+        e.alternar(true);
+        e.art.scrollIntoView({ block: 'center' });
+    }
+}
+
+async function cargarPublicaciones() {
+    let publicaciones = [];
+    try {
+        const res = await fetch('/publicaciones');
+        publicaciones = (await res.json()) || [];
+    } catch (err) {
+        vacio.textContent = 'No se pudieron cargar las publicaciones.';
+        vacio.hidden = false;
+        lista.hidden = true;
+        return;
+    }
+
+    lista.replaceChildren();
+    elementos = publicaciones.map(crearPublicacion);
+    for (const e of elementos) lista.append(e.art);
+    aplicarFiltros();
+    abrirDesdeHash();
+}
+}
 
     /* ---------- Filtros, búsqueda y ventana de crear ---------- */
     for (const boton of filtros) {
