@@ -371,6 +371,10 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 }
 
 func cerrarSesion(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
 	if c, err := r.Cookie("sesion"); err == nil {
 		pool.Exec(r.Context(), "DELETE FROM sesiones WHERE token_hash = $1", hashToken(c.Value))
 	}

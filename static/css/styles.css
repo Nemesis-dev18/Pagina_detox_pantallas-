@@ -1433,3 +1433,14 @@ footer{
   . PAGINA COMUNIDAD
   ================================================================ */
 /* Los estilos de comunidad.html están dentro de esa misma página (etiqueta <style>). */
+
+
+/* ================================================================
+  BOTON CERRAR SESION (lo crea static/js/auth.js)
+  ================================================================ */
+.hero-right { gap: 10px; }
+.form_salir { margin: 0; }
+.btn_salir {
+  font: inherit;
+  cursor: pointer;
+}
