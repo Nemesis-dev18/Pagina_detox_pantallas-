@@ -19,5 +19,57 @@ DETOX_WEB
 
         </div>
    </header>
+      <!-- Menú lateral con menú desplegable -->
+    <section class="contenedor_menu">
+        <aside id="menu_lateral">
+            <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
+                <span class="texto_menu_letras">OPCIONES</span>
+                <span class="flecha" aria-hidden="true"></span>
+            </button>
+        </aside>
+
+        <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
+            <ul>
+                <li><a href="index.html" aria-current="page">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="comunidad.html">Comunidad</a></li>
+                <li><a href="mapa.html">Mapa</a></li>
+                <li class="separador" role="separator"></li>
+               <!--  <li><a href="inicio_sesion.html">Iniciar sesión</a></li>  <li><a href="registro.html">Crear cuenta</a></li> --> 
+            </ul>
+        </nav>
+    </section>
+
+    <!-- Menú desplegable de OPCIONES (va aquí adentro para no depender de otro archivo) -->
+    <script>
+        (function () {
+            var contenedor = document.querySelector('.contenedor_menu');
+            var boton = document.getElementById('boton_menu');
+            if (!contenedor || !boton) return;
+
+            function fijarEstado(abierto) {
+                contenedor.classList.toggle('abierto', abierto);
+                boton.setAttribute('aria-expanded', String(abierto));
+            }
+
+            boton.addEventListener('click', function () {
+                fijarEstado(!contenedor.classList.contains('abierto'));
+            });
+
+            // Se cierra al hacer clic fuera del menú
+            document.addEventListener('click', function (e) {
+                if (!contenedor.contains(e.target)) fijarEstado(false);
+            });
+
+            // Se cierra con la tecla Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    fijarEstado(false);
+                    boton.focus();
+                }
+            });
+        })();
+    </script>
+    
 </body>
 </html>
