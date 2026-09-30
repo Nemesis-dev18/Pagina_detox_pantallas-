@@ -65,36 +65,7 @@ DETOX_WEB
         <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>
 
-    <!-- Menú desplegable de OPCIONES (va aquí adentro para no depender de otro archivo) -->
-    <script>
-        (function () {
-            var contenedor = document.querySelector('.contenedor_menu');
-            var boton = document.getElementById('boton_menu');
-            if (!contenedor || !boton) return;
-
-            function fijarEstado(abierto) {
-                contenedor.classList.toggle('abierto', abierto);
-                boton.setAttribute('aria-expanded', String(abierto));
-            }
-
-            boton.addEventListener('click', function () {
-                fijarEstado(!contenedor.classList.contains('abierto'));
-            });
-
-            // Se cierra al hacer clic fuera del menú
-            document.addEventListener('click', function (e) {
-                if (!contenedor.contains(e.target)) fijarEstado(false);
-            });
-
-            // Se cierra con la tecla Escape
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    fijarEstado(false);
-                    boton.focus();
-                }
-            });
-        })();
-    </script>
+<script src="../static/js/menu_desplegable.js"></script>
     
     <script src="../static/js/auth.js" defer></script>
 </body>
