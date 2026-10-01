@@ -217,7 +217,7 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 
 	// Siempre la misma respuesta, exista o no el correo
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Si ese correo está registrado, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada (en desarrollo: http://localhost:8025).")
+	fmt.Fprint(w, " te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada ")
 }
 
 func restablecer(w http.ResponseWriter, r *http.Request) {
