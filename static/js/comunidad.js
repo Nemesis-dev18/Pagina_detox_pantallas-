@@ -1,4 +1,4 @@
-  const lista = document.getElementById('lista');
+const lista = document.getElementById('lista');
     const vacio = document.getElementById('vacio');
     const buscador = document.getElementById('buscador');
     const btnCrear = document.getElementById('btn-crear');
@@ -15,6 +15,19 @@
     const ICONO_COMENTAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
     const ICONO_COMPARTIR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>';
     const ICONO_ELIMINAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
+
+    const ICONO_EDITAR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+
+    // Estilos del modo edición (puedes moverlos a css/styles.css si prefieres)
+    const estiloEdicion = document.createElement('style');
+    estiloEdicion.textContent = `
+    .editor { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+    .editor input, .editor select, .editor textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit; border: 1px solid #ccc; border-radius: 6px; }
+    .editor .editor_botones { display: flex; gap: 8px; }
+    .editor .btn_cancelar { padding: 8px 14px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; font: inherit; }
+    .link_editar { background: none; border: 0; padding: 2px 0; color: inherit; opacity: .7; text-decoration: underline; cursor: pointer; font: inherit; font-size: .85rem; }
+    .link_editar:hover { opacity: 1; }`;
+    document.head.appendChild(estiloEdicion);
 
     let haySesion = false;
     let soyAdmin = false;
@@ -95,12 +108,73 @@
         }
         for (const c of comentarios) {
             const item = crearElemento('div', 'comentario');
-            item.append(
-                crearElemento('p', 'meta', c.alias + ' · ' + formatearFecha(c.creado_en)),
-                crearElemento('p', 'cuerpo', c.contenido)
-            );
+            const meta = crearElemento('p', 'meta',
+                c.alias + ' · ' + formatearFecha(c.creado_en) + (c.editado_en ? ' · editado' : ''));
+            const cuerpo = crearElemento('p', 'cuerpo', c.contenido);
+            item.append(meta, cuerpo);
+
+            // El autor del comentario (o un admin) puede editarlo
+            if (haySesion && (c.alias === miAlias.textContent || soyAdmin)) {
+                const btnEditar = crearElemento('button', 'link_editar', 'Editar');
+                btnEditar.type = 'button';
+                btnEditar.addEventListener('click', () => {
+                    editarComentario(publicacionId, c, item, cuerpo, btnEditar, contenedor);
+                });
+                item.append(btnEditar);
+            }
             contenedor.append(item);
         }
+    }
+
+    function editarComentario(publicacionId, c, item, cuerpo, btnEditar, contenedor) {
+        const form = crearElemento('form', 'editor');
+        const caja = document.createElement('textarea');
+        caja.name = 'contenido';
+        caja.rows = 3;
+        caja.maxLength = 2000;
+        caja.required = true;
+        caja.value = c.contenido;
+
+        const botones = crearElemento('div', 'editor_botones');
+        const guardar = crearElemento('button', 'boton_rojo', 'Guardar');
+        guardar.type = 'submit';
+        const cancelar = crearElemento('button', 'btn_cancelar', 'Cancelar');
+        cancelar.type = 'button';
+        botones.append(guardar, cancelar);
+        const aviso = crearElemento('p', 'meta');
+        form.append(caja, botones, aviso);
+
+        cuerpo.hidden = true;
+        btnEditar.hidden = true;
+        item.append(form);
+        caja.focus();
+
+        cancelar.addEventListener('click', () => {
+            form.remove();
+            cuerpo.hidden = false;
+            btnEditar.hidden = false;
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            guardar.disabled = true;
+            try {
+                const res = await fetch('/publicaciones/' + publicacionId + '/comentarios/' + c.id, {
+                    method: 'PUT',
+                    body: new URLSearchParams(new FormData(form))
+                });
+                if (res.ok) {
+                    cargarComentarios(publicacionId, contenedor);
+                    avisar('Comentario actualizado');
+                } else {
+                    aviso.textContent = await res.text();
+                }
+            } catch (err) {
+                aviso.textContent = 'No hay conexión con el servidor.';
+            } finally {
+                guardar.disabled = false;
+            }
+        });
     }
 
     function crearBloqueRespuestas(publicacionId) {
@@ -158,8 +232,7 @@
     titulo.type = 'button';
     titulo.setAttribute('aria-expanded', 'false');
     titulo.setAttribute('aria-controls', 'detalle-' + p.id);
-    const meta = crearElemento('p', 'meta',
-        p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en));
+    const meta = crearElemento('p', 'meta');
     meta.title = formatearFecha(p.creado_en);
     info.append(titulo, meta);
 
@@ -170,7 +243,105 @@
     const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
     acciones.append(btnResponder, btnCompartir);
 
-    // Solo el autor ve el botón de borrar
+    cabecera.append(avatar, info, acciones);
+
+    const detalle = crearElemento('div', 'pub_detalle');
+    detalle.id = 'detalle-' + p.id;
+    detalle.hidden = true;
+    const bloque = crearBloqueRespuestas(p.id);
+    const listaComentarios = bloque.firstChild;
+    const cuerpoPost = crearElemento('p', 'cuerpo', p.contenido);
+    detalle.append(cuerpoPost, bloque);
+
+    const entrada = { id: p.id, art: art, categoria: p.categoria, texto: '', alternar: null };
+    function pintarMeta() {
+        meta.textContent = p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en)
+            + (p.editado_en ? ' · editado' : '');
+        entrada.categoria = p.categoria;
+        entrada.texto = normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias);
+    }
+    pintarMeta();
+
+    // El autor (o un admin) puede editar la publicación
+    if (haySesion && (p.alias === miAlias.textContent || soyAdmin)) {
+        const btnEditar = crearBotonIcono('Editar', ICONO_EDITAR);
+        btnEditar.addEventListener('click', () => {
+            if (detalle.querySelector('.editor_post')) return;   // ya está editando
+            alternar(true);
+
+            const form = crearElemento('form', 'editor editor_post');
+            const campoTitulo = document.createElement('input');
+            campoTitulo.name = 'titulo';
+            campoTitulo.maxLength = 120;
+            campoTitulo.required = true;
+            campoTitulo.value = p.titulo;
+            const campoCategoria = document.createElement('select');
+            campoCategoria.name = 'categoria';
+            for (const clave in ETIQUETAS) {
+                const op = crearElemento('option', '', ETIQUETAS[clave]);
+                op.value = clave;
+                op.selected = clave === p.categoria;
+                campoCategoria.append(op);
+            }
+            const campoContenido = document.createElement('textarea');
+            campoContenido.name = 'contenido';
+            campoContenido.rows = 6;
+            campoContenido.maxLength = 5000;
+            campoContenido.required = true;
+            campoContenido.value = p.contenido;
+
+            const botones = crearElemento('div', 'editor_botones');
+            const guardar = crearElemento('button', 'boton_rojo', 'Guardar cambios');
+            guardar.type = 'submit';
+            const cancelar = crearElemento('button', 'btn_cancelar', 'Cancelar');
+            cancelar.type = 'button';
+            botones.append(guardar, cancelar);
+            const aviso = crearElemento('p', 'meta');
+            form.append(campoTitulo, campoCategoria, campoContenido, botones, aviso);
+
+            cuerpoPost.hidden = true;
+            detalle.insertBefore(form, cuerpoPost);
+            campoTitulo.focus();
+
+            cancelar.addEventListener('click', () => {
+                form.remove();
+                cuerpoPost.hidden = false;
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                guardar.disabled = true;
+                try {
+                    const res = await fetch('/publicaciones/' + p.id, {
+                        method: 'PUT',
+                        body: new URLSearchParams(new FormData(form))
+                    });
+                    if (res.ok) {
+                        p.titulo = campoTitulo.value.trim();
+                        p.categoria = campoCategoria.value;
+                        p.contenido = campoContenido.value.trim();
+                        p.editado_en = new Date().toISOString();
+                        titulo.textContent = p.titulo;
+                        cuerpoPost.textContent = p.contenido;
+                        pintarMeta();
+                        form.remove();
+                        cuerpoPost.hidden = false;
+                        aplicarFiltros();
+                        avisar('Publicación actualizada');
+                    } else {
+                        aviso.textContent = await res.text();
+                    }
+                } catch (err) {
+                    aviso.textContent = 'No hay conexión con el servidor.';
+                } finally {
+                    guardar.disabled = false;
+                }
+            });
+        });
+        acciones.append(btnEditar);
+    }
+
+    // El autor (o un admin) puede borrar
     if (haySesion && (p.alias === miAlias.textContent || soyAdmin)) {
         const btnBorrar = crearBotonIcono('Eliminar', ICONO_ELIMINAR);
         btnBorrar.addEventListener('click', async () => {
@@ -184,15 +355,6 @@
         });
         acciones.append(btnBorrar);
     }
-
-    cabecera.append(avatar, info, acciones);
-
-    const detalle = crearElemento('div', 'pub_detalle');
-    detalle.id = 'detalle-' + p.id;
-    detalle.hidden = true;
-    const bloque = crearBloqueRespuestas(p.id);
-    const listaComentarios = bloque.firstChild;
-    detalle.append(crearElemento('p', 'cuerpo', p.contenido), bloque);
 
     function alternar(forzar) {
         const abrir = forzar === undefined ? detalle.hidden : forzar;
@@ -214,14 +376,9 @@
             window.prompt('Copia este enlace:', enlace);
         }
     });
- art.append(cabecera, detalle);
-    return {
-        id: p.id,
-        art: art,
-        categoria: p.categoria,
-        texto: normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias),
-        alternar: alternar
-    };
+    art.append(cabecera, detalle);
+    entrada.alternar = alternar;
+    return entrada;
 }
 
     function aplicarFiltros() {

@@ -22,7 +22,7 @@
     <section class="texto_sesion">
         <div class="registro-cuenta">
             <h2 class="titulo">Elige tu nueva contraseña</h2>
-            <form class="formulario-cuenta" action="/restablecer" method="POST">
+            <form class="formulario-cuenta" action="/restablecer" method="POST" data-ajax>
                 <input type="hidden" id="token" name="token">
 
                 <label for="password">Nueva contraseña</label>
@@ -33,6 +33,7 @@
 
                 <button class="boton-cuenta" type="submit">Guardar contraseña</button>
             </form>
+            <p class="mensaje_form" role="alert" hidden></p>
         </div>
     </section>
 
@@ -55,5 +56,6 @@
         const token = new URLSearchParams(window.location.search).get('token');
         document.getElementById('token').value = token || '';
     </script>
+    <script src="js/formularios.js" defer></script>
 </body>
 </html>
