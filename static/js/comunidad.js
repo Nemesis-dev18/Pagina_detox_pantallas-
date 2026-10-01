@@ -1,4 +1,4 @@
-const lista = document.getElementById('lista');
+  const lista = document.getElementById('lista');
     const vacio = document.getElementById('vacio');
     const buscador = document.getElementById('buscador');
     const btnCrear = document.getElementById('btn-crear');
@@ -320,7 +320,6 @@ const lista = document.getElementById('lista');
                         p.titulo = campoTitulo.value.trim();
                         p.categoria = campoCategoria.value;
                         p.contenido = campoContenido.value.trim();
-                        p.editado_en = new Date().toISOString();
                         titulo.textContent = p.titulo;
                         cuerpoPost.textContent = p.contenido;
                         pintarMeta();
