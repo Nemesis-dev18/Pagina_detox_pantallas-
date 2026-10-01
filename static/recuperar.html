@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <title>Nueva contraseña | DETOX_WEB</title>
+    <title>Recuperar contraseña | DETOX_WEB</title>
 </head>
 <body class="inicio_sesion">
+    <!-- Cabecera -->
     <header class="cabecera">
         <div class="hero">
             <div class="hero-left" id="logo">
@@ -19,24 +20,24 @@
         </div>
     </header>
 
+    <!-- Formulario de recuperación -->
     <section class="texto_sesion">
         <div class="registro-cuenta">
-            <h2 class="titulo">Elige tu nueva contraseña</h2>
-            <form class="formulario-cuenta" action="/restablecer" method="POST" data-ajax>
-                <input type="hidden" id="token" name="token">
+            <h2 class="titulo_recuperar">Recuperar contraseña</h2>
+            <form class="formulario-cuenta" action="/recuperar" method="POST" data-ajax>
+                <label for="correo">Correo electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="CORREO ELECTRÓNICO" required>
 
-                <label for="password">Nueva contraseña</label>
-                <input type="password" id="password" name="password" placeholder="NUEVA CONTRASEÑA" minlength="8" required>
-
-                <label for="confirmar-password">Confirmar contraseña</label>
-                <input type="password" id="confirmar-password" name="confirmar_password" placeholder="CONFIRMAR CONTRASEÑA" minlength="8" required>
-
-                <button class="boton-cuenta" type="submit">Guardar contraseña</button>
+                <button class="boton-cuenta" type="submit">Enviar enlace</button>
             </form>
             <p class="mensaje_form" role="alert" hidden></p>
+            <p class="enlace-cuenta"><a href="inicio_sesion.html">Volver a iniciar sesión</a></p>
         </div>
+
+     
     </section>
 
+    <!-- Pie de página -->
     <footer id="contacto" class="pie_pagina">
         <div class="pie_contenido">
             <div class="pie_col pie_marca">
@@ -44,18 +45,14 @@
                 <p>Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.</p>
                 <p class="pie_suave">Parte del Proyecto Esperanza (nombre provisional: <em>Preventiva</em>).</p>
             </div>
+
+
         </div>
 
         <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento. Su finalidad es exclusivamente preventiva, educativa y de concientización.</p>
 
         <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>
-
-    <script>
-        // Toma el token de la dirección (?token=...) y lo mete en el formulario
-        const token = new URLSearchParams(window.location.search).get('token');
-        document.getElementById('token').value = token || '';
-    </script>
     <script src="js/formularios.js" defer></script>
 </body>
 </html>

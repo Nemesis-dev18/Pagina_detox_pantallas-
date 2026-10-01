@@ -24,7 +24,7 @@
 <section class="texto_sesion">
   <div class="registro">
     <h2 class="titulo">Bienvenido de nuevo</h2>
-    <form class="sesion" action="/login" method="POST">
+    <form class="sesion" action="/login" method="POST" data-ajax>
       <div class="user">
         <input type="email" placeholder="CORREO ELECTRÓNICO" id="correo" name="username" required>
       </div>
@@ -35,8 +35,9 @@
         <button class="boton_s" type="submit">Iniciar Sesión</button>
       </div>
     </form>
+    <p class="mensaje_form" role="alert" hidden></p>
             <div class="enlaces-sesion">
-                <a href="recuperar_contraseña.html">¿Olvidaste tu contraseña?</a>
+                <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
                 <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
             </div>
         </div>
@@ -60,5 +61,6 @@
 
         <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>
+    <script src="../static/js/formularios.js" defer></script>
 </body>
 </html>
