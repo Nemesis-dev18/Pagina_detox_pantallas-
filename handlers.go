@@ -518,3 +518,41 @@ func borrarPublicacion(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+// DELETE /publicaciones/{id}/comentarios/{comentarioId}
+// Borra un comentario. Solo el autor o un admin.
+func borrarComentario(w http.ResponseWriter, r *http.Request) {
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "debes iniciar sesión", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("id")
+	comentarioID := r.PathValue("comentarioId")
+	if !reUUID.MatchString(id) || !reUUID.MatchString(comentarioID) {
+		http.Error(w, "comentario no encontrado", http.StatusNotFound)
+		return
+	}
+
+	// Se exige también que el comentario sea de esa publicación
+	var tag pgconn.CommandTag
+	if u.EsAdmin {
+		tag, err = pool.Exec(r.Context(),
+			"DELETE FROM comentarios WHERE id = $1 AND publicacion_id = $2",
+			comentarioID, id)
+	} else {
+		tag, err = pool.Exec(r.Context(),
+			"DELETE FROM comentarios WHERE id = $1 AND publicacion_id = $2 AND autor_id = $3",
+			comentarioID, id, u.ID)
+	}
+	if err != nil {
+		http.Error(w, "error borrando el comentario", http.StatusInternalServerError)
+		return
+	}
+	if tag.RowsAffected() == 0 {
+		http.Error(w, "no encontrado, o no es tuyo", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
