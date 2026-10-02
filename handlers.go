@@ -437,6 +437,8 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
+		// En la base queda el texto original; al público se le muestra tapado
+		c.Contenido = censurar(c.Contenido)
 		comentarios = append(comentarios, c)
 	}
 	if err := rows.Err(); err != nil {
