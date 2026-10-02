@@ -25,12 +25,13 @@
     <section class="texto_sesion">
         <div class="registro-cuenta">
             <h2 class="titulo_recuperar">Recuperar contraseña</h2>
-            <form class="formulario-cuenta" action="/recuperar" method="POST">
+            <form class="formulario-cuenta" action="/recuperar" method="POST" data-ajax>
                 <label for="correo">Correo electrónico</label>
                 <input type="email" id="correo" name="correo" placeholder="CORREO ELECTRÓNICO" required>
 
                 <button class="boton-cuenta" type="submit">Enviar enlace</button>
             </form>
+            <p class="mensaje_form" role="alert" hidden></p>
             <p class="enlace-cuenta"><a href="inicio_sesion.html">Volver a iniciar sesión</a></p>
         </div>
 
@@ -53,5 +54,6 @@
 
         <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>
+    <script src="../static/js/formularios.js" defer></script>
 </body>
 </html>
