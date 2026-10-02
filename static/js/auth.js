@@ -34,6 +34,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     boton.className = 'btn btn_salir';
     boton.textContent = 'Cerrar sesión' + (alias ? ' (' + alias + ')' : '');
 
+    // El servidor exige el encabezado X-CSRF-Token, que un form nativo no envía:
+    // se hace el POST con fetch (csrf.js agrega el encabezado) y luego se redirige.
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            await fetch('/logout', { method: 'POST' });
+        } catch (err) { /* sin conexión: se recarga igual */ }
+        window.location.href = '/static/index.html';
+    });
+
     form.appendChild(boton);
     zona.appendChild(form);
 });
