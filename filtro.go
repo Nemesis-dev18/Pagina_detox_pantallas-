@@ -12,7 +12,7 @@ import (
 
 // Lo que se muestra en lugar de una palabra excluida. Siempre el mismo largo,
 // para no regalar pistas sobre cuál era la palabra.
-const mascara = "#####"
+const mascara = "*****"
 
 // Cada letra puede venir "disfrazada" con estos símbolos (leetspeak).
 var equivalentes = map[rune]string{
@@ -186,7 +186,7 @@ func buscarCoincidencias(texto string) []coincidencia {
 	return out
 }
 
-// censurar devuelve el texto con cada palabra excluida cambiada por #####.
+// censurar devuelve el texto con cada palabra excluida cambiada por *****.
 func censurar(texto string) string {
 	ms := buscarCoincidencias(texto)
 	if len(ms) == 0 {
