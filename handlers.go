@@ -474,10 +474,14 @@ func crearComentario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = pool.Exec(r.Context(),
-		"INSERT INTO comentarios (publicacion_id, autor_id, contenido) VALUES ($1, $2, $3)",
-		id, u.ID, contenido)
+	// Revisa bloqueo por spam y guarda el comentario (ver antispam.go)
+	err = guardarComentario(r.Context(), u.ID, id, contenido)
 	if err != nil {
+		var bloq errBloqueado
+		if errors.As(err, &bloq) {
+			responderBloqueo(w, bloq)
+			return
+		}
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
 			http.Error(w, "la publicación no existe", http.StatusNotFound)
