@@ -113,7 +113,7 @@
             const cuerpo = crearElemento('p', 'cuerpo', c.contenido);
             item.append(meta, cuerpo);
 
-            // El autor del comentario (o un admin) puede editarlo
+            // El autor del comentario (o un admin) puede editarlo o borrarlo
             if (haySesion && (c.alias === miAlias.textContent || soyAdmin)) {
                 const btnEditar = crearElemento('button', 'link_editar', 'Editar');
                 btnEditar.type = 'button';
@@ -121,6 +121,22 @@
                     editarComentario(publicacionId, c, item, cuerpo, btnEditar, contenedor);
                 });
                 item.append(btnEditar);
+
+                const btnBorrar = crearElemento('button', 'link_editar', 'Eliminar');
+                btnBorrar.type = 'button';
+                btnBorrar.addEventListener('click', async () => {
+                    if (!confirm('¿Eliminar este comentario?')) return;
+                    const res = await fetch('/publicaciones/' + publicacionId + '/comentarios/' + c.id, {
+                        method: 'DELETE'
+                    });
+                    if (res.ok) {
+                        cargarComentarios(publicacionId, contenedor);
+                        avisar('Comentario eliminado');
+                    } else {
+                        alert(await res.text());
+                    }
+                });
+                item.append(btnBorrar);
             }
             contenedor.append(item);
         }
