@@ -9,7 +9,6 @@
       
     </style>
     <title>Comunidad | DETOX_WEB</title>
-    <script src="../static/js/csrf.js"></script>
 </head>
 <body class="comunidad">
     <header class="cabecera">
@@ -49,37 +48,6 @@
         </nav>
     </section>
 
-    <!-- Menú desplegable de OPCIONES (va aquí adentro para no depender de otro archivo) -->
-    <script>
-        (function () {
-            var contenedor = document.querySelector('.contenedor_menu');
-            var boton = document.getElementById('boton_menu');
-            if (!contenedor || !boton) return;
-
-            function fijarEstado(abierto) {
-                contenedor.classList.toggle('abierto', abierto);
-                boton.setAttribute('aria-expanded', String(abierto));
-            }
-
-            boton.addEventListener('click', function () {
-                fijarEstado(!contenedor.classList.contains('abierto'));
-            });
-
-            // Se cierra al hacer clic fuera del menú
-            document.addEventListener('click', function (e) {
-                if (!contenedor.contains(e.target)) fijarEstado(false);
-            });
-
-            // Se cierra con la tecla Escape
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    fijarEstado(false);
-                    boton.focus();
-                }
-            });
-        })();
-    </script>
-    
 
 
     <main class="foro">
@@ -193,6 +161,8 @@
 
     <p id="toast" class="toast" role="status" aria-live="polite"></p>
 
+<script src="../static/js/csrf.js"></script>
+<script src="../static/js/menu_desplegable.js"></script>
 <script src="../static/js/comunidad.js"></script>
 <script src="../static/js/auth.js" defer></script>
 </body>
