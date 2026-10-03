@@ -49,11 +49,11 @@ func editarPublicacion(w http.ResponseWriter, r *http.Request) {
 	var tag pgconn.CommandTag
 	if u.EsAdmin {
 		tag, err = pool.Exec(r.Context(),
-			"UPDATE publicaciones SET titulo = $1, contenido = $2, categoria = $3 WHERE id = $4",
+			"UPDATE publicaciones SET titulo = $1, contenido = $2, categoria = $3, editado_en = now() WHERE id = $4",
 			titulo, contenido, categoria, id)
 	} else {
 		tag, err = pool.Exec(r.Context(),
-			"UPDATE publicaciones SET titulo = $1, contenido = $2, categoria = $3 WHERE id = $4 AND autor_id = $5",
+			"UPDATE publicaciones SET titulo = $1, contenido = $2, categoria = $3, editado_en = now() WHERE id = $4 AND autor_id = $5",
 			titulo, contenido, categoria, id, u.ID)
 	}
 	if err != nil {
@@ -100,15 +100,52 @@ func editarComentario(w http.ResponseWriter, r *http.Request) {
 	var tag pgconn.CommandTag
 	if u.EsAdmin {
 		tag, err = pool.Exec(r.Context(),
-			"UPDATE comentarios SET contenido = $1 WHERE id = $2 AND publicacion_id = $3",
+			"UPDATE comentarios SET contenido = $1, editado_en = now() WHERE id = $2 AND publicacion_id = $3",
 			contenido, comentarioID, id)
 	} else {
 		tag, err = pool.Exec(r.Context(),
-			"UPDATE comentarios SET contenido = $1 WHERE id = $2 AND publicacion_id = $3 AND autor_id = $4",
+			"UPDATE comentarios SET contenido = $1, editado_en = now() WHERE id = $2 AND publicacion_id = $3 AND autor_id = $4",
 			contenido, comentarioID, id, u.ID)
 	}
 	if err != nil {
 		http.Error(w, "error guardando los cambios", http.StatusInternalServerError)
+		return
+	}
+	if tag.RowsAffected() == 0 {
+		http.Error(w, "no encontrado, o no es tuyo", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// DELETE /publicaciones/{id}/comentarios/{comentarioId}
+// Borra un comentario. Solo el autor o un admin.
+func borrarComentario(w http.ResponseWriter, r *http.Request) {
+	u, err := usuarioActual(r)
+	if err != nil {
+		http.Error(w, "debes iniciar sesión", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("id")
+	comentarioID := r.PathValue("comentarioId")
+	if !reUUID.MatchString(id) || !reUUID.MatchString(comentarioID) {
+		http.Error(w, "comentario no encontrado", http.StatusNotFound)
+		return
+	}
+
+	var tag pgconn.CommandTag
+	if u.EsAdmin {
+		tag, err = pool.Exec(r.Context(),
+			"DELETE FROM comentarios WHERE id = $1 AND publicacion_id = $2", comentarioID, id)
+	} else {
+		tag, err = pool.Exec(r.Context(),
+			"DELETE FROM comentarios WHERE id = $1 AND publicacion_id = $2 AND autor_id = $3",
+			comentarioID, id, u.ID)
+	}
+	if err != nil {
+		http.Error(w, "error borrando el comentario", http.StatusInternalServerError)
 		return
 	}
 	if tag.RowsAffected() == 0 {

@@ -123,7 +123,7 @@ const buscadorEl = document.getElementById('buscador_mapa');
 const chips = document.querySelectorAll('.chip');
 
 let categoriaActual = '';
-const marcadores = new Map();
+const marcadores = new Map(); // nombre -> marcador de Leaflet
 
 function normalizar(texto) {
     return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -196,6 +196,7 @@ function crearTarjeta(lugar) {
     return art;
 }
 
+// Dibuja los marcadores una sola vez; filtrar solo muestra/oculta.
 for (const lugar of LUGARES) {
     const m = L.marker([lugar.lat, lugar.lng], { icon: iconoRojo }).addTo(mapa);
     m.bindPopup(crearPopup(lugar));
