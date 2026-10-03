@@ -1,8 +1,82 @@
 @charset "UTF-8";
 
 /* ================================================================
-  1. RESET Y ESTILOS BASE
-  ================================================================ */
+   ÍNDICE
+   ----------------------------------------------------------------
+   1. Variables, fuentes y reset base        (todas las páginas)
+   2. Componentes compartidos                (todas las páginas)
+        2.1 Cabecera y logo
+        2.2 Barra superior (.hero) y botones
+        2.3 Tipografía reutilizable
+        2.4 Botón cerrar sesión
+        2.5 Pie de página
+   3. Página de inicio (index.html)
+        3.1 Estructura
+        3.2 Menú lateral y desplegable
+        3.3 Contenido principal y tarjetas
+   4. Inicio de sesión, registro y recuperación
+   5. Página Nosotros
+   6. Página Comunidad (foro)
+   7. Página Mapa
+   8. Accesibilidad: menos movimiento
+   9. Responsive extra (pantallas grandes, tabletas, celulares)
+   ================================================================ */
+
+
+/* ================================================================
+   1. VARIABLES, FUENTES Y RESET BASE
+   ================================================================ */
+
+/* ---- Fuentes del proyecto (afecta a todo el sitio) ---- */
+@font-face {
+  font-family: "Anton";
+  src: url("../fuentes/Anton/Anton-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap; /* muestra texto de inmediato mientras carga la fuente */
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
+  font-weight: 100 900; /* fuente variable: admite todos los pesos */
+  font-display: swap;
+}
+
+/* ---- Variables globales (colores y medidas usados en todas las páginas) ---- */
+:root {
+  /* Rojos */
+  --rojo: #d11c1c;
+  --rojo-fuerte: rgb(203, 11, 11);
+  --rojo-hover: #a80f0f;
+  --rojo-oscuro: #7d1212;
+  --rojo-claro: #ff8a8a;      /* textos de error / enlaces sobre fondo oscuro */
+  --rojo-halo: rgba(209, 28, 28, 0.4); /* resplandor al enfocar campos */
+
+  /* Fondos y superficies */
+  --fondo: #111;
+  --fondo-campo: #0d0d0d;     /* fondo de inputs y listas */
+  --superficie: #262323;
+  --superficie-2: rgb(23, 23, 21);
+  --superficie-3: rgb(40, 40, 29);
+  --gris: #5f5f5f;
+  --gris-oscuro: #2e2e2e;
+
+  /* Bordes y textos */
+  --borde: #666;
+  --borde-suave: #333;
+  --texto-suave: #d9d4c9;
+  --texto-tenue: #918c80;
+
+  /* Tipografías */
+  --fuente-titulo: "Anton", Impact, sans-serif;
+  --fuente-texto: "Inter", system-ui, sans-serif;
+
+  /* Otros */
+  --avatar: 60px;             /* tamaño del avatar en Comunidad */
+  --transicion: 0.2s ease;
+}
+
+/* ---- Reset base (afecta a todos los elementos) ---- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -11,17 +85,19 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* Afecta al <body> de cualquier página */
 body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  font-family: "Inter", sans-serif;
+  font-family: var(--fuente-texto);
 }
 
+/* Imágenes y medios: nunca se salen de su contenedor */
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;
-  height: auto; /* ← agregado */
+  height: auto;
 }
 
 button { cursor: pointer; background: none; border: none; }
@@ -30,98 +106,323 @@ ul, ol { list-style: none; }
 a { color: inherit; text-decoration: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 
-/* Fuentes del proyecto */
-@font-face {
-  font-family: "Anton";
-  src: url("../fuentes/Anton/Anton-Regular.ttf") format("truetype");
-}
-@font-face {
-  font-family: "inter";
-  src: url("../fuentes/Inter/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
-}
+/* Cualquier elemento con el atributo hidden desaparece (lo usa Comunidad) */
+[hidden] { display: none !important; }
 
-/* Colores del proyecto (los mismos de siempre, ahora en un solo lugar) */
-:root {
-  --rojo: #d11c1c;
-  --rojo-fuerte: rgb(203, 11, 11);
-  --rojo-hover: #a80f0f;
-  --fondo: #111;
-  --superficie: #262323;
-  --superficie-2: rgb(23, 23, 21);
-  --gris: #5f5f5f;
-  --texto-suave: #d9d4c9;
-}
-
-/* Foco visible para quien navega con teclado */
+/* Foco visible para quien navega con teclado (enlaces y botones) */
 a:focus-visible,
 button:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 3px;
 }
 
+/* Texto solo para lectores de pantalla (oculto visualmente) */
+.solo_lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
 /* ================================================================
-  2. ESTRUCTURA GENERAL DE INICIO Y SESION
-  ================================================================ */
-.index , .inicio_sesion {
-  /* Afecta al <body> de index.html y de las páginas de sesión. */
-  display: flex;
-  flex-wrap: wrap;
-  background-color: var(--fondo);
-  color: #fff;
-  font-size: 16px;
-  line-height: 1.6;
-  min-height: 50vh;
-}
+   2. COMPONENTES COMPARTIDOS
+   ================================================================ */
 
-.index {
-  /* Solo index.html: ocupa toda la pantalla sin estirar las filas. */
-  min-height: 100vh;
-  align-content: flex-start;
-}
+/* ---------- 2.1 Cabecera y logo ---------- */
 
-/* Cabecera de las páginas generales */
+/* Afecta al <header class="cabecera"> de las páginas generales */
 .cabecera {
-  /* Afecta al <header class="cabecera">. */
   flex: 1 0 100%;
+  min-height: 80px;
   padding: clamp(10px, 2vw, 20px);
   text-align: center;
-  border-bottom: 3px solid var(--rojo-fuerte);
   background-color: var(--superficie);
-  min-height: 80px;
+  border-bottom: 3px solid var(--rojo-fuerte);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
+/* Afecta a la imagen dentro de #logo (logo de la cabecera principal) */
 #logo img {
-  /* Afecta a la imagen dentro de #logo: tamaño y borde del logo. */
   width: 80px;
   height: 70px;
-  object-fit: cover;
   margin: 0 auto;
+  object-fit: cover;
   border-radius: 25px;
   border: 3px solid var(--rojo);
 }
 
-/* Menú lateral de la página de inicio */
+/* Afecta al logo de la página Mapa */
+#logo_mapa img {
+  width: 80px;
+  height: 70px;
+  margin: 0 auto;
+  border-radius: 25px;
+}
+
+/* ---------- 2.2 Barra superior (.hero) y botones ---------- */
+
+/* Afecta a la barra superior de index, sesión, registro, comunidad y mapa */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+  padding: 0 clamp(8px, 2vw, 10px);
+  background-color: var(--superficie);
+  font-family: var(--fuente-titulo);
+}
+
+.hero-left,
+.hero-right {
+  display: flex;
+  align-items: center;
+}
+
+.hero-right { gap: 10px; }
+
+/* Contenedor del título dentro de la barra superior */
+.hero-center {
+  flex: 1;
+  margin-left: clamp(10px, 2vw, 20px);
+  padding-left: clamp(10px, 2vw, 20px);
+  text-align: left;
+  border-left: 3px solid #fff;
+}
+
+.hero-center h1 {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  color: #fff;
+}
+
+/* Afecta a cualquier enlace con apariencia de botón (.btn) */
+.btn {
+  padding: 8px 14px;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  transition: background-color var(--transicion),
+              border-color var(--transicion),
+              transform var(--transicion);
+}
+
+.btn:hover {
+  background-color: var(--rojo);
+  border-color: var(--rojo);
+  transform: translateY(-2px);
+}
+
+/* Responsive de la barra superior (celulares y tabletas pequeñas) */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    height: auto;
+    padding: 15px 10px;
+    gap: 10px;
+  }
+
+  .hero-center {
+    margin-left: 0;
+    padding-left: 0;
+    text-align: center;
+    border-left: 0;
+  }
+}
+
+/* ---------- 2.3 Tipografía reutilizable ---------- */
+
+/* Afecta a los títulos con class="titulo" (formularios e inicio) */
+.titulo {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 2rem;
+  padding: clamp(15px, 4vw, 30px);
+  font-family: var(--fuente-titulo);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Título grande de la página de recuperar contraseña */
+.titulo_recuperar {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: clamp(15px, 4vw, 30px);
+  font-family: var(--fuente-titulo);
+  font-size: clamp(2rem, 4vw, 5rem);
+  line-height: 1.2;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+
+/* Texto descriptivo debajo del título de inicio */
+.subtitulo {
+  max-width: 420px;
+  font-family: var(--fuente-texto);
+  font-weight: 400;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  line-height: 1.4;
+  color: var(--texto-suave);
+}
+
+/* ---------- 2.4 Botón cerrar sesión (lo crea static/js/auth.js) ---------- */
+.form_salir { margin: 0; }
+
+.btn_salir {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---------- 2.5 Pie de página ---------- */
+
+/* Pie genérico: afecta a todos los <footer> que no tengan .pie_pagina */
+footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: clamp(180px, 20vw, 200px);
+  max-height: 300px;
+  margin: auto;
+  text-align: center;
+}
+
+/* Texto legal dentro del footer */
+.pies {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+/* Pie completo del proyecto: afecta a <footer class="pie_pagina"> */
+footer.pie_pagina {
+  flex: 0 0 100%;
+  width: 100%;
+  min-height: 0;
+  max-height: none;
+  margin: clamp(2rem, 5vw, 4rem) 0 0;
+  padding: clamp(24px, 4vw, 40px) clamp(16px, 4vw, 40px) 20px;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 24px;
+  text-align: left;
+  background-color: var(--superficie-2);
+  border-top: 3px solid var(--rojo-fuerte);
+  color: var(--texto-suave);
+  font-family: var(--fuente-texto);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Rejilla del pie: columna ancha + columna angosta */
+.pie_contenido {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: clamp(20px, 4vw, 48px);
+}
+
+.pie_titulo,
+.pie_pagina h3 {
+  margin-bottom: 8px;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.pie_titulo { font-size: 1.6rem; }
+.pie_pagina h3 { font-size: 1.1rem; }
+
+.pie_pagina ul { padding: 0; margin: 0; }
+.pie_pagina li { margin-bottom: 6px; overflow-wrap: anywhere; }
+.pie_suave { margin-top: 6px; opacity: 0.75; }
+
+.pie_pagina a { color: #fff; }
+
+.pie_pagina a:hover,
+.pie_pagina a:focus-visible {
+  color: var(--rojo);
+  text-decoration: underline;
+}
+
+/* Recuadro de aviso dentro del pie */
+.pie_aviso {
+  padding: 12px 16px;
+  border-left: 3px solid var(--rojo-fuerte);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Línea de derechos reservados al final del pie */
+footer.pie_pagina .pies {
+  justify-content: flex-start;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: left;
+  opacity: 0.8;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 720px) {
+  .pie_contenido { grid-template-columns: 1fr; }
+}
+
+
+/* ================================================================
+   3. PÁGINA DE INICIO (index.html)
+   ================================================================ */
+
+/* ---------- 3.1 Estructura ---------- */
+
+/* Afecta al <body> de index.html y de las páginas de sesión */
+.index,
+.inicio_sesion {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 50vh;
+  background-color: var(--fondo);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Solo index.html: ocupa toda la pantalla sin estirar las filas */
+.index {
+  min-height: 100vh;
+  align-content: flex-start;
+}
+
+/* ---------- 3.2 Menú lateral y desplegable ---------- */
+
+/* Columna del menú; es la referencia para el menú desplegable */
 .contenedor_menu {
-  /* Columna del menú. Es la referencia para el menú desplegable. */
   position: relative;
   flex: 0 0 auto;
   width: clamp(100px, 12vw, 130px);
-  background-color: var(--superficie);
+  background-color: var(--fondo);
   z-index: 20;
 }
 
+/* <aside id="menu_lateral">: la pastilla roja del menú */
 #menu_lateral {
-  /* Afecta al <aside id="menu_lateral"> de index.html (la pastilla roja). */
   display: flex;
-  margin: clamp(10px, 2vw, 20px);
-  padding: clamp(10px, 2vw, 20px) 0;
-  height: 90%;
-  background-color: var(--rojo-fuerte);
-  border-radius: 20px;
-  border: 6px solid rgb(10, 7, 7);
   align-items: center;
   justify-content: center;
+  height: 90%;
+  margin: clamp(10px, 2vw, 20px);
+  padding: clamp(10px, 2vw, 20px) 0;
+  background-color: var(--rojo-fuerte);
+  border: 6px solid rgb(10, 7, 7);
+  border-radius: 20px;
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -131,27 +432,34 @@ button:focus-visible {
   box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.35);
 }
 
+/* Botón OPCIONES del menú lateral */
 .texto_menu {
-  /* Afecta al botón OPCIONES del menú lateral. */
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-self: stretch;          /* ocupa todo el alto de la pastilla roja */
   gap: 1.2rem;
   width: 100%;
-  padding: 0.4rem 0;
+  padding: 0.6rem 0;
   color: #fff;
-  font-family: "Anton", sans-serif;
-  font-size: 1.6rem;
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
 }
 
+/* La palabra OPCIONES: se estira para llenar todo el espacio disponible */
 .texto_menu_letras {
+  flex: 1 1 auto;               /* crece hasta ocupar el alto sobrante */
+  min-height: 0;
   writing-mode: vertical-rl;
   text-orientation: upright;
   letter-spacing: 0.35rem;
+  text-align: justify;
+  text-align-last: justify;     /* reparte las letras de punta a punta */
+  text-justify: inter-character;
 }
 
+/* Flechita que gira cuando el menú se abre */
 .flecha {
-  /* Flechita que gira cuando el menú se abre. */
   width: 12px;
   height: 12px;
   border-top: 3px solid #fff;
@@ -160,9 +468,7 @@ button:focus-visible {
   transition: transform 0.35s ease;
 }
 
-.contenedor_menu.abierto .flecha {
-  transform: rotate(225deg);
-}
+.contenedor_menu.abierto .flecha { transform: rotate(225deg); }
 
 /* Menú desplegable (se desliza al presionar OPCIONES) */
 .menu_desplegable {
@@ -176,15 +482,17 @@ button:focus-visible {
   border-radius: 20px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65);
 
-  /* Cerrado: recortado desde la izquierda y sin poder hacer clic */
+  /* Estado cerrado: recortado desde la izquierda y sin clics */
   clip-path: inset(0 100% 0 0 round 20px);
   opacity: 0;
   transform: translateX(-16px);
   visibility: hidden;
   pointer-events: none;
-  transition: clip-path 0.4s ease, opacity 0.3s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+  transition: clip-path 0.4s ease, opacity 0.3s ease,
+              transform 0.4s ease, visibility 0s linear 0.4s;
 }
 
+/* Estado abierto (la clase .abierto la pone el JavaScript) */
 .contenedor_menu.abierto .menu_desplegable {
   clip-path: inset(0 0 0 0 round 20px);
   opacity: 1;
@@ -200,17 +508,20 @@ button:focus-visible {
   gap: 4px;
 }
 
+/* Enlaces dentro del menú desplegable */
 .menu_desplegable a {
   display: block;
   padding: 12px 18px;
   border-left: 4px solid transparent;
   border-radius: 10px;
   color: #fff;
-  font-family: "Anton", sans-serif;
+  font-family: var(--fuente-titulo);
   font-size: 1.2rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  transition: background-color 0.2s ease, border-color 0.2s ease, padding-left 0.2s ease;
+  transition: background-color var(--transicion),
+              border-color var(--transicion),
+              padding-left var(--transicion);
 }
 
 .menu_desplegable a:hover,
@@ -219,36 +530,38 @@ button:focus-visible {
   padding-left: 24px;
 }
 
+/* Enlace de la página actual */
 .menu_desplegable a[aria-current="page"] {
   border-left-color: var(--rojo);
   background-color: rgba(255, 255, 255, 0.07);
 }
 
+/* Línea separadora entre grupos de enlaces */
 .menu_desplegable .separador {
   height: 1px;
   margin: 8px 12px;
   background-color: rgba(255, 255, 255, 0.14);
 }
 
-/* Contenido principal de inicio */
+/* ---------- 3.3 Contenido principal y tarjetas ---------- */
+
+/* Contenedor general del contenido de index.html */
 .contenido {
-  /* Afecta al contenedor general del contenido de index.html. */
   flex: 1;
+  min-width: 0;
   margin: clamp(10px, 2vw, 20px);
   padding: clamp(20px, 3vw, 30px) clamp(12px, 2vw, 20px);
-  min-width: 0;
-  max-height: 10000px;
-  background-color: var(--superficie-2);
+  background-color: var(---fondo);
   border-radius: 10px;
 }
 
+/* Fila con el título y la imagen principal */
 .contenido-encabezado {
-  /* Afecta a la fila que contiene el título y la imagen principal. */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
   flex-wrap: wrap;
+  gap: 30px;
 }
 
 .contenido-encabezado h1 {
@@ -256,15 +569,15 @@ button:focus-visible {
   max-width: 520px;
 }
 
+/* Bloque del título y subtítulo de inicio */
 .contenido-principal {
-  /* Afecta al bloque del título y subtítulo de inicio. */
   flex: 1 1 400px;
-  max-width: 520px;
   min-width: 0;
+  max-width: 520px;
 }
 
+/* En inicio el título va alineado con el subtítulo */
 .contenido-principal .titulo {
-  /* En inicio el título va alineado con el subtítulo. */
   padding: 0;
   margin-bottom: 1.2rem;
 }
@@ -274,6 +587,7 @@ button:focus-visible {
   border-left: 4px solid var(--rojo);
 }
 
+/* Contenedor de la imagen principal de index.html */
 .imagen2 {
   flex: 1 1 380px;
   min-width: 0;
@@ -282,7 +596,6 @@ button:focus-visible {
 }
 
 .imagen2 img {
-  /* Afecta a la imagen principal de index.html. */
   width: 100%;
   max-width: 850px;
   height: clamp(280px, 45vw, 500px);
@@ -292,164 +605,84 @@ button:focus-visible {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
 }
 
-/* Bloques de la página de inicio */
+/* Rejilla de las 3 tarjetas de la página de inicio */
 .bloques {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(10px, 2vw, 20px);
-  padding: 0 clamp(10px, 2vw, 20px) clamp(20px, 4vw, 40px);
   margin-top: clamp(40px, 8vw, 100px);
+  padding: 0 clamp(10px, 2vw, 20px) clamp(20px, 4vw, 40px);
   font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
-.contenedor_1, .contenedor_2, .contenedor_3 {
-  /* Afecta a cada una de las tres tarjetas de index.html. */
+/* Cada tarjeta de index.html */
+.contenedor_1,
+.contenedor_2,
+.contenedor_3 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 0.75rem;
   min-height: clamp(140px, 20vw, 180px);
-  background-color: var(--gris);
-  border-radius: 10px;
-  border-bottom: 4px solid var(--rojo);
   padding: clamp(12px, 2vw, 20px);
+  background-color: var(--gris);
+  border-bottom: 4px solid var(--rojo);
+  border-radius: 10px;
   color: #fff;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.contenedor_1:hover, .contenedor_2:hover, .contenedor_3:hover {
+.contenedor_1:hover,
+.contenedor_2:hover,
+.contenedor_3:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5);
 }
 
+/* Número de cada tarjeta (01, 02, 03) */
 .bloques span {
-  /* Número de cada tarjeta (01, 02, 03). */
   align-self: flex-start;
   padding: 0 12px;
   background-color: var(--rojo-fuerte);
   border-radius: 999px;
-  font-family: "Anton", sans-serif;
+  font-family: var(--fuente-titulo);
   font-size: 0.95rem;
   letter-spacing: 1px;
   line-height: 1.8;
 }
 
 .bloques h2 {
-  font-family: "Anton", sans-serif;
+  font-family: var(--fuente-titulo);
   font-weight: 400;
   font-size: clamp(1.5rem, 2.6vw, 2rem);
   letter-spacing: 1px;
   line-height: 1.1;
 }
 
-/* Barra superior de las páginas generales */
+/* Contenedor de la página Mapa (cuerpo de mapa.html) */
 .mapa {
   flex: 1;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  background-color: var(--fondo, #111);
-  color: #fff;
   min-height: 100vh;
-}
-.hero {
-  /* Afecta a la barra superior de index, sesión, registro y mapa. */
-  font-family: "Anton", sans-serif;
-  background-color: var(--superficie);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 clamp(8px, 2vw, 10px);
-  min-height: 80px;
-}
-
-.hero-left, .hero-right {
-  display: flex;
-  align-items: center;
-}
-
-.hero-center {
-  /* Afecta al contenedor del título dentro de la barra superior. */
-  flex: 1;
-  text-align: left;
-  margin-left: clamp(10px, 2vw, 20px);
-  padding-left: clamp(10px, 2vw, 20px);
-  border-left: 3px solid #fff;
-}
-
-.hero-center h1 {
-  font-size: clamp(1.2rem, 3vw, 2rem);
+  background-color: var(--fondo);
   color: #fff;
 }
 
-.btn {
-  /* Afecta al enlace con apariencia de botón. */
-  background: transparent;
-  color: #fff;
-  padding: 8px 14px;
-  border: 2px solid #fff;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.btn:hover {
-  background-color: var(--rojo);
-  border-color: var(--rojo);
-  transform: translateY(-2px);
-}
-
-/* Tipografía reutilizable */
-.titulo {
-  /* Afecta a los títulos con class="titulo" de los formularios. */
-  font-family: "Anton", sans-serif;
-  text-transform: uppercase;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.2;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 520px;
-  padding: clamp(15px, 4vw, 30px);
-}
-
-.titulo_recuperar{
-  /* Afecta a los títulos con class="titulo" de los formularios. */
-  font-family: "Anton", sans-serif;
-  text-transform: uppercase;
-  font-size: clamp(2rem, 4vw, 5rem);
-  line-height: 1.2;
-  letter-spacing: 5px;
-  margin-bottom: 2rem;
-  width: 100%;
- 
-  padding: clamp(15px, 4vw, 30px);
-}
-
-
-.subtitulo {
-  /* Afecta al texto descriptivo debajo del título de inicio. */
-  font-family: "Inter", sans-serif;
-  font-weight: 400;
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
-  line-height: 1.4;
-  color: var(--texto-suave);
-  max-width: 420px;
-}
-
-
-/* Responsive general */
+/* Responsive de inicio (768px o menos) */
 @media (max-width: 768px) {
-  /* Afecta a pantallas de 768px o menos. */
+  /* El menú pasa de columna lateral a barra horizontal */
   .contenedor_menu {
     flex: 1 0 100%;
     width: 100%;
   }
 
   #menu_lateral {
+    min-height: 64px;
     margin: 10px;
     padding: 6px 16px;
-    min-height: 64px;
     border-radius: 100px;
   }
 
@@ -457,22 +690,19 @@ button:focus-visible {
     flex-direction: row;
     justify-content: center;
     gap: 1rem;
-    font-size: 1.3rem;
+    padding: 0 8px;
+    font-size: clamp(1.3rem, 5.5vw, 1.9rem);
   }
 
+  /* En celular la palabra se estira a lo ancho de toda la barra */
   .texto_menu_letras {
     writing-mode: horizontal-tb;
     text-orientation: mixed;
     letter-spacing: 0.3rem;
   }
 
-  .flecha {
-    transform: rotate(135deg);
-  }
-
-  .contenedor_menu.abierto .flecha {
-    transform: rotate(-45deg);
-  }
+  .flecha { transform: rotate(135deg); }
+  .contenedor_menu.abierto .flecha { transform: rotate(-45deg); }
 
   /* En el celular el menú se despliega hacia abajo */
   .menu_desplegable {
@@ -489,29 +719,9 @@ button:focus-visible {
     transform: translateY(0);
   }
 
-  .contenido {
-    margin: 10px;
-    max-height: none;
-  }
+  .contenido { margin: 10px; }
 
-  .hero {
-    flex-direction: column;
-    height: auto;
-    padding: 15px 10px;
-    gap: 10px;
-    background-color: var(--superficie);
-  }
-
-  .hero-center {
-    padding-left: 0;
-    text-align: center;
-    border-left: 0;
-    margin-left: 0;
-  }
-
-  .imagen2 img {
-    border-radius: 40px;
-  }
+  .imagen2 img { border-radius: 40px; }
 
   .bloques {
     grid-template-columns: 1fr;
@@ -519,63 +729,44 @@ button:focus-visible {
   }
 }
 
-/* Menos movimiento para quien lo prefiere así */
-@media (prefers-reduced-motion: reduce) {
-  .menu_desplegable,
-  .flecha,
-  .btn,
-  .contenedor_1, .contenedor_2, .contenedor_3 {
-    transition: none;
-  }
-}
-
 
 /* ================================================================
-  3. PAGINAS DE INICIO DE SESION, REGISTRO Y RECUPERACION
-  ================================================================ */
-.inicio_sesion{
-  display: flex;
-  flex-wrap: wrap;
-}
+   4. INICIO DE SESIÓN, REGISTRO Y RECUPERACIÓN
+   ================================================================ */
 
+/* Área completa que contiene los formularios */
 .texto_sesion {
-  /* Afecta al área completa que contiene los formularios. */
   flex: 0 0 100%;
-  background-color: rgb(40, 40, 29);
-  font-family: "Anton", sans-serif;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  flex-wrap: wrap;
-  padding: clamp(15px, 4vw, 30px);
   gap: clamp(15px, 3vw, 30px);
+  padding: clamp(15px, 4vw, 30px);
+  background-color: var(--superficie-3);
+  font-family: var(--fuente-titulo);
   font-size: clamp(1.1rem, 2vw, 1.6rem);
-
 }
 
-.texto_sesion article {
-  flex: 1 1 500px;
-}
-.titulo{
-  padding: clamp(15px, 4vw, 30px);;
-}
+.texto_sesion article { flex: 1 1 500px; }
 
+/* ---------- Formulario de inicio de sesión ---------- */
+
+/* Contenedores de correo y contraseña del login */
 .user,
 .contraseña {
-  /* Afecta a los contenedores de correo y contraseña del login. */
   margin: clamp(1rem, 3vw, 2rem);
 }
 
+/* Formulario de inicio de sesión */
 .registro {
-  /* Afecta al formulario de inicio de sesión. */
+  /* El ancho descuenta los márgenes laterales para no desbordar en celular */
+  width: min(40rem, calc(100% - 2 * clamp(1rem, 7vw, 7rem)));
   margin: clamp(1rem, 7vw, 7rem);
-  width: min(40rem, 100%);
 }
 
-.registro .sesion {
-  align-items: center;
-}
+.registro .sesion { align-items: center; }
 
 .registro .boton_sesion {
   display: flex;
@@ -583,68 +774,66 @@ button:focus-visible {
   margin-left: clamp(10px, 4vw, 40px);
 }
 
+/* Botón "Iniciar Sesión" */
 .boton_sesion button {
-  /* Afecta al botón Iniciar Sesión del formulario de login. */
   width: 100%;
   min-height: 52px;
   padding: 10px 16px;
-  background-color: #d11c1c;
+  background-color: var(--rojo);
   color: #fff;
   border: 2px solid #fff;
   border-radius: 6px;
   font: inherit;
-  cursor: pointer;
 }
 
+/* Campos de correo y contraseña del login */
 .registro #correo,
 .registro #password {
-  /* Afecta a los campos de correo y contraseña del login. */
-  font-family: "Inter", sans-serif;
-  border-radius: 10px;
-  height: clamp(48px, 5vw, 60px);
   width: min(80%, 420px);
-  font-size: clamp(0.5rem, 1vw, 15px);
+  height: clamp(48px, 5vw, 60px);
   padding: 10px;
+  border-radius: 10px;
+  font-family: var(--fuente-texto);
+  font-size: 1rem; /* antes era demasiado pequeño en algunas pantallas */
 }
 
-.registro input::placeholder {
-  font-family: "Inter", sans-serif;
-}
+.registro input::placeholder { font-family: var(--fuente-texto); }
 
-.imagen2_sesion {
-  /* Afecta al contenedor de imagen de las páginas de sesión. */
-  flex: 0 1 580px;
-  display: flex;
-  justify-content: flex-end;
-  border-left: 3px solid #d11c1c;
-  padding-left: clamp(15px, 3vw, 30px);
-}
-
+/* Enlaces de ayuda bajo el login (¿Olvidaste tu contraseña?, Crear cuenta) */
 .enlaces-sesion {
-  margin-top: 1rem;
-  font-size: 1.2rem;
   width: min(50%, 420px);
+  margin-top: 1rem;
   margin-left: clamp(0px, 5vw, 18%);
+  font-size: 1.2rem;
   line-height: clamp(2rem, 5vw, 4rem);
 }
 
 .enlaces-sesion .linkeo {
+  color: var(--rojo);
   text-decoration: underline;
-  color: #d11c1c;
+}
+
+/* Imagen lateral de las páginas de sesión */
+.imagen2_sesion {
+  flex: 0 1 580px;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: clamp(15px, 3vw, 30px);
+  border-left: 3px solid var(--rojo);
 }
 
 .imagen2_sesion img {
-  /* Afecta a la imagen de las páginas de sesión. */
   width: min(100%, 820px);
   height: clamp(350px, 55vw, 660px);
   object-fit: cover;
+  border: 3px solid var(--rojo);
   border-radius: 60px;
-  border: 3px solid #d11c1c;
-  margin-right: 0;
-  
 }
+
+/* ---------- Registro y recuperación de contraseña ---------- */
+
+/* Contenedor de las páginas de registro y recuperar contraseña */
 .registro-cuenta {
-  /* Afecta al contenedor de registro y recuperación de contraseña. */
   flex: 1 1 500px;
   width: min(100%, 620px);
   max-width: 620px;
@@ -653,31 +842,29 @@ button:focus-visible {
 
 .registro-cuenta .titulo {
   margin: 0 0 1.5rem;
-  white-space: normal;
   text-align: center;
+  white-space: normal;
 }
 
+/* Formulario de crear o recuperar cuenta */
 .formulario-cuenta {
-  /* Afecta al formulario de crear o recuperar cuenta. */
   display: flex;
   flex-direction: column;
+  gap: 0.3rem;
   width: 100%;
-  gap: 0.30rem;
-  font-family: "Inter", sans-serif;
-  border-left: 3px solid #d11c1c;
-  border-right: 3px solid #d11c1c;
   padding: 0 30px;
+  border-left: 3px solid var(--rojo);
+  border-right: 3px solid var(--rojo);
+  font-family: var(--fuente-texto);
 }
 
 .formulario-cuenta label {
-  /* Afecta a las etiquetas de los campos del formulario. */
   width: 100%;
   font-size: 0.95rem;
   color: #fff;
 }
 
 .formulario-cuenta input {
-  /* Afecta a los campos de entrada de registro y recuperación. */
   width: 100%;
   height: 50px;
   padding: 10px 14px;
@@ -686,55 +873,39 @@ button:focus-visible {
   font: inherit;
 }
 
-.formulario-cuenta input::placeholder {
-  font-family: "Inter", sans-serif
-}
+.formulario-cuenta input::placeholder { font-family: var(--fuente-texto); }
 
+/* Botón principal de registro o recuperación */
 .boton-cuenta {
-  /* Afecta al botón principal de registro o recuperación. */
   width: 100%;
   height: 56px;
   margin-top: 1rem;
-  background-color: #d11c1c;
+  background-color: var(--rojo);
   color: #fff;
   border: 2px solid #fff;
   border-radius: 6px;
-  font-family: "Anton", sans-serif;
+  font-family: var(--fuente-titulo);
   font-size: 1.2rem;
 }
 
+/* Enlaces inferiores de registro y recuperación */
 .enlace-cuenta {
   margin-top: 1rem;
   text-align: center;
-  font-family: "Inter", sans-serif;
+  font-family: var(--fuente-texto);
   font-size: 0.95rem;
 }
 
 .enlace-cuenta a {
-  /* Afecta a los enlaces inferiores de registro y recuperación. */
-  color: #d11c1c;
+  color: var(--rojo);
   text-decoration: underline;
 }
 
-footer{
-  /* Afecta a todos los pies de página. */
-  margin-top: clamp(2rem, 5vw, 8%);
-  min-height: clamp(180px, 20vw, 200px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin: auto;
-  max-height:300px ;
-
-}
-
-/* Estados hover y foco de los formularios */
+/* ---------- Estados hover / foco de los formularios ---------- */
 .registro #correo,
 .registro #password,
 .formulario-cuenta input {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
 }
 
 .registro #correo:focus,
@@ -742,12 +913,12 @@ footer{
 .formulario-cuenta input:focus {
   outline: none;
   border-color: var(--rojo);
-  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
+  box-shadow: 0 0 0 3px var(--rojo-halo);
 }
 
 .boton_sesion button,
 .boton-cuenta {
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--transicion), transform var(--transicion);
 }
 
 .boton_sesion button:hover,
@@ -757,146 +928,159 @@ footer{
 }
 
 .enlaces-sesion a:hover,
-.enlace-cuenta a:hover {
-  color: #fff;
-}
+.enlace-cuenta a:hover { color: #fff; }
 
 
 /* ================================================================
-  4. PAGINA NOSOTROS
-  ================================================================ */
+   5. PÁGINA NOSOTROS (nosotros.html)
+   ================================================================ */
 
-.cabecera_nosotros{
-  /* Afecta al header exclusivo de nosotros.html. */
-  color: #e5c7c7;
-}
+/* Header exclusivo de nosotros.html */
+.cabecera_nosotros { color: #e5c7c7; }
 
+/* Barra superior de nosotros.html */
 .hero_nosotros {
-  /* Afecta a la barra superior de nosotros.html. */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   height: 80px;
   padding: 0 10px;
   background-color: #958e8e;
   color: #0f0202;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
 }
 
+/* Título de la barra superior de Nosotros */
 .hero_nosotros h1 {
-  /* Afecta al título de la barra superior de Nosotros. */
-  color: #000000;
   width: auto;
   margin-left: clamp(20px, 5vw, 50px);
+  color: #000;
   white-space: nowrap;
 }
+
+/* Espacio que contiene el título de la cabecera de Nosotros */
 .hero-center_nosotros {
-  /* Afecta al espacio que contiene el título de la cabecera de Nosotros. */
-  width: max-content;
   flex: 0 0 auto;
-}
-.separador_br{
-  background-color: #7d1212;
-  height: 5px;
-  width: 100%;
-}
-.hero_nosotros .linkeo {
-  margin-left: auto;
+  width: max-content;
 }
 
+.hero_nosotros .linkeo { margin-left: auto; }
+
+/* Navegación de Nosotros */
 .hero_nosotros nav {
-  /* Afecta a la navegación de Nosotros. */
   display: flex;
   align-items: center;
 }
-.imagen2_nosotros {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
+
+.hero_nosotros nav a {
+  margin: 0 clamp(8px, 2vw, 20px) clamp(8px, 2vw, 20px) 0;
+  padding: 0 clamp(8px, 2vw, 20px);
+  border-left: 3px solid #000;
+  border-right: 3px solid #000;
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
-.imagen2_nosotros img {
-  /* Afecta a la imagen grande de la sección Nosotros. */
-  width: 100%;
-  margin: 0;
-  height: clamp(280px, 45vw, 500px);
-  object-fit: cover;
-  border-radius: 60px;
-  border: 3px solid #000000;
-
-}
+/* Logo de Nosotros */
 #logo_nosotros img {
   width: clamp(60px, 8vw, 80px);
   height: clamp(55px, 7vw, 70px);
-
   margin: 0 auto;
+  border: 3px solid #000;
   border-radius: 25px;
-  border: 3px solid #000000;
-}
-.imagen2_nosotros,
-.texto_nosotros {
-  flex: 1;
 }
 
-.texto_nosotros h1 {
-  /* Afecta al título QUIENES SOMOS. */
-  width: min(400px, 100%);
-  max-width: 100%;
-  font-size: clamp(2.2rem, 5vw, 5rem);
-}
-.texto_nosotros{
-  margin-left: 0;
-  width: auto;
-  padding-inline: clamp(15px, 5vw, 70px);
-}
-.texto_nosotros p {
-  /* Afecta a los párrafos descriptivos de Nosotros. */
-  padding: 10px 0;
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+/* Línea roja separadora bajo la cabecera */
+.separador_br {
+  width: 100%;
+  height: 5px;
+  background-color: var(--rojo-oscuro);
 }
 
-
+/* Organiza imagen, texto y bloques de la sección informativa */
 .informacion_relativa {
-  /* Organiza imagen, texto y bloques de la sección informativa. */
-
   display: grid;
   grid-template-columns: 1.4fr 0.8fr;
   align-items: center;
   gap: clamp(20px, 4vw, 40px);
   padding: clamp(10px, 2vw, 20px);
-
 }
 
-.bloques_nosotros {
-  /* Organiza los tres bloques de beneficios de Nosotros. */
-  grid-column: 1 / -1;
+/* Imagen y texto comparten el espacio disponible */
+.imagen2_nosotros,
+.texto_nosotros { flex: 1; }
+
+.imagen2_nosotros {
+  display: flex;
+  justify-content: center;
+}
+
+/* Imagen grande de la sección Nosotros */
+.imagen2_nosotros img {
   width: 100%;
+  height: clamp(280px, 45vw, 500px);
+  margin: 0;
+  object-fit: cover;
+  border: 3px solid #000;
+  border-radius: 60px;
+}
+
+.texto_nosotros {
+  width: auto;
+  margin-left: 0;
+  padding-inline: clamp(15px, 5vw, 70px);
+}
+
+/* Título "QUIÉNES SOMOS" */
+.texto_nosotros h1 {
+  width: min(400px, 100%);
+  max-width: 100%;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+}
+
+/* Párrafos descriptivos de Nosotros */
+.texto_nosotros p {
+  padding: 10px 0;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+}
+
+/* Rejilla de los tres bloques de beneficios */
+.bloques_nosotros {
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
+  width: 100%;
   min-width: 0;
 }
 
+/* Cada bloque individual de beneficios */
 .bloques_nosotros > div {
-  /* Afecta a cada bloque individual de beneficios. */
   width: 100%;
   min-height: clamp(140px, 20vw, 180px);
-  padding: clamp(12px, 2vw, 20px);
   margin-top: clamp(15px, 3vw, 30px);
-  border-color: #000000;
+  padding: clamp(12px, 2vw, 20px);
+  border-color: #000;
   font-size: 1.2rem;
 }
 
+/* Texto dentro de cada bloque de beneficios */
 .bloques_nosotros > div p {
-  /* Afecta al texto dentro de cada bloque de beneficios. */
   max-width: 300px;
-  font-size: clamp(1rem, 2vw, 1.5rem);
   margin-left: clamp(10px, 2vw, 30px);
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
+/* Bloques con borde derecho (columnas de datos) */
+.bloque_1,
+.bloque_2 {
+  margin: 0;
+  padding: 0 clamp(20px, 5vw, 70px);
+  border-right: 3px solid #000;
+  font-size: 1.5rem;
+}
+
+/* Responsive de Nosotros */
 @media (max-width: 768px) {
-  .informacion_relativa {
-    grid-template-columns: 1fr;
-  }
+  .informacion_relativa { grid-template-columns: 1fr; }
 
   .bloques_nosotros {
     grid-column: auto;
@@ -904,643 +1088,962 @@ footer{
   }
 
   .hero_nosotros {
-    height: auto;
-    min-height: 80px;
     flex-wrap: wrap;
     gap: 10px;
+    height: auto;
+    min-height: 80px;
     padding-block: 10px;
   }
 
   .hero_nosotros h1 {
-    white-space: normal;
     margin-left: 20px;
+    white-space: normal;
   }
 
-  .hero_nosotros .linkeo {
-    width: 100%;
-  }
-
-  .hero_nosotros nav {
-    flex-wrap: wrap;
-  }
-  
+  .hero_nosotros .linkeo { width: 100%; }
+  .hero_nosotros nav { flex-wrap: wrap; }
 }
 
-.pies{
-  /* Afecta al texto legal dentro del footer. */
 
+/* ================================================================
+   6. PÁGINA COMUNIDAD (foro)
+   ================================================================ */
+
+/* Afecta al <body class="comunidad"> */
+.comunidad {
   display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-  .hero_nosotros nav a {
-      margin: 0 clamp(8px, 2vw, 20px) clamp(8px, 2vw, 20px) 0;
-     border-left: 3px solid #000000;
-     border-right: 3px solid #000000;
-    font-size: clamp(1rem, 2vw, 1.5rem);
-    padding: 0 clamp(8px, 2vw, 20px);
-
-    
-  }
-  .bloque_1,.bloque_2 {
-      margin: 0;
-     border-right: 3px solid #000000;
-     font-size: 1.5rem;
-      padding: 0 clamp(20px, 5vw, 70px);
-  }
-
-
-  #logo_mapa img {
-  width: 80px;
-  height: 70px;
-
-  margin: 0 auto;
-  border-radius: 25px;
-
-  }
-
-
-/* ================================================================
-  5. PAGINA COMUNIDAD
-  ================================================================ */
-/* Los estilos de comunidad.html están dentro de esa misma página (etiqueta <style>). */
-
-
-
-
-/* ================================================================
-6. comunidad
-  ================================================================ */
-
-
-
-
-
-        [hidden] { display: none !important; }
-
-       .comunidad {
-             display: flex;
-            flex-wrap: wrap;
-             align-content: flex-start;
-
-          --rojo-fuerte: rgb(203, 11, 11);
-          --rojo-hover: #a80f0f;
-          --fondo: #111;
-          --superficie-2: rgb(23, 23, 21);
-          --texto-suave: #d9d4c9;
-          --rojo-oscuro: #7d1212;
-          --borde: #666;
-          --gris-oscuro: #2e2e2e;
-          --avatar: 60px;
-          background-color: var(--fondo);
-          color: #fff;
-          font-size: 16px;
-          line-height: 1.6;
-          min-height: 100vh;
-        }
-
-        .solo_lectores {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          margin: -1px;
-          padding: 0;
-          overflow: hidden;
-          clip: rect(0 0 0 0);
-          white-space: nowrap;
-          border: 0;
-        }
-
-        .foro {
-          flex: 1;
-          min-width: 0;
-          max-width: 1240px;
-          margin: 0 auto;
-          padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 28px) 3rem;
-        }
-
-        .foro_titulo {
-          font-family: "Inter", sans-serif;
-          font-weight: 400;
-          font-size: clamp(2rem, 4vw, 2.7rem);
-          line-height: 1.2;
-          margin-bottom: 1rem;
-        }
-
-        .foro_rejilla {
-          /* Filtros arriba; buscador y lista a la izquierda; especialistas a la derecha. */
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) 300px;
-          grid-template-areas:
-            "filtros filtros"
-            "barra   lateral"
-            "lista   lateral";
-          column-gap: clamp(16px, 3vw, 32px);
-          row-gap: 1.5rem;
-          align-items: start;
-        }
-
-        /* Filtros por categoría */
-        .filtros {
-          grid-area: filtros;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem clamp(0.6rem, 2vw, 1.5rem);
-        }
-
-        .filtro {
-          padding: 0.25rem clamp(1rem, 2.5vw, 1.8rem);
-          border: 2px solid var(--borde);
-          border-radius: 999px;
-          color: #fff;
-          font: inherit;
-          font-size: clamp(1rem, 2vw, 1.4rem);
-          transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .filtro:hover {
-          border-color: #fff;
-        }
-
-        .filtro.activo {
-          background-color: var(--rojo-oscuro);
-          border-color: var(--rojo);
-        }
-
-        /* Buscador y botón de crear */
-        .zona_barra { grid-area: barra; }
-
-        .barra {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .buscador {
-          flex: 1 1 240px;
-          min-width: 0;
-          height: 54px;
-          padding: 0 1.2rem 0 3.2rem;
-          background-color: #0d0d0d;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: 1rem center;
-          background-size: 22px;
-          border: 2px solid var(--borde);
-          border-radius: 12px;
-          color: #fff;
-          font: inherit;
-          font-size: clamp(1rem, 2vw, 1.25rem);
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .buscador::placeholder { color: #bdbdbd; }
-
-        .btn_crear {
-          flex: 0 0 auto;
-          height: 54px;
-          padding: 0 1.5rem;
-          background-color: var(--rojo-oscuro);
-          border: 2px solid var(--rojo);
-          border-radius: 12px;
-          color: #fff;
-          font: inherit;
-          font-size: clamp(1rem, 2vw, 1.3rem);
-          white-space: nowrap;
-          transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .btn_crear:hover {
-          background-color: var(--rojo-fuerte);
-          transform: translateY(-2px);
-        }
-
-        .aviso_login {
-          margin-top: 0.75rem;
-          font-size: 0.95rem;
-          color: var(--texto-suave);
-        }
-
-        .aviso_login a {
-          color: var(--rojo);
-          text-decoration: underline;
-        }
-
-        .aviso_login a:hover { color: #fff; }
-
-        /* Lista de publicaciones */
-        .zona_lista { grid-area: lista; min-width: 0; }
-
-        .lista_pub {
-          border: 2px solid var(--borde);
-          border-radius: 18px;
-          overflow: hidden;
-          background-color: #0d0d0d;
-        }
-
-        .publicacion:not([hidden]) ~ .publicacion:not([hidden]) {
-          border-top: 2px solid var(--borde);
-        }
-
-        .pub_cabecera {
-          display: grid;
-          grid-template-columns: auto minmax(0, 1fr) auto;
-          align-items: center;
-          gap: 1rem;
-          padding: 0.9rem 1rem;
-        }
-
-        .avatar {
-          width: var(--avatar);
-          height: var(--avatar);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background-color: var(--gris-oscuro);
-          font-family: "Anton", sans-serif;
-          font-size: 1.5rem;
-        }
-
-        .pub_titulo {
-          display: block;
-          text-align: left;
-          color: #fff;
-          font: inherit;
-          font-size: clamp(1.05rem, 2vw, 1.4rem);
-          font-weight: 600;
-          line-height: 1.3;
-          overflow-wrap: anywhere;
-        }
-
-        .pub_titulo:hover { text-decoration: underline; text-decoration-color: var(--rojo); }
-
-        .meta {
-          color: var(--texto-suave);
-          font-size: clamp(0.9rem, 1.6vw, 1.1rem);
-        }
-
-        .acciones {
-          display: flex;
-          gap: 0.6rem;
-        }
-
-        .icono_btn {
-          width: 44px;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background-color: var(--gris-oscuro);
-          color: #fff;
-          transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .icono_btn:hover {
-          background-color: var(--rojo-fuerte);
-          transform: translateY(-2px);
-        }
-
-        .pub_detalle {
-          padding: 0 1rem 1.1rem calc(var(--avatar) + 2rem);
-        }
-
-        .cuerpo {
-          white-space: pre-wrap;
-          overflow-wrap: anywhere;
-        }
-
-        .respuestas {
-          margin-top: 1rem;
-          padding-left: 1rem;
-          border-left: 3px solid var(--rojo);
-        }
-
-        .comentario { margin: 0.8rem 0; }
-
-        .respuestas textarea {
-          width: 100%;
-          margin: 0.5rem 0;
-          padding: 0.7rem 0.9rem;
-          background-color: #0d0d0d;
-          color: #fff;
-          border: 2px solid var(--borde);
-          border-radius: 10px;
-          font: inherit;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .vacio {
-          padding: 2rem 1.2rem;
-          border: 2px solid var(--borde);
-          border-radius: 18px;
-          text-align: center;
-          color: var(--texto-suave);
-        }
-
-        /* Especialistas verificadas */
-        .especialistas {
-          grid-area: lateral;
-          position: sticky;
-          top: 16px;
-          border: 2px solid var(--borde);
-          border-radius: 18px;
-          overflow: hidden;
-          background-color: #0d0d0d;
-        }
-
-        .especialistas h3 {
-          padding: 1.2rem 1.2rem 0.8rem;
-          font-family: "Anton", sans-serif;
-          font-weight: 400;
-          font-size: 1.5rem;
-          letter-spacing: 0.5px;
-        }
-
-        .especialista {
-          display: flex;
-          align-items: center;
-          gap: 0.9rem;
-          padding: 0.7rem 1.2rem;
-        }
-
-        .especialista_nombre { font-weight: 600; line-height: 1.3; }
-        .especialista_cargo { color: var(--texto-suave); line-height: 1.3; }
-
-        .ver_todos {
-          margin-top: 0.5rem;
-          padding: 0.9rem 1.2rem;
-          border-top: 2px solid var(--borde);
-          font-weight: 600;
-        }
-
-        /* Ventana de crear publicación */
-        .modal {
-          margin: auto;
-          width: min(560px, calc(100% - 24px));
-          padding: 0;
-          border: 2px solid var(--rojo);
-          border-radius: 18px;
-          background-color: var(--superficie-2);
-          color: #fff;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        }
-
-        .modal::backdrop { background-color: rgba(0, 0, 0, 0.72); }
-
-        .modal_caja { padding: clamp(16px, 3vw, 28px); }
-
-        .modal_cabecera {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .modal h3 {
-          font-family: "Anton", sans-serif;
-          font-weight: 400;
-          font-size: 1.8rem;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-        }
-
-        .cerrar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background-color: var(--gris-oscuro);
-          color: #fff;
-          font-size: 1.5rem;
-          line-height: 1;
-          transition: background-color 0.2s ease;
-        }
-
-        .cerrar:hover { background-color: var(--rojo-fuerte); }
-
-        .modal label {
-          display: block;
-          margin-top: 0.9rem;
-          font-size: 0.95rem;
-        }
-
-        .modal input,
-        .modal textarea,
-        .modal select {
-          width: 100%;
-          margin-top: 0.3rem;
-          padding: 0.7rem 0.9rem;
-          background-color: #0d0d0d;
-          color: #fff;
-          border: 2px solid var(--borde);
-          border-radius: 10px;
-          font: inherit;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .modal_pie {
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 1rem;
-          margin-top: 1.2rem;
-        }
-
-        .mensaje { color: #ff8a8a; }
-
-        .boton_rojo {
-          padding: 0.55rem 1.5rem;
-          background-color: var(--rojo);
-          color: #fff;
-          border: 2px solid #fff;
-          border-radius: 6px;
-          font-family: "Anton", sans-serif;
-          font-size: 1.1rem;
-          letter-spacing: 1px;
-          transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .boton_rojo:hover {
-          background-color: var(--rojo-hover);
-          transform: translateY(-2px);
-        }
-
-        /* Foco en campos */
-        .buscador:focus,
-        .modal input:focus,
-        .modal textarea:focus,
-        .modal select:focus,
-        .respuestas textarea:focus {
-          outline: none;
-          border-color: var(--rojo);
-          box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.4);
-        }
-
-        /* Aviso "Enlace copiado" */
-        .toast {
-          position: fixed;
-          left: 50%;
-          bottom: 24px;
-          transform: translate(-50%, 12px);
-          padding: 0.6rem 1.4rem;
-          background-color: var(--rojo-fuerte);
-          border-radius: 999px;
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.25s ease, transform 0.25s ease;
-          z-index: 50;
-        }
-
-        .toast.visible {
-          opacity: 1;
-          transform: translate(-50%, 0);
-        }
-
-        /* Comunidad en pantallas medianas y celular */
-        @media (max-width: 900px) {
-          .comunidad { --avatar: 48px; }
-
-          .foro_rejilla {
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-areas:
-              "filtros"
-              "barra"
-              "lista"
-              "lateral";
-          }
-
-          .especialistas { position: static; }
-
-          .pub_cabecera { grid-template-columns: auto minmax(0, 1fr); }
-
-          .acciones { grid-column: 2; }
-
-          .pub_detalle { padding-left: 1rem; }
-
-          .btn_crear { flex: 1 1 100%; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .filtro, .btn_crear, .icono_btn, .boton_rojo, .toast { transition: none; }
-        }
-
-
-/* ================================================================
-  . PAGINA COMUNIDAD
-  ================================================================ */
-/* Los estilos de comunidad.html están dentro de esa misma página (etiqueta <style>). */
-
-
-/* ================================================================
-  BOTON CERRAR SESION (lo crea static/js/auth.js)
-  ================================================================ */
-.hero-right { gap: 10px; }
-.form_salir { margin: 0; }
-.btn_salir {
-  font: inherit;
-  cursor: pointer;
-}
-
-
-/* ================================================================
-  PIE DE PAGINA (contenido del proyecto)
-  ================================================================ */
-footer.pie_pagina {
-  width: 100%;
-  flex: 0 0 100%;
-  max-height: none;
-  min-height: 0;
-  margin: clamp(2rem, 5vw, 4rem) 0 0;
-  padding: clamp(24px, 4vw, 40px) clamp(16px, 4vw, 40px) 20px;
-  align-items: stretch;
-  justify-content: flex-start;
-  text-align: left;
-  gap: 24px;
-  background-color: var(--superficie-2, #171715);
-  border-top: 3px solid var(--rojo-fuerte, #cb0b0b);
-  color: #d9d4c9;
-  font-family: "Inter", sans-serif;
-  font-size: 0.9rem;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-height: 100vh;
+  background-color: var(--fondo);
+  color: #fff;
+  font-size: 16px;
   line-height: 1.6;
 }
 
-.pie_contenido {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: clamp(20px, 4vw, 48px);
+/* Contenedor central del foro */
+.foro {
+  flex: 1;
+  min-width: 0;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 28px) 3rem;
 }
 
-.pie_titulo,
-.pie_pagina h3 {
-  font-family: "Anton", sans-serif;
+.foro_titulo {
+  margin-bottom: 1rem;
+  font-family: var(--fuente-texto);
   font-weight: 400;
-  letter-spacing: 1px;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 1.2;
+}
+
+/* Distribución: filtros arriba; buscador y lista a la izquierda; especialistas a la derecha */
+.foro_rejilla {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-areas:
+    "filtros filtros"
+    "barra   lateral"
+    "lista   lateral";
+  column-gap: clamp(16px, 3vw, 32px);
+  row-gap: 1.5rem;
+  align-items: start;
+}
+
+/* ---------- Filtros por categoría ---------- */
+.filtros {
+  grid-area: filtros;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem clamp(0.6rem, 2vw, 1.5rem);
+}
+
+.filtro {
+  padding: 0.25rem clamp(1rem, 2.5vw, 1.8rem);
+  border: 2px solid var(--borde);
+  border-radius: 999px;
   color: #fff;
-  margin-bottom: 8px;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  transition: background-color var(--transicion), border-color var(--transicion);
 }
 
-.pie_titulo { font-size: 1.6rem; }
-.pie_pagina h3 { font-size: 1.1rem; }
+.filtro:hover { border-color: #fff; }
 
-.pie_pagina ul { list-style: none; padding: 0; margin: 0; }
-.pie_pagina li { margin-bottom: 6px; overflow-wrap: anywhere; }
-.pie_suave { opacity: 0.75; margin-top: 6px; }
-
-.pie_pagina a { color: #fff; text-decoration: none; }
-.pie_pagina a:hover,
-.pie_pagina a:focus-visible { color: var(--rojo, #d11c1c); text-decoration: underline; }
-
-.pie_aviso {
-  padding: 12px 16px;
-  border-left: 3px solid var(--rojo-fuerte, #cb0b0b);
-  background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 4px;
+/* Filtro seleccionado */
+.filtro.activo {
+  background-color: var(--rojo-oscuro);
+  border-color: var(--rojo);
 }
 
-footer.pie_pagina .pies {
-  justify-content: flex-start;
+/* ---------- Buscador y botón de crear ---------- */
+.zona_barra { grid-area: barra; }
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Campo de búsqueda con icono de lupa integrado */
+.buscador {
+  flex: 1 1 240px;
+  min-width: 0;
+  height: 54px;
+  padding: 0 1.2rem 0 3.2rem;
+  background-color: var(--fondo-campo);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 1rem center;
+  background-size: 22px;
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.buscador::placeholder { color: #bdbdbd; }
+
+/* Botón "Crear publicación" */
+.btn_crear {
+  flex: 0 0 auto;
+  height: 54px;
+  padding: 0 1.5rem;
+  background-color: var(--rojo-oscuro);
+  border: 2px solid var(--rojo);
+  border-radius: 12px;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  white-space: nowrap;
+  transition: background-color var(--transicion), transform var(--transicion);
+}
+
+.btn_crear:hover {
+  background-color: var(--rojo-fuerte);
+  transform: translateY(-2px);
+}
+
+/* Aviso "Inicia sesión para publicar" */
+.aviso_login {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+}
+
+.aviso_login a {
+  color: var(--rojo);
+  text-decoration: underline;
+}
+
+.aviso_login a:hover { color: #fff; }
+
+/* ---------- Lista de publicaciones ---------- */
+.zona_lista {
+  grid-area: lista;
+  min-width: 0;
+}
+
+.lista_pub {
+  overflow: hidden;
+  background-color: var(--fondo-campo);
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+}
+
+/* Línea entre publicaciones visibles (ignora las ocultas por el filtro) */
+.publicacion:not([hidden]) ~ .publicacion:not([hidden]) {
+  border-top: 2px solid var(--borde);
+}
+
+/* Fila superior de cada publicación: avatar, título y acciones */
+.pub_cabecera {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+/* Círculo con la inicial del autor */
+.avatar {
+  width: var(--avatar);
+  height: var(--avatar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  font-family: var(--fuente-titulo);
+  font-size: 1.5rem;
+}
+
+.pub_titulo {
+  display: block;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.3;
   text-align: left;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  opacity: 0.8;
-  font-size: 0.8rem;
+  overflow-wrap: anywhere;
 }
 
-@media (max-width: 720px) {
-  .pie_contenido { grid-template-columns: 1fr; }
+.pub_titulo:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--rojo);
 }
+
+/* Autor, fecha y categoría */
+.meta {
+  color: var(--texto-suave);
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+}
+
+/* Botones redondos de cada publicación (compartir, etc.) */
+.acciones {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.icono_btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  color: #fff;
+  transition: background-color var(--transicion), transform var(--transicion);
+}
+
+.icono_btn:hover {
+  background-color: var(--rojo-fuerte);
+  transform: translateY(-2px);
+}
+
+/* Contenido desplegado de una publicación */
+.pub_detalle {
+  padding: 0 1rem 1.1rem calc(var(--avatar) + 2rem);
+}
+
+.cuerpo {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Comentarios / respuestas */
+.respuestas {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rojo);
+}
+
+.comentario { margin: 0.8rem 0; }
+
+.respuestas textarea {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.7rem 0.9rem;
+  background-color: var(--fondo-campo);
+  color: #fff;
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  font: inherit;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+/* Mensaje cuando no hay publicaciones */
+.vacio {
+  padding: 2rem 1.2rem;
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+/* ---------- Especialistas verificadas (columna derecha) ---------- */
+.especialistas {
+  grid-area: lateral;
+  position: sticky;
+  top: 16px;
+  overflow: hidden;
+  background-color: var(--fondo-campo);
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+}
+
+.especialistas h3 {
+  padding: 1.2rem 1.2rem 0.8rem;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+.especialista {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1.2rem;
+}
+
+.especialista_nombre { font-weight: 600; line-height: 1.3; }
+.especialista_cargo { color: var(--texto-suave); line-height: 1.3; }
+
+.ver_todos {
+  margin-top: 0.5rem;
+  padding: 0.9rem 1.2rem;
+  border-top: 2px solid var(--borde);
+  font-weight: 600;
+}
+
+/* ---------- Ventana "Crear publicación" (<dialog class="modal">) ---------- */
+.modal {
+  width: min(560px, calc(100% - 24px));
+  margin: auto;
+  padding: 0;
+  background-color: var(--superficie-2);
+  color: #fff;
+  border: 2px solid var(--rojo);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+/* Fondo oscuro detrás de la ventana */
+.modal::backdrop { background-color: rgba(0, 0, 0, 0.72); }
+
+.modal_caja { padding: clamp(16px, 3vw, 28px); }
+
+.modal_cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal h3 {
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Botón "×" para cerrar la ventana */
+.cerrar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--gris-oscuro);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: background-color var(--transicion);
+}
+
+.cerrar:hover { background-color: var(--rojo-fuerte); }
+
+.modal label {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+}
+
+/* Campos del formulario de la ventana */
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.7rem 0.9rem;
+  background-color: var(--fondo-campo);
+  color: #fff;
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  font: inherit;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.modal_pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+/* Mensaje de error del formulario */
+.mensaje { color: var(--rojo-claro); }
+
+/* Botón rojo principal (publicar) */
+.boton_rojo {
+  padding: 0.55rem 1.5rem;
+  background-color: var(--rojo);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  font-family: var(--fuente-titulo);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  transition: background-color var(--transicion), transform var(--transicion);
+}
+
+.boton_rojo:hover {
+  background-color: var(--rojo-hover);
+  transform: translateY(-2px);
+}
+
+/* Foco en los campos de Comunidad */
+.buscador:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus,
+.respuestas textarea:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px var(--rojo-halo);
+}
+
+/* Aviso flotante "Enlace copiado" */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  padding: 0.6rem 1.4rem;
+  background-color: var(--rojo-fuerte);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Comunidad en pantallas medianas y celular */
+@media (max-width: 900px) {
+  .comunidad { --avatar: 48px; }
+
+  /* Todo en una sola columna */
+  .foro_rejilla {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "filtros"
+      "barra"
+      "lista"
+      "lateral";
+  }
+
+  .especialistas { position: static; }
+  .pub_cabecera { grid-template-columns: auto minmax(0, 1fr); }
+  .acciones { grid-column: 2; }
+  .pub_detalle { padding-left: 1rem; }
+  .btn_crear { flex: 1 1 100%; }
+}
+
+
 /* ================================================================
-mapa 
-  ================================================================ */
+   7. PÁGINA MAPA (mapa.html)
+   ================================================================ */
 
-      .filtros_mapa { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .chip { background: transparent; color: #fff; border: 1px solid #666; border-radius: 999px; padding: .45rem 1.1rem; cursor: pointer; font: inherit; }
-        .chip.activo { background: #cb0b0b; border-color: #cb0b0b; }
+/* Botones de filtro por categoría del mapa */
+.filtros_mapa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 
-        .buscador_mapa { width: 100%; max-width: 420px; padding: .6rem .9rem; border-radius: 8px; border: 1px solid #555; background: #1a1a1a; color: #fff; font: inherit; }
+.chip {
+  padding: 0.45rem 1.1rem;
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--transicion), border-color var(--transicion);
+}
 
-        .mapa_rejilla { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 1rem; align-items: start; }
-        @media (max-width: 860px) { .mapa_rejilla { grid-template-columns: 1fr; } }
+.chip:hover { border-color: #fff; }
 
-        .lista_lugares { display: flex; flex-direction: column; gap: .6rem; max-height: 560px; overflow-y: auto; padding-right: .3rem; }
-        .tarjeta_lugar { background: #171715; border: 1px solid #333; border-radius: 10px; padding: .8rem .9rem; cursor: pointer; transition: border-color .15s; }
-        .tarjeta_lugar:hover, .tarjeta_lugar:focus-visible { border-color: #cb0b0b; }
-        .tarjeta_lugar h3 { margin: 0 0 .2rem; font-size: 1.02rem; }
-        .tarjeta_lugar .categoria_tag { display: inline-block; font-size: .72rem; color: #ff8a8a; margin-bottom: .3rem; }
-        .tarjeta_lugar p { margin: .15rem 0; font-size: .88rem; color: #d9d4c9; }
-        .tarjeta_lugar a { color: #ff8a8a; }
+/* Filtro seleccionado */
+.chip.activo {
+  background: var(--rojo-fuerte);
+  border-color: var(--rojo-fuerte);
+}
 
-        #mapa_leaflet { height: 560px; border-radius: 10px; border: 1px solid #333; background: #111; }
-        #mapa_leaflet .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
-        .marcador_rojo { background: #cb0b0b; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 3px rgba(203,11,11,.35); }
+/* Campo de búsqueda de lugares */
+.buscador_mapa {
+  width: 100%;
+  max-width: 420px;
+  padding: 0.6rem 0.9rem;
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font: inherit;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
 
-        .fuente_datos { font-size: .8rem; color: #918c80; }
+.buscador_mapa:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px var(--rojo-halo);
+}
 
-        .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1a1a1a; color: #fff; }
-        .leaflet-popup-content a { color: #ff8a8a; }
-        .popup_lugar h3 { margin: 0 0 .3rem; font-size: 1rem; }
-        .popup_lugar p { margin: .15rem 0; font-size: .85rem; }
+/* Distribución: lista de lugares a la izquierda, mapa a la derecha */
+.mapa_rejilla {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+/* Lista desplazable de lugares */
+.lista_lugares {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 560px;
+  padding-right: 0.3rem;
+  overflow-y: auto;
+}
+
+/* Tarjeta de cada lugar */
+.tarjeta_lugar {
+  padding: 0.8rem 0.9rem;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde-suave);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.tarjeta_lugar:hover,
+.tarjeta_lugar:focus-visible { border-color: var(--rojo-fuerte); }
+
+.tarjeta_lugar h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.02rem;
+}
+
+/* Etiqueta de categoría dentro de la tarjeta */
+.tarjeta_lugar .categoria_tag {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--rojo-claro);
+}
+
+.tarjeta_lugar p {
+  margin: 0.15rem 0;
+  font-size: 0.88rem;
+  color: var(--texto-suave);
+}
+
+.tarjeta_lugar a { color: var(--rojo-claro); }
+
+/* Contenedor del mapa de Leaflet */
+#mapa_leaflet {
+  height: 560px;
+  background: var(--fondo);
+  border: 1px solid var(--borde-suave);
+  border-radius: 10px;
+}
+
+/* Mosaicos del mapa en modo oscuro (invierte los colores del mapa base) */
+#mapa_leaflet .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+/* Marcador rojo personalizado */
+.marcador_rojo {
+  width: 16px;
+  height: 16px;
+  background: var(--rojo-fuerte);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(203, 11, 11, 0.35);
+}
+
+/* Texto "Fuente de los datos" bajo el mapa */
+.fuente_datos {
+  font-size: 0.8rem;
+  color: var(--texto-tenue);
+}
+
+/* Ventanita emergente (popup) de Leaflet */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.leaflet-popup-content a { color: var(--rojo-claro); }
+
+.popup_lugar h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.popup_lugar p {
+  margin: 0.15rem 0;
+  font-size: 0.85rem;
+}
+
+/* Mapa en celular: una sola columna */
+@media (max-width: 860px) {
+  .mapa_rejilla { grid-template-columns: 1fr; }
+}
+
+
+/* ================================================================
+   8. ACCESIBILIDAD: MENOS MOVIMIENTO
+   Quita animaciones para quien lo pide en su sistema operativo.
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .menu_desplegable,
+  .flecha,
+  #menu_lateral,
+  .btn,
+  .contenedor_1,
+  .contenedor_2,
+  .contenedor_3,
+  .boton_sesion button,
+  .boton-cuenta,
+  .filtro,
+  .chip,
+  .btn_crear,
+  .icono_btn,
+  .boton_rojo,
+  .toast {
+    transition: none;
+  }
+}
+
+
+/* ================================================================
+   9. RESPONSIVE EXTRA (cualquier dispositivo)
+   Va al final del archivo para sobrescribir lo anterior.
+   Puntos de corte (de mayor a menor):
+     1600+  pantallas grandes / TV
+     1024   tabletas horizontales y laptops pequeños
+      900   tabletas verticales
+      768   celulares grandes y tabletas pequeñas
+      600   celulares
+      480   celulares pequeños
+      360   celulares muy pequeños
+   IMPORTANTE: cada HTML debe tener en el <head>:
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   ================================================================ */
+
+/* ---------- Reglas para todos los tamaños ---------- */
+
+/* Evita el scroll horizontal accidental en todas las páginas */
+html { overflow-x: hidden; }
+
+/* Respeta el "notch" y bordes redondeados de los celulares */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Campos y medios nunca se salen de su contenedor */
+input, select, textarea, iframe, video { max-width: 100%; }
+
+/* El menú desplegable nunca es más alto que la pantalla (útil en celular horizontal) */
+.menu_desplegable {
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+/* Celulares y tabletas táctiles: sin "saltitos" al tocar (no existe hover real) */
+@media (hover: none) {
+  .btn:hover,
+  .btn_crear:hover,
+  .icono_btn:hover,
+  .boton_rojo:hover,
+  .boton_sesion button:hover,
+  .boton-cuenta:hover,
+  .contenedor_1:hover,
+  .contenedor_2:hover,
+  .contenedor_3:hover {
+    transform: none;
+  }
+}
+
+/* Celulares en horizontal (poca altura) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .imagen2 img,
+  .imagen2_sesion img,
+  .imagen2_nosotros img {
+    height: clamp(200px, 55vh, 360px);
+  }
+
+  #menu_lateral { min-height: 0; }
+}
+
+/* ---------- 1600px o más: pantallas grandes y TV ---------- */
+@media (min-width: 1600px) {
+  /* Texto un poco más grande en monitores grandes */
+  .index,
+  .inicio_sesion,
+  .comunidad { font-size: 18px; }
+
+  .imagen2 img { max-width: 1000px; }
+  .foro { max-width: 1400px; }
+}
+
+/* ---------- Hasta 1024px: tabletas horizontales ---------- */
+@media (max-width: 1024px) {
+  /* Sesión: el formulario y la imagen se reparten el ancho */
+  .texto_sesion article { flex: 1 1 420px; }
+  .imagen2_sesion { flex: 1 1 360px; }
+
+  /* Nosotros: la barra superior puede pasar a dos líneas */
+  .hero_nosotros {
+    flex-wrap: wrap;
+    gap: 10px;
+    height: auto;
+    min-height: 80px;
+    padding-block: 10px;
+  }
+
+  .hero_nosotros h1 { white-space: normal; }
+  .bloques_nosotros > div p { max-width: none; }
+
+  .bloque_1,
+  .bloque_2 { padding: 0 clamp(12px, 3vw, 40px); }
+
+  .menu_desplegable { min-width: 220px; }
+}
+
+/* ---------- Hasta 900px: tabletas verticales ---------- */
+@media (max-width: 900px) {
+  /* Inicio: tarjetas en 2 columnas; la tercera ocupa todo el ancho */
+  .bloques { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contenedor_3 { grid-column: 1 / -1; }
+
+  /* Nosotros: todo en una sola columna */
+  .informacion_relativa { grid-template-columns: 1fr; }
+
+  .bloques_nosotros {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  /* Sesión: formulario arriba, imagen abajo */
+  .texto_sesion {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .imagen2_sesion {
+    flex: 0 0 auto;
+    width: 100%;
+    justify-content: center;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .registro {
+    width: 100%;
+    margin: 1rem auto;
+  }
+
+  .registro .boton_sesion {
+    width: min(100%, 420px);
+    margin-inline: auto;
+  }
+
+  .enlaces-sesion {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+/* ---------- Hasta 768px: celulares grandes ---------- */
+@media (max-width: 768px) {
+  /* Inicio: tarjetas en una columna (vuelve a imponerse sobre la regla de 900px) */
+  .bloques { grid-template-columns: 1fr; }
+
+  /* Barra superior: botones centrados y que puedan bajar de línea */
+  .hero-left,
+  .hero-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Inicio: título e imagen ocupan todo el ancho */
+  .contenido-encabezado { gap: 20px; }
+
+  .contenido-principal,
+  .imagen2 {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  /* Imágenes principales con altura más moderada */
+  .imagen2 img,
+  .imagen2_nosotros img {
+    height: clamp(220px, 60vw, 400px);
+  }
+
+  .titulo_recuperar { letter-spacing: 2px; }
+
+  /* Nosotros */
+  .texto_nosotros { padding-inline: 10px; }
+  .texto_nosotros h1 { width: 100%; }
+  .bloques_nosotros > div p { margin-left: 0; }
+
+  .bloque_1,
+  .bloque_2 {
+    padding: 0 1rem;
+    border-right: 0;
+  }
+
+  .hero_nosotros nav a { margin: 0 8px 8px 0; }
+
+  /* Mapa: el mapa y la lista se adaptan a la altura de la pantalla */
+  #mapa_leaflet { height: clamp(320px, 60vh, 560px); }
+  .lista_lugares { max-height: 320px; }
+  .buscador_mapa { max-width: none; }
+}
+
+/* ---------- Hasta 600px: celulares ---------- */
+@media (max-width: 600px) {
+  /* Botones y enlaces fáciles de tocar (mínimo 44px) */
+  .btn,
+  .chip,
+  .filtro { min-height: 44px; }
+
+  /* Sesión y registro */
+  .texto_sesion { padding: 12px; }
+  .user,
+  .contraseña { margin: 1rem 0; }
+
+  .registro #correo,
+  .registro #password { width: 100%; }
+
+  .registro .boton_sesion { width: 100%; }
+
+  .registro-cuenta { flex: 1 1 100%; }
+  .formulario-cuenta { padding: 0 16px; }
+
+  /* Bordes más suaves en las imágenes */
+  .imagen2 img,
+  .imagen2_nosotros img,
+  .imagen2_sesion img {
+    border-radius: 32px;
+  }
+
+  .imagen2_sesion img { height: clamp(240px, 70vw, 380px); }
+
+  /* Menú desplegable más compacto */
+  .menu_desplegable a {
+    padding: 10px 14px;
+    font-size: 1.05rem;
+  }
+
+  /* Comunidad */
+  .filtro {
+    padding: 0.25rem 1rem;
+    font-size: 1rem;
+  }
+
+  .pub_cabecera {
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+
+  .especialista { padding: 0.6rem 1rem; }
+
+  /* Ventana de crear publicación: botones a todo el ancho */
+  .modal_pie {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .boton_rojo { width: 100%; }
+
+  /* Pie de página */
+  footer.pie_pagina { padding-inline: 16px; }
+}
+
+/* ---------- Hasta 480px: celulares pequeños ---------- */
+@media (max-width: 480px) {
+  .texto_menu { gap: 0.6rem; }
+
+  .texto_menu_letras { letter-spacing: 0.15rem; }
+
+  #logo img {
+    width: 64px;
+    height: 56px;
+  }
+
+  .hero-center h1 { font-size: 1.15rem; }
+
+  .titulo {
+    font-size: clamp(1.6rem, 8vw, 2rem);
+    letter-spacing: 1px;
+  }
+
+  .bloques h2 { font-size: 1.4rem; }
+  .chip { font-size: 0.9rem; }
+
+  /* Aviso "Enlace copiado" a lo ancho y por encima de la barra del sistema */
+  .toast {
+    width: calc(100% - 32px);
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    text-align: center;
+  }
+}
+
+/* ---------- Hasta 360px: celulares muy pequeños ---------- */
+@media (max-width: 360px) {
+  .cabecera { padding: 8px; }
+
+  .hero_nosotros nav a {
+    margin: 0 6px 6px 0;
+    padding: 0 8px;
+    font-size: 1rem;
+  }
+
+  .formulario-cuenta { padding: 0 10px; }
+  .buscador { padding-right: 0.8rem; }
+}
+
+/* ---------- Nosotros en tableta/celular: el título ya no se sale ---------- */
+@media (max-width: 900px) {
+  /* El contenedor del título ocupa el ancho disponible y deja que el texto baje de línea */
+  .hero-center_nosotros {
+    flex: 1 1 100%;
+    width: auto;
+    min-width: 0;
+  }
+
+  .hero_nosotros h1 {
+    margin-left: 0;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    white-space: normal;
+  }
+
+  /* Nosotros: la cabecera y el contenido nunca pasan del ancho de la pantalla */
+  .cabecera_nosotros,
+  .hero_nosotros,
+  .informacion_relativa {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
