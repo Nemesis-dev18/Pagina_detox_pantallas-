@@ -16,40 +16,18 @@
         .banner_crisis strong { color: #ff6b6b; }
         .banner_crisis a { color: #fff; text-decoration: underline; }
 
-        .filtros_mapa { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .chip { background: transparent; color: #fff; border: 1px solid #666; border-radius: 999px; padding: .45rem 1.1rem; cursor: pointer; font: inherit; }
-        .chip.activo { background: #cb0b0b; border-color: #cb0b0b; }
-
-        .buscador_mapa { width: 100%; max-width: 420px; padding: .6rem .9rem; border-radius: 8px; border: 1px solid #555; background: #1a1a1a; color: #fff; font: inherit; }
-
-        .mapa_rejilla { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 1rem; align-items: start; }
-        @media (max-width: 860px) { .mapa_rejilla { grid-template-columns: 1fr; } }
-
-        .lista_lugares { display: flex; flex-direction: column; gap: .6rem; max-height: 560px; overflow-y: auto; padding-right: .3rem; }
-        .tarjeta_lugar { background: #171715; border: 1px solid #333; border-radius: 10px; padding: .8rem .9rem; cursor: pointer; transition: border-color .15s; }
-        .tarjeta_lugar:hover, .tarjeta_lugar:focus-visible { border-color: #cb0b0b; }
-        .tarjeta_lugar h3 { margin: 0 0 .2rem; font-size: 1.02rem; }
-        .tarjeta_lugar .categoria_tag { display: inline-block; font-size: .72rem; color: #ff8a8a; margin-bottom: .3rem; }
-        .tarjeta_lugar p { margin: .15rem 0; font-size: .88rem; color: #d9d4c9; }
-        .tarjeta_lugar a { color: #ff8a8a; }
-
-        #mapa_leaflet { height: 560px; border-radius: 10px; border: 1px solid #333; background: #111; }
-        #mapa_leaflet .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
-        .marcador_rojo { background: #cb0b0b; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 3px rgba(203,11,11,.35); }
-
-        .fuente_datos { font-size: .8rem; color: #918c80; }
-
-        .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1a1a1a; color: #fff; }
-        .leaflet-popup-content a { color: #ff8a8a; }
-        .popup_lugar h3 { margin: 0 0 .3rem; font-size: 1rem; }
-        .popup_lugar p { margin: .15rem 0; font-size: .85rem; }
+  
     </style>
 </head>
 <body class="mapa">
     <!-- Cabecera -->
     <header class="cabecera">
         <div class="hero">
-            <div class="hero-left" id="logo_mapa"><img src="../static/img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB"></div>
+            <div class="hero-left" id="logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                </a>
+            </div>
             <div class="hero-center">
                 <h1>DETOX_WEB</h1>
             </div>
