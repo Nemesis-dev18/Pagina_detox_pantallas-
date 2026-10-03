@@ -1,0 +1,17 @@
+# Secretos: nunca deben entrar a la imagen
+.env
+.env.*
+!.env.example
+
+# Git y editores
+.git
+.gitignore
+.vscode/
+.idea/
+
+# Archivos locales
+*.log
+*.local
+node_modules/
+tmp/
+temp/

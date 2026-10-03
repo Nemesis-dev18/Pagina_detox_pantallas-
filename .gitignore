@@ -1,14 +1,24 @@
-
-# Dependencias
-node_modules/
-bower_components/
-
-# Variables de entorno y secretos
+# ---------- Variables de entorno y secretos (NUNCA se suben) ----------
 .env
 .env.*
 !.env.example
 
-# Builds y archivos temporales
+# ---------- Go ----------
+*.exe
+*.test
+*.out
+/server
+/bin/
+
+# ---------- Datos locales de base de datos ----------
+postgres_data/
+pgdata/
+
+# ---------- Dependencias ----------
+node_modules/
+bower_components/
+
+# ---------- Builds y archivos temporales ----------
 dist/
 build/
 .cache/
@@ -19,14 +29,14 @@ coverage/
 tmp/
 temp/
 
-# Logs
+# ---------- Logs ----------
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Sistema operativo y editores
+# ---------- Sistema operativo y editores ----------
 .DS_Store
 Thumbs.db
 .idea/
@@ -34,6 +44,5 @@ Thumbs.db
 *.swp
 *.swo
 
-# Archivos de configuración locales
+# ---------- Archivos de configuración locales ----------
 *.local
-
