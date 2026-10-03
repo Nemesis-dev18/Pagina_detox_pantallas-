@@ -21,3 +21,4 @@ COPY --from=build /src /app
 
 # El puerto lo define la plataforma con la variable PORT (tu código debe leerla)
 CMD ["./server"]
+
