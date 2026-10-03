@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -34,6 +35,13 @@ func main() {
 	http.HandleFunc("/logout", exigirCSRF(cerrarSesion))
 	http.HandleFunc("/yo", yo)
 
-	fmt.Println("Servidor en http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", conCSRF(http.DefaultServeMux)))
+	// En producción (Render) el puerto lo asigna la plataforma con la variable PORT.
+	// En tu computador, si no existe, se usa el 8080.
+	puerto := os.Getenv("PORT")
+	if puerto == "" {
+		puerto = "8080"
+	}
+
+	fmt.Println("Servidor escuchando en el puerto " + puerto)
+	log.Fatal(http.ListenAndServe(":"+puerto, conCSRF(http.DefaultServeMux)))
 }
