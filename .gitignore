@@ -8,6 +8,7 @@
 *.test
 *.out
 /server
+/detox-web
 /bin/
 
 # ---------- Datos locales de base de datos ----------
@@ -46,3 +47,9 @@ Thumbs.db
 
 # ---------- Archivos de configuración locales ----------
 *.local/detox-web
+detox-web.config.js
+detox-web.config.local.js
+detox-web.config.local.json
+detox-web.config.local.ts
+detox-web.config.local.mjs
+detox-web.config.local.cjs
