@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"log"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -38,4 +40,20 @@ func cargarEnv(ruta string) {
 			os.Setenv(clave, valor)
 		}
 	}
+}
+
+// avisarBaseDeDatos escribe en el log a qué host y usuario se va a conectar la app.
+// Nunca imprime la contraseña. Sirve para confirmar en Render que usa Supabase.
+func avisarBaseDeDatos() {
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		log.Println("ATENCION: DATABASE_URL está vacía")
+		return
+	}
+	u, err := url.Parse(dsn)
+	if err != nil {
+		log.Println("ATENCION: DATABASE_URL no se pudo interpretar")
+		return
+	}
+	log.Printf("conectando a host=%s usuario=%s", u.Host, u.User.Username())
 }

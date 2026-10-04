@@ -10,6 +10,7 @@ import (
 
 func main() {
 	cargarEnv(".env")
+	avisarBaseDeDatos()
 
 	if err := conectarDB(context.Background()); err != nil {
 		log.Fatal("no se pudo conectar a la base: ", err)
