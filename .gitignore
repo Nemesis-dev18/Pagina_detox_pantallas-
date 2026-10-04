@@ -8,7 +8,6 @@
 *.test
 *.out
 /server
-/detox-web
 /bin/
 
 # ---------- Datos locales de base de datos ----------
