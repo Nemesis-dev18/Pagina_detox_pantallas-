@@ -75,9 +75,9 @@ func agregarPalabra(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tag, err := pool.Exec(r.Context(),
-		INSERT INTO palabras_excluidas (palabra) VALUES ($1) ON CONFLICT (palabra) DO NOTHING
-		palabra)
+	   tag, err := pool.Exec(r.Context(),
+   	"INSERT INTO palabras_excluidas (palabra) VALUES ($1) ON CONFLICT (palabra) DO NOTHING",
+   	palabra)
 	if err != nil {
 		http.Error(w, "error guardando la palabra", http.StatusInternalServerError)
 		return
