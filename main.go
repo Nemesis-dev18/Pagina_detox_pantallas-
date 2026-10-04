@@ -18,6 +18,10 @@ func main() {
 	defer pool.Close()
 	fmt.Println("Conectado a Postgres")
 
+	if err := recargarFiltro(context.Background()); err != nil {
+		log.Println("no se pudo cargar el filtro de palabras: ", err)
+	}
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.Handle("/", http.RedirectHandler("/static/index.html", http.StatusFound))
 
