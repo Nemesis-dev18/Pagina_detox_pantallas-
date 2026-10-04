@@ -128,6 +128,3 @@ func editarComentario(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
-
-// >>> Si tu editar.go original seguía con borrarComentario (lo que venía
-// >>> después de este punto), pégala aquí abajo tal cual la tenías.
