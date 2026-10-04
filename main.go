@@ -36,6 +36,11 @@ func main() {
 	http.HandleFunc("/logout", exigirCSRF(cerrarSesion))
 	http.HandleFunc("/yo", yo)
 
+	http.HandleFunc("GET /admin/palabras", listarPalabras)
+	http.HandleFunc("POST /admin/palabras", exigirCSRF(agregarPalabra))
+	http.HandleFunc("DELETE /admin/palabras/{id}", exigirCSRF(borrarPalabra))
+	http.HandleFunc("GET /admin/coincidencias", listarCoincidencias)
+
 	// En producción (Render) el puerto lo asigna la plataforma con la variable PORT.
 	// En tu computador, si no existe, se usa el 8080.
 	puerto := os.Getenv("PORT")
