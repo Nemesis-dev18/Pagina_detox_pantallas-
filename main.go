@@ -23,7 +23,7 @@ func main() {
 	}
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.Handle("/", http.RedirectHandler("/static/index.html", http.StatusFound))
+	http.Handle("/", http.FileServer(http.Dir("html")))
 
 	http.HandleFunc("GET /publicaciones", listarPublicaciones)
 	http.HandleFunc("POST /publicaciones", exigirCSRF(crearPublicacion))

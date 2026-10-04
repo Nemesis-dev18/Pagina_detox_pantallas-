@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             await fetch('/logout', { method: 'POST' });
         } catch (err) { /* sin conexión: se recarga igual */ }
-        window.location.href = '/static/index.html';
+        window.location.href = '/index.html';
     });
 
     form.appendChild(boton);

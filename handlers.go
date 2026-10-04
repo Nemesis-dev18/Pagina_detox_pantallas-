@@ -168,7 +168,7 @@ func registrar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/static/inicio_sesion.html", http.StatusSeeOther)
+	http.Redirect(w, r, "/inicio_sesion.html", http.StatusSeeOther)
 }
 
 // ---------- Recuperar contraseña ----------
@@ -206,7 +206,7 @@ func enviarEnlaceRecuperacion(ctx context.Context, usuarioID, correo string) err
 		return err
 	}
 
-	enlace := baseURL() + "/static/restablecer.html?token=" + token
+	enlace := baseURL() + "/restablecer.html?token=" + token
 	cuerpo := "Hola,\n\nPara elegir una nueva contraseña entra a este enlace (vale 30 minutos):\n\n" +
 		enlace + "\n\nSi no fuiste tú, ignora este mensaje.\n"
 	return enviarCorreo(correo, "Recuperar contraseña | DETOX_WEB", cuerpo)
@@ -299,7 +299,7 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/static/inicio_sesion.html", http.StatusSeeOther)
+	http.Redirect(w, r, "/inicio_sesion.html", http.StatusSeeOther)
 }
 
 // ---------- Login y sesiones ----------
@@ -382,7 +382,7 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 		// Secure: true, // activar cuando el sitio se publique con HTTPS
 	})
-	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+	http.Redirect(w, r, "/index.html", http.StatusSeeOther)
 }
 
 func cerrarSesion(w http.ResponseWriter, r *http.Request) {
@@ -400,7 +400,7 @@ func cerrarSesion(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1, // le dice al navegador que borre la cookie
 		HttpOnly: true,
 	})
-	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+	http.Redirect(w, r, "/index.html", http.StatusSeeOther)
 }
 
 // Ruta de prueba: dice quién eres según tu sesión
