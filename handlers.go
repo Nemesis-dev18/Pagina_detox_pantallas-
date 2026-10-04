@@ -27,6 +27,8 @@ var categoriasValidas = map[string]bool{
 }
 
 type Publicacion struct {
+		TituloOriginal    string `json:"titulo_original,omitempty"`
+	ContenidoOriginal string `json:"contenido_original,omitempty"`
 	ID        string    `json:"id"`
 	Alias     string    `json:"alias"`
 	Titulo    string    `json:"titulo"`
@@ -46,15 +48,27 @@ func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
+		u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
 	defer rows.Close()
 
 	publicaciones := []Publicacion{}
-	for rows.Next() {
+		for rows.Next() {
 		var p Publicacion
 		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
+					tituloOrig, contenidoOrig := p.Titulo, p.Contenido
+		p.Titulo = censurar(p.Titulo)
+		p.Contenido = censurar(p.Contenido)
+		if haySesion && (u.EsAdmin || u.Alias == p.Alias) {
+			p.TituloOriginal = tituloOrig
+			p.ContenidoOriginal = contenidoOrig
 		}
+		}
+		// En la base queda el texto original; al público se le muestra tapado
+		p.Titulo = censurar(p.Titulo)
+		p.Contenido = censurar(p.Contenido)
 		publicaciones = append(publicaciones, p)
 	}
 	if err := rows.Err(); err != nil {
@@ -405,12 +419,12 @@ func yo(w http.ResponseWriter, r *http.Request) {
 var reUUID = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
 
 type Comentario struct {
-	ID        string    `json:"id"`
-	Alias     string    `json:"alias"`
-	Contenido string    `json:"contenido"`
-	CreadoEn  time.Time `json:"creado_en"`
+	ID                string    `json:"id"`
+	Alias             string    `json:"alias"`
+	Contenido         string    `json:"contenido"`
+	ContenidoOriginal string    `json:"contenido_original,omitempty"`
+	CreadoEn          time.Time `json:"creado_en"`
 }
-
 func listarComentarios(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if !reUUID.MatchString(id) {
@@ -428,6 +442,8 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
+		u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
 	defer rows.Close()
 
 	comentarios := []Comentario{}
@@ -438,8 +454,11 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// En la base queda el texto original; al público se le muestra tapado
+				original := c.Contenido
 		c.Contenido = censurar(c.Contenido)
-		comentarios = append(comentarios, c)
+		if haySesion && (u.EsAdmin || u.Alias == c.Alias) {
+			c.ContenidoOriginal = original
+		}
 	}
 	if err := rows.Err(); err != nil {
 		http.Error(w, "error leyendo datos", http.StatusInternalServerError)

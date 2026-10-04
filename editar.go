@@ -33,6 +33,11 @@ func editarPublicacion(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "el título y el contenido son obligatorios", http.StatusBadRequest)
 		return
 	}
+	// Si llega texto ya tapado, no se guarda: pisaría el original
+	if strings.Contains(titulo, "*****") || strings.Contains(contenido, "*****") {
+		http.Error(w, "no puedes guardar texto censurado", http.StatusBadRequest)
+		return
+	}
 	if len([]rune(titulo)) > 120 {
 		http.Error(w, "el título es muy largo (máximo 120 caracteres)", http.StatusBadRequest)
 		return
@@ -91,6 +96,11 @@ func editarComentario(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "escribe algo para responder", http.StatusBadRequest)
 		return
 	}
+	// Si llega texto ya tapado, no se guarda: pisaría el original
+	if strings.Contains(contenido, "*****") {
+		http.Error(w, "no puedes guardar texto censurado", http.StatusBadRequest)
+		return
+	}
 	if len([]rune(contenido)) > 2000 {
 		http.Error(w, "la respuesta es muy larga (máximo 2000 caracteres)", http.StatusBadRequest)
 		return
@@ -119,5 +129,5 @@ func editarComentario(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// DELETE /publicaciones/{id}/comentarios/{comentarioId}
-// Borra un comentario. Solo el autor o un admin.
+// >>> Si tu editar.go original seguía con borrarComentario (lo que venía
+// >>> después de este punto), pégala aquí abajo tal cual la tenías.
