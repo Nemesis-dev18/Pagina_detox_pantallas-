@@ -156,6 +156,9 @@ func listarCoincidencias(w http.ResponseWriter, r *http.Request) {
 		}
 		runas := []rune(contenido)
 		for _, m := range buscarCoincidencias(contenido) {
+			if m.Inicio < 0 || m.Fin > len(runas) || m.Inicio >= m.Fin {
+				continue
+			}
 			vistas = append(vistas, coincidenciaVista{
 				ComentarioID: id,
 				Alias:        alias,

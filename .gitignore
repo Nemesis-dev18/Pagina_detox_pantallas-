@@ -45,10 +45,21 @@ Thumbs.db
 *.swo
 
 # ---------- Archivos de configuración locales ----------
-*.local/detox-web
+*.local
+
+# ---------- Binario compilado ----------
+/detox-web
 detox-web.config.js
 detox-web.config.local.js
 detox-web.config.local.json
 detox-web.config.local.ts
 detox-web.config.local.mjs
 detox-web.config.local.cjs
+
+# ---------- Volcados y bases locales (datos de usuarios, no subir) ----------
+datos.sql
+schema.sql
+prohibidas.sql
+sesiones.sql
+publicaciones_ejemplo.sql
+*.db

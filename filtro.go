@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
 	"regexp"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
@@ -39,20 +41,20 @@ var plegar = func() map[rune]rune {
 		'u': "úùüû",
 		'n': "ñ",
 		'c': "ç",
-		// Cirílico que imita letras latinas
-		'p': "р",
-		'x': "х",
-		'y': "у",
+		// Cirílico que imita letras latinas (р, х, у)
+		'p': "\u0440",
+		'x': "\u0445",
+		'y': "\u0443",
 	} {
 		for _, v := range variantes {
 			m[v] = base
 		}
 	}
-	m['а'] = 'a'
-	m['е'] = 'e'
-	m['о'] = 'o'
-	m['с'] = 'c'
-	m['і'] = 'i'
+	m['\u0430'] = 'a' // а cirílica
+	m['\u0435'] = 'e' // е cirílica
+	m['\u043e'] = 'o' // о cirílica
+	m['\u0441'] = 'c' // с cirílica
+	m['\u0456'] = 'i' // і cirílica
 	return m
 }()
 
@@ -116,7 +118,7 @@ func compilarPalabra(palabra string) *regexp.Regexp {
 }
 
 // recargarFiltro lee la lista desde la base y reemplaza la que está en memoria.
-// Se llama al arrancar y cada vez que el admin agrega o quita una palabra.
+// Se llama al arrancar (main.go) y cada vez que el admin agrega o quita una palabra.
 func recargarFiltro(ctx context.Context) error {
 	rows, err := pool.Query(ctx, "SELECT palabra FROM palabras_excluidas")
 	if err != nil {
@@ -141,6 +143,7 @@ func recargarFiltro(ctx context.Context) error {
 	filtroMu.Lock()
 	filtroPalabras = nuevas
 	filtroMu.Unlock()
+	log.Printf("filtro de palabras cargado: %d palabras", len(nuevas))
 	return nil
 }
 
@@ -169,8 +172,14 @@ func buscarCoincidencias(texto string) []coincidencia {
 	var out []coincidencia
 	for _, p := range palabras {
 		for _, m := range p.re.FindAllStringIndex(s, -1) {
+			if m[1] <= m[0] {
+				continue // coincidencia vacía: se ignora
+			}
 			a := utf8.RuneCountInString(s[:m[0]])
 			b := utf8.RuneCountInString(s[:m[1]])
+			if a < 0 || a >= len(idx) || b < 1 || b > len(idx) {
+				continue // posición fuera de rango: se ignora
+			}
 			ini, fin := idx[a], idx[b-1]+1
 
 			// Solo palabras completas: "computadora" no debe disparar "puta".
@@ -187,7 +196,16 @@ func buscarCoincidencias(texto string) []coincidencia {
 }
 
 // censurar devuelve el texto con cada palabra excluida cambiada por *****.
-func censurar(texto string) string {
+// Si algo falla por dentro, registra el error y devuelve el texto tapado
+// completo: así un comentario problemático no tira toda la lista.
+func censurar(texto string) (resultado string) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("censurar falló: %v\n%s", r, debug.Stack())
+			resultado = mascara
+		}
+	}()
+
 	ms := buscarCoincidencias(texto)
 	if len(ms) == 0 {
 		return texto
@@ -206,6 +224,9 @@ func censurar(texto string) string {
 				fin = ms[i].Fin
 			}
 			i++
+		}
+		if ini < pos || fin > len(orig) || ini > fin {
+			continue // rango inválido: se ignora esta coincidencia
 		}
 		b.WriteString(string(orig[pos:ini]))
 		b.WriteString(mascara)
