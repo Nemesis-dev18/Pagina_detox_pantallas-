@@ -149,7 +149,9 @@
         caja.rows = 3;
         caja.maxLength = 2000;
         caja.required = true;
-        caja.value = c.contenido;
+       caja.value = c.contenido_original ?? c.contenido;
+campoTitulo.value = p.titulo_original ?? p.titulo;
+campoContenido.value = p.contenido_original ?? p.contenido;
 
         const botones = crearElemento('div', 'editor_botones');
         const guardar = crearElemento('button', 'boton_rojo', 'Guardar');
