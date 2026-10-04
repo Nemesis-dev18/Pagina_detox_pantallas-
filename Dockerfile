@@ -8,7 +8,7 @@ RUN go mod download
 
 # Luego todo el código y se compila a un solo ejecutable llamado "server"
 COPY . .
-RUN CGO_ENABLED=0 go build -o /src/server ./cmd/detox-web
+RUN CGO_ENABLED=0 go build -o /src/server .
 
 # ---------- Etapa 2: imagen final, liviana ----------
 FROM alpine:3.20

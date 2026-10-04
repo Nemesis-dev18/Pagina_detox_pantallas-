@@ -373,7 +373,7 @@ psql "$DATABASE_URL" -f respaldo.sql
 =====================================================================
  9. PROBAR LA API CON CURL (lo que recibe la página)
 =====================================================================
-# Primero enciende el servidor en otra terminal:  go run ./cmd/detox-web
+# Primero enciende el servidor en otra terminal:  go run .
 
 # Lista de publicaciones (lo que carga la página Comunidad):
 curl http://localhost:8080/publicaciones
