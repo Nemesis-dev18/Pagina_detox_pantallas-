@@ -306,6 +306,7 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 // Se usa cuando el correo no existe, para que el login tarde lo mismo
 var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
+
 type Usuario struct {
 	ID      string
 	Alias   string
@@ -415,6 +416,7 @@ func yo(w http.ResponseWriter, r *http.Request) {
 		"es_admin": u.EsAdmin,
 	})
 }
+
 // ---------- Comentarios ----------
 
 var reUUID = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
@@ -549,6 +551,7 @@ func borrarPublicacion(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
 // DELETE /publicaciones/{id}/comentarios/{comentarioId}
 // Borra un comentario. Solo el autor o un admin.
 func borrarComentario(w http.ResponseWriter, r *http.Request) {
