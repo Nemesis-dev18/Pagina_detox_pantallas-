@@ -149,7 +149,9 @@
         caja.rows = 3;
         caja.maxLength = 2000;
         caja.required = true;
-        caja.value = c.contenido_original ?? c.contenido;
+       caja.value = c.contenido_original ?? c.contenido;
+campoTitulo.value = p.titulo_original ?? p.titulo;
+campoContenido.value = p.contenido_original ?? p.contenido;
 
         const botones = crearElemento('div', 'editor_botones');
         const guardar = crearElemento('button', 'boton_rojo', 'Guardar');
@@ -290,7 +292,7 @@
             campoTitulo.name = 'titulo';
             campoTitulo.maxLength = 120;
             campoTitulo.required = true;
-            campoTitulo.value = p.titulo_original ?? p.titulo;
+            campoTitulo.value = p.titulo;
             const campoCategoria = document.createElement('select');
             campoCategoria.name = 'categoria';
             for (const clave in ETIQUETAS) {
@@ -304,7 +306,7 @@
             campoContenido.rows = 6;
             campoContenido.maxLength = 5000;
             campoContenido.required = true;
-            campoContenido.value = p.contenido_original ?? p.contenido;
+            campoContenido.value = p.contenido;
 
             const botones = crearElemento('div', 'editor_botones');
             const guardar = crearElemento('button', 'boton_rojo', 'Guardar cambios');
@@ -336,8 +338,6 @@
                         p.titulo = campoTitulo.value.trim();
                         p.categoria = campoCategoria.value;
                         p.contenido = campoContenido.value.trim();
-                        p.titulo_original = p.titulo;
-                        p.contenido_original = p.contenido;
                         titulo.textContent = p.titulo;
                         cuerpoPost.textContent = p.contenido;
                         pintarMeta();

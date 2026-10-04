@@ -27,14 +27,14 @@ var categoriasValidas = map[string]bool{
 }
 
 type Publicacion struct {
-	ID                string    `json:"id"`
-	Alias             string    `json:"alias"`
-	Titulo            string    `json:"titulo"`
-	Contenido         string    `json:"contenido"`
-	Categoria         string    `json:"categoria"`
-	CreadoEn          time.Time `json:"creado_en"`
-	TituloOriginal    string    `json:"titulo_original,omitempty"`
-	ContenidoOriginal string    `json:"contenido_original,omitempty"`
+		TituloOriginal    string `json:"titulo_original,omitempty"`
+	ContenidoOriginal string `json:"contenido_original,omitempty"`
+	ID        string    `json:"id"`
+	Alias     string    `json:"alias"`
+	Titulo    string    `json:"titulo"`
+	Contenido string    `json:"contenido"`
+	Categoria string    `json:"categoria"`
+	CreadoEn  time.Time `json:"creado_en"`
 }
 
 func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
@@ -48,27 +48,27 @@ func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
+		u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
 	defer rows.Close()
 
-	u, errSesion := usuarioActual(r)
-	haySesion := errSesion == nil
-
 	publicaciones := []Publicacion{}
-	for rows.Next() {
+		for rows.Next() {
 		var p Publicacion
 		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
-		}
-		// En la base queda el texto original; al público se le muestra tapado.
-		// El autor (o un admin) recibe además el original para poder editarlo.
-		tituloOrig, contenidoOrig := p.Titulo, p.Contenido
+					tituloOrig, contenidoOrig := p.Titulo, p.Contenido
 		p.Titulo = censurar(p.Titulo)
 		p.Contenido = censurar(p.Contenido)
 		if haySesion && (u.EsAdmin || u.Alias == p.Alias) {
 			p.TituloOriginal = tituloOrig
 			p.ContenidoOriginal = contenidoOrig
 		}
+		}
+		// En la base queda el texto original; al público se le muestra tapado
+		p.Titulo = censurar(p.Titulo)
+		p.Contenido = censurar(p.Contenido)
 		publicaciones = append(publicaciones, p)
 	}
 	if err := rows.Err(); err != nil {
@@ -77,7 +77,6 @@ func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "private, no-store")
 	json.NewEncoder(w).Encode(publicaciones)
 }
 
@@ -306,7 +305,6 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 // Se usa cuando el correo no existe, para que el login tarde lo mismo
 var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
-
 type Usuario struct {
 	ID      string
 	Alias   string
@@ -416,7 +414,6 @@ func yo(w http.ResponseWriter, r *http.Request) {
 		"es_admin": u.EsAdmin,
 	})
 }
-
 // ---------- Comentarios ----------
 
 var reUUID = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
@@ -428,7 +425,6 @@ type Comentario struct {
 	ContenidoOriginal string    `json:"contenido_original,omitempty"`
 	CreadoEn          time.Time `json:"creado_en"`
 }
-
 func listarComentarios(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if !reUUID.MatchString(id) {
@@ -446,10 +442,9 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
-	defer rows.Close()
-
-	u, errSesion := usuarioActual(r)
+		u, errSesion := usuarioActual(r)
 	haySesion := errSesion == nil
+	defer rows.Close()
 
 	comentarios := []Comentario{}
 	for rows.Next() {
@@ -458,14 +453,12 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
-		// En la base queda el texto original; al público se le muestra tapado.
-		// El autor (o un admin) recibe además el original para poder editarlo.
-		original := c.Contenido
+		// En la base queda el texto original; al público se le muestra tapado
+				original := c.Contenido
 		c.Contenido = censurar(c.Contenido)
 		if haySesion && (u.EsAdmin || u.Alias == c.Alias) {
 			c.ContenidoOriginal = original
 		}
-		comentarios = append(comentarios, c)
 	}
 	if err := rows.Err(); err != nil {
 		http.Error(w, "error leyendo datos", http.StatusInternalServerError)
@@ -473,7 +466,6 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "private, no-store")
 	json.NewEncoder(w).Encode(comentarios)
 }
 
@@ -551,7 +543,6 @@ func borrarPublicacion(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
-
 // DELETE /publicaciones/{id}/comentarios/{comentarioId}
 // Borra un comentario. Solo el autor o un admin.
 func borrarComentario(w http.ResponseWriter, r *http.Request) {
