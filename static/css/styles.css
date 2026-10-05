@@ -1559,13 +1559,38 @@ footer.pie_pagina .pies {
    ================================================================ */
 
 
-           .mapa_main { display: flex; flex-direction: column; gap: 1rem; padding: clamp(16px, 3vw, 28px); max-width: 1280px; margin: 0 auto; width: 100%; }
-        .mapa_titulo { font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0; }
-        .mapa_subtitulo { color: #c9c4b8; margin: .2rem 0 0; }
+  .mapa_main { 
+    display: flex;
+     flex-direction:
+      column; gap: 1rem;
+       padding: clamp(16px, 3vw, 28px);
+        max-width: 1280px; margin: 0 auto;
+         width: 100%;
+         }
+        .mapa_titulo { 
+          font-size: clamp(1.8rem, 4vw, 2.4rem);
+           margin: 0; }
+        .mapa_subtitulo { 
+          color: #c9c4b8; margin: .2rem 0 0; 
+        }
 
-        .banner_crisis { background: #2a0a0a; border: 1px solid #7d1212; border-radius: 10px; padding: .9rem 1.1rem; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; align-items: center; }
-        .banner_crisis strong { color: #ff6b6b; }
-        .banner_crisis a { color: #fff; text-decoration: underline; }
+        .banner_crisis { 
+          background: #2a0a0a;
+           border: 1px solid #7d1212; 
+           border-radius: 10px;
+            padding: .9rem 1.1rem; 
+            display: flex;
+             flex-wrap: wrap;
+              gap: .5rem 1.5rem;
+               align-items: center;
+               }
+        .banner_crisis strong {
+           color: #ff6b6b; 
+          }
+        .banner_crisis a {
+           color: #fff; 
+           text-decoration: underline; 
+          }
 
 
 /* Botones de filtro por categoría del mapa */
@@ -2058,4 +2083,1118 @@ input, select, textarea, iframe, video { max-width: 100%; }
     max-width: 100%;
     min-width: 0;
   }
+}
+
+/* ================================================================
+  10. MEJORAS COMPARTIDAS
+   ================================================================ */
+
+/* Enlace para saltar al contenido con teclado o lector de pantalla. */
+.saltar {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--rojo);
+  color: #fff;
+  font-family: var(--fuente-titulo);
+  border-radius: 6px;
+}
+
+.saltar:focus {
+  top: 12px;
+}
+
+/* Marca de la cabecera cuando el nombre del sitio no es el titulo principal. */
+.hero-center .marca {
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  color: #fff;
+}
+
+/* Cabecera compartida por las paginas principales. */
+.cabecera, .cabecera_nosotros {
+  min-height: 0;
+  padding: 0;
+  text-align: left;
+  background: var(--superficie-2);
+  border-bottom: 1px solid var(--borde-suave);
+  box-shadow: none;
+  position: relative;
+  z-index: 30;
+  flex: 1 0 100%;
+}
+
+.cabecera .hero, .hero_nosotros {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 16px;
+  max-width: 1180px;
+  min-height: 68px;
+  margin: 0 auto;
+  padding: 10px clamp(16px, 3vw, 32px);
+  background: transparent;
+}
+
+.cabecera #logo img, #logo_nosotros img, .cabecera_nosotros #logo img {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid var(--rojo);
+  object-fit: cover;
+}
+
+.hero-left, .hero-right, .linkeo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cabecera .hero-center, .hero-center_nosotros {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+}
+
+.cabecera .hero-center :is(h1, .marca), .hero_nosotros .marca {
+  margin: 0;
+  color: #fff;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: 1.5px;
+}
+
+.cabecera .btn {
+  padding: 9px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cabecera .btn:hover {
+  border-color: var(--rojo);
+}
+
+/* Menu desplegable: boton, flecha, panel y estados abierto/activo. */
+header .contenedor_menu {
+  position: relative;
+  flex: none;
+  width: auto;
+  background: transparent;
+  z-index: 40;
+}
+
+header #menu_lateral,
+header #menu_lateral:hover,
+header .contenedor_menu.abierto #menu_lateral {
+  display: block;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  flex: none;
+  min-height: 0;
+}
+
+header .texto_menu {
+  flex-direction: row;
+  align-self: auto;
+  width: auto;
+  gap: 10px;
+  padding: 9px 14px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  font-size: 1rem;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
+  transition: border-color var(--transicion), background-color var(--transicion);
+}
+
+header .texto_menu:hover,
+header .contenedor_menu.abierto .texto_menu {
+  border-color: var(--rojo);
+  background: var(--superficie);
+}
+
+header .texto_menu_letras {
+  flex: none;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  letter-spacing: 1.5px;
+  text-align: left;
+  text-align-last: auto;
+  text-transform: uppercase;
+}
+
+header .flecha {
+  width: 7px;
+  height: 7px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+header .contenedor_menu.abierto .flecha {
+  transform: rotate(225deg) translateY(-2px);
+}
+
+header .menu_desplegable {
+  top: calc(100% + 8px);
+  left: auto;
+  right: 0;
+  min-width: 210px;
+  padding: 6px;
+  background: var(--superficie);
+  border: 1px solid var(--borde-suave);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+  clip-path: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+
+header .contenedor_menu.abierto .menu_desplegable {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+header .menu_desplegable a {
+  padding: 10px 14px;
+  border-left: 0;
+  border-radius: 6px;
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+header .menu_desplegable a:hover,
+header .menu_desplegable a:focus-visible {
+  padding-left: 14px;
+  background: var(--rojo-fuerte);
+}
+
+header .menu_desplegable a[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 3px 0 0 var(--rojo);
+}
+
+/* ================================================================
+  11. PAGINA DE INICIO
+   ================================================================ */
+
+/* Hero: distribuye el texto principal y el medidor de horas. */
+.index .contenido-encabezado {
+  align-items: stretch;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.index .contenido-principal {
+  flex: 1 1 380px;
+  max-width: 600px;
+  align-self: center;
+}
+
+.index .titulo {
+  max-width: none;
+  font-size: clamp(2.3rem, 5.6vw, 4.4rem);
+  line-height: 1.04;
+  letter-spacing: 1px;
+}
+
+.index .contenido-principal .subtitulo {
+  max-width: 46ch;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+}
+
+/* Acciones principales y boton de llamada a la accion. */
+.index .acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1.8rem;
+}
+
+.btn_primario {
+  padding: 14px 24px;
+  background: var(--rojo-fuerte);
+  color: #fff;
+  border: 2px solid var(--rojo-fuerte);
+  border-radius: 6px;
+  font-family: var(--fuente-titulo);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  transition: background-color var(--transicion), border-color var(--transicion);
+}
+
+.btn_primario:hover {
+  background: var(--rojo-hover);
+  border-color: var(--rojo-hover);
+}
+
+.index .acciones .btn {
+  padding: 14px 24px;
+  font-family: var(--fuente-titulo);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+/* Panel del medidor, rejilla de horas y textos del resultado. */
+.espejo {
+  flex: 1 1 400px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: clamp(18px, 3vw, 32px);
+  background: var(--superficie);
+  border: 3px solid var(--rojo);
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+.espejo h2 {
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  letter-spacing: 1px;
+  line-height: 1.15;
+}
+
+.espejo label {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.espejo output {
+  font-family: var(--fuente-titulo);
+  color: #fff;
+}
+
+.espejo input[type="range"] {
+  width: 100%;
+  height: 28px;
+  margin-top: 8px;
+  accent-color: var(--rojo);
+  cursor: pointer;
+}
+
+.horas {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.horas span {
+  aspect-ratio: 1 / 1.1;
+  background: var(--superficie-3);
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.horas span.on {
+  background: var(--rojo);
+}
+
+.espejo .leyenda {
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+}
+
+.espejo .resultado {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+}
+
+.espejo .cifra {
+  display: block;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  line-height: 1;
+  color: #fff;
+}
+
+.espejo .nota {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--borde-suave);
+  font-size: 0.9rem;
+  color: var(--texto-tenue);
+}
+
+/* Pasos de uso: numeracion, columnas y enlaces. */
+.pasos_seccion {
+  margin-top: clamp(48px, 8vw, 96px);
+}
+
+.pasos_seccion > h2 {
+  margin-bottom: 1.6rem;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  letter-spacing: 1px;
+}
+
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 3vw, 40px);
+  counter-reset: paso;
+}
+
+.pasos li {
+  position: relative;
+  padding-top: 2.6rem;
+  border-top: 3px solid var(--borde-suave);
+  counter-increment: paso;
+}
+
+.pasos li::before {
+  content: counter(paso);
+  position: absolute;
+  top: -18px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--rojo-fuerte);
+  border-radius: 50%;
+  font-family: var(--fuente-titulo);
+}
+
+.pasos h3 {
+  margin-bottom: 0.5rem;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.pasos p {
+  max-width: 36ch;
+  color: var(--texto-suave);
+}
+
+.pasos a {
+  display: inline-block;
+  margin-top: 0.9rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--rojo);
+  transition: color var(--transicion), border-color var(--transicion);
+}
+
+.pasos a:hover {
+  color: var(--rojo-claro);
+  border-color: var(--rojo-claro);
+}
+
+/* Comportamiento reducido y distribucion de inicio en movil. */
+@media (max-width: 768px) {
+  .pasos {
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+  }
+
+  .index .acciones > * {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horas span, .btn_primario, .pasos a {
+    transition: none;
+  }
+}
+
+/* ================================================================
+  12. INICIO DE SESION Y REGISTRO
+   ================================================================ */
+
+/* Centrado de los formularios de cuenta y estilo de sus campos. */
+.texto_sesion {
+  flex: 1 1 100%;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: clamp(28px, 7vw, 72px) 16px;
+  background: var(--fondo);
+}
+
+.texto_sesion .registro, .registro-cuenta {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: clamp(22px, 4vw, 36px);
+  background: var(--superficie);
+  border: 1px solid var(--borde-suave);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.registro .titulo, .registro-cuenta .titulo {
+  max-width: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  letter-spacing: 1px;
+  text-align: left;
+  text-shadow: none;
+}
+
+.sesion, .formulario-cuenta {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+.sesion .user, .sesion .contraseña, .sesion .boton_sesion {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.sesion input, .formulario-cuenta input {
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--fondo-campo);
+  color: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  box-shadow: none;
+  font: 400 1rem var(--fuente-texto);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sesion input:focus, .formulario-cuenta input:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px var(--rojo-halo);
+}
+
+.sesion input::placeholder, .formulario-cuenta input::placeholder {
+  color: var(--texto-tenue);
+}
+
+.formulario-cuenta label {
+  color: var(--texto-suave);
+  font: 600 0.9rem var(--fuente-texto);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.boton_s, .boton-cuenta {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--rojo-fuerte);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  font: 700 1rem var(--fuente-texto);
+  letter-spacing: 0;
+  text-transform: none;
+  transition: background-color var(--transicion);
+}
+
+.boton_s:hover, .boton-cuenta:hover {
+  background: var(--rojo-hover);
+  transform: none;
+}
+
+.enlaces-sesion, .enlace-cuenta {
+  display: grid;
+  gap: 6px;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  font: 400 0.95rem var(--fuente-texto);
+  color: var(--texto-suave);
+  text-align: left;
+}
+
+.enlaces-sesion a, .enlace-cuenta a {
+  font: 600 0.95rem var(--fuente-texto);
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: var(--rojo);
+  text-underline-offset: 3px;
+}
+
+.enlaces-sesion p, .enlace-cuenta p {
+  margin: 0;
+  font: 400 0.95rem var(--fuente-texto);
+  color: var(--texto-suave);
+}
+
+.mensaje_form {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--rojo-claro);
+}
+
+/* Ajustes finales de ancho y alineacion para los formularios de cuenta. */
+.texto_sesion {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.texto_sesion .registro, .texto_sesion .registro-cuenta {
+  flex: 0 1 440px;
+  width: 100%;
+  margin: 0;
+}
+
+.texto_sesion .sesion, .texto_sesion .formulario-cuenta {
+  width: 100%;
+  align-items: stretch;
+}
+
+.texto_sesion .registro .sesion input, .texto_sesion .formulario-cuenta input {
+  width: 100% !important;
+  max-width: none;
+}
+
+.texto_sesion .enlaces-sesion, .texto_sesion .enlace-cuenta {
+  width: 100%;
+}
+
+.texto_sesion .sesion .boton_sesion .boton_s, .texto_sesion .boton-cuenta {
+  width: 100%;
+  height: auto;
+  border: 0;
+  font: 700 1rem var(--fuente-texto);
+  letter-spacing: 0;
+}
+
+.texto_sesion .titulo {
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  color: #fff;
+}
+
+.texto_sesion .enlaces-sesion a {
+  display: inline;
+}
+
+.texto_sesion .formulario-cuenta {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.texto_sesion .formulario-cuenta .boton-cuenta {
+  margin-top: 6px;
+}
+
+/* ================================================================
+  13. NOSOTROS, MAPA Y COMUNIDAD
+   ================================================================ */
+
+/* Pagina Nosotros: ancho de lectura, titulo y bloques informativos. */
+.nosotros {
+  display: block;
+  min-height: 100vh;
+  background: var(--fondo);
+  color: var(--texto-suave);
+}
+
+.nosotros .separador_br {
+  display: none;
+}
+
+.nosotros .informacion_relativa {
+  display: block;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 72px) clamp(16px, 3vw, 32px);
+  background: transparent;
+}
+
+.nosotros .texto_nosotros {
+  max-width: 62ch;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.nosotros .titulo_nosotros {
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.nosotros .texto_nosotros h1 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: 1px;
+}
+
+.nosotros .texto_nosotros p {
+  margin: 0 0 1rem;
+  color: var(--texto-suave);
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.nosotros .bloques_nosotros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 3vw, 28px);
+  margin: clamp(32px, 6vw, 64px) 0 0;
+  padding: 0;
+  background: transparent;
+}
+
+.nosotros .bloques_nosotros > div {
+  min-height: 0;
+  margin: 0;
+  padding: 1.3rem 1.4rem;
+  background: var(--superficie);
+  border: 0;
+  border-left: 3px solid var(--rojo);
+  border-radius: 0 10px 10px 0;
+}
+
+.nosotros .bloques_nosotros > div p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.nosotros .bloques_nosotros strong {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .nosotros .bloques_nosotros {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mapa y comunidad: limitan el ancho de lectura al ancho de la cabecera. */
+.mapa {
+  display: block;
+  font-family: var(--fuente-texto);
+  background: var(--fondo);
+}
+
+.mapa :where(p, span, a, input, button, li, label) {
+  font-family: var(--fuente-texto);
+}
+
+.mapa .chip, .mapa .banner_crisis strong {
+  font-weight: 600;
+}
+
+.mapa .mapa_main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+
+.foro {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+
+/* Ajustes de navegacion para pantallas medianas y moviles. */
+@media (max-width: 768px) {
+  header .menu_desplegable {
+    left: 0;
+    right: auto;
+  }
+
+  .cabecera .hero-right {
+    flex-wrap: wrap;
+  }
+}
+
+/* ================================================================
+  14. TEST DE HABITOS DIGITALES
+   ================================================================ */
+
+/* Hero de Test: separa el texto principal del panel introductorio. */
+.pagina-test .test-encabezado {
+  align-items: stretch;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+/* Columna izquierda del hero: controla su ancho y alineacion vertical. */
+.pagina-test .test-encabezado .contenido-principal {
+  flex: 1 1 380px;
+  max-width: 620px;
+  align-self: center;
+}
+
+/* Etiquetas pequenas como "Autoevaluacion" y "Seccion 01". */
+.pagina-test .test-etiqueta {
+  margin: 0 0 0.7rem;
+  color: var(--rojo-claro);
+  font: 700 0.8rem var(--fuente-texto);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Centra verticalmente el texto del panel explicativo del hero. */
+.pagina-test .test-intro {
+  justify-content: center;
+}
+
+/* Da contraste legible al texto dentro del panel explicativo. */
+.pagina-test .test-intro p {
+  color: var(--texto-suave);
+}
+
+/* Separa la nota de privacidad del texto anterior. */
+.pagina-test .test-intro .nota {
+  margin-top: 0.4rem;
+}
+
+/* Seccion del cuestionario: ocupa todo el ancho y separa el hero de las preguntas. */
+.pagina-test .test-seccion {
+  width: 100%;
+  margin-top: clamp(48px, 8vw, 96px);
+}
+
+/* Encabezado del cuestionario: alinea titulo y contador en extremos opuestos. */
+.pagina-test .test-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--borde-suave);
+}
+
+/* Titulos de la seccion y del resultado: comparten tipografia de encabezados. */
+.pagina-test .test-cabecera h2, .pagina-test .test-resultado h2 {
+  margin: 0;
+  font: 400 clamp(1.7rem, 3vw, 2.4rem)/1.15 var(--fuente-titulo);
+  letter-spacing: 1px;
+}
+
+/* Contador de respuestas: evita que el texto se parta en varias lineas. */
+.pagina-test .test-progreso {
+  margin: 0 0 0.2rem;
+  color: var(--texto-tenue);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* Formulario: distribuye las preguntas en dos columnas en pantallas amplias. */
+.pagina-test .test-formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(24px, 5vw, 64px);
+  margin-top: 1.5rem;
+}
+
+/* Cada pregunta: agrega separacion y una linea superior sin crear una tarjeta. */
+.pagina-test .test-formulario fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 1.4rem 0 1.6rem;
+  border: 0;
+  border-top: 2px solid var(--borde-suave);
+}
+
+/* Enunciado de cada pregunta: usa la fuente de titulos y aprovecha el ancho completo. */
+.pagina-test .test-formulario legend {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0;
+  color: #fff;
+  font: 400 1.18rem/1.4 var(--fuente-titulo);
+  letter-spacing: 0.3px;
+}
+
+/* Respuestas de cada pregunta: crea dos columnas de opciones. */
+.pagina-test .test-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Cada opcion: hace que toda la superficie sea clicable y mantiene el estilo oscuro. */
+.pagina-test .test-opciones label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 8px 10px;
+  color: var(--texto-suave);
+  background: var(--superficie);
+  border: 1px solid var(--borde-suave);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Opcion seleccionada: resalta la respuesta actual con el color de acento. */
+.pagina-test .test-opciones label:has(input:checked) {
+  color: #fff;
+  border-color: var(--rojo);
+  background: rgba(190, 35, 43, 0.16);
+}
+
+/* Radios: conserva controles nativos y adapta su tamano y color. */
+.pagina-test .test-opciones input {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--rojo);
+}
+
+/* Acciones del formulario: ocupa ambas columnas y separa los botones de las preguntas. */
+.pagina-test .test-acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  padding: 1.4rem 0 2rem;
+  border-top: 1px solid var(--borde-suave);
+}
+
+/* Boton principal: muestra que se puede activar para calcular la reflexion. */
+.pagina-test .test-acciones .btn_primario {
+  cursor: pointer;
+}
+
+/* Boton de reinicio: estilo secundario y discreto para borrar las respuestas. */
+.pagina-test .test-reiniciar {
+  padding: 10px 0;
+  color: var(--texto-suave);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rojo);
+  font: 600 0.95rem var(--fuente-texto);
+  cursor: pointer;
+}
+
+/* Hover del reinicio: aumenta el contraste cuando se apunta al boton. */
+.pagina-test .test-reiniciar:hover {
+  color: #fff;
+}
+
+/* Resultado: destaca la reflexion sin encerrarla en otra tarjeta decorativa. */
+.pagina-test .test-resultado {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+  margin: 0 0 4rem;
+  padding: clamp(20px, 4vw, 36px);
+  background: var(--superficie);
+  border-left: 4px solid var(--rojo);
+}
+
+/* Mantiene oculto el resultado hasta que se envia el formulario. */
+.pagina-test .test-resultado[hidden] {
+  display: none;
+}
+
+/* Texto general del resultado: elimina margenes y conserva el color de lectura. */
+.pagina-test .test-resultado > p {
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+/* Etiqueta del resultado: la diferencia del texto explicativo. */
+.pagina-test .test-resultado .test-etiqueta {
+  color: var(--rojo-claro);
+}
+
+/* Aviso de orientacion: lo separa del resultado principal y reduce su enfasis. */
+.pagina-test .test-resultado .test-aviso {
+  padding-top: 1rem;
+  color: var(--texto-tenue);
+  border-top: 1px solid var(--borde-suave);
+  font-size: 0.9rem;
+}
+
+/* Enlace a la comunidad: conserva su ancho natural dentro del resultado. */
+.pagina-test .test-resultado .btn {
+  justify-self: start;
+}
+
+/* Recurso externo: lo separa del resultado con una linea, sin anidar otra tarjeta. */
+.pagina-test .test-recurso {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--borde-suave);
+}
+
+/* Texto del recurso: deja el titulo y la explicacion alineados y sin margen extra. */
+.pagina-test .test-recurso-texto h3, .pagina-test .test-recurso-texto p {
+  margin: 0;
+}
+
+/* Etiqueta del recurso: mantiene una separacion corta respecto al titulo. */
+.pagina-test .test-recurso-texto .test-etiqueta {
+  margin-bottom: 0.35rem;
+}
+
+/* Titulo del recurso: usa la fuente de encabezados en un tamano secundario. */
+.pagina-test .test-recurso-texto h3 {
+  margin-bottom: 0.25rem;
+  color: #fff;
+  font: 400 1.2rem/1.3 var(--fuente-titulo);
+}
+
+/* Descripcion del recurso: usa el color suave para diferenciarla del titulo. */
+.pagina-test .test-recurso-texto p:last-child {
+  color: var(--texto-suave);
+}
+
+/* Enlace externo: funciona como boton secundario y conserva el ancho de su texto. */
+.pagina-test .test-recurso-enlace {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  color: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font: 600 0.9rem var(--fuente-texto);
+  transition: border-color var(--transicion), background-color var(--transicion);
+}
+
+/* Hover y foco del enlace: indican claramente que es una accion interactiva. */
+.pagina-test .test-recurso-enlace:hover,
+.pagina-test .test-recurso-enlace:focus-visible {
+  border-color: var(--rojo);
+  background: var(--rojo-fuerte);
+}
+
+/* Responsive de Test: apila las preguntas y encabezados en pantallas estrechas. */
+@media (max-width: 768px) {
+  .pagina-test .test-encabezado .acciones > * {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .pagina-test .test-formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .pagina-test .test-cabecera {
+    align-items: start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pagina-test .test-recurso {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+/* Telefonos angostos: apila opciones y botones para facilitar su uso. */
+@media (max-width: 420px) {
+  .pagina-test .test-opciones {
+    grid-template-columns: 1fr;
+  }
+
+  .pagina-test .test-acciones {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pagina-test .test-acciones .btn_primario {
+    width: 100%;
+  }
+
+  .pagina-test .test-recurso-enlace {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* ================================================================
+  15. ADMINISTRACION DE PALABRAS
+   ================================================================ */
+
+/* Ancho y separacion del panel para administrar palabras excluidas. */
+.admin {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.admin h1, .admin h2 {
+  margin: 1.5rem 0 .5rem;
+}
+
+.admin form {
+  display: flex;
+  gap: .5rem;
+  margin: .5rem 0;
+}
+
+.admin input {
+  flex: 1;
+  padding: .5rem;
+}
+
+/* Tabla administrativa: filas compactas y desplazamiento en pantallas pequenas. */
+.admin table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: .5rem 0;
+}
+
+.admin th, .admin td {
+  text-align: left;
+  padding: .4rem .5rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.admin .disfrazada {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.admin .aviso {
+  min-height: 1.2em;
+}
+
+.admin .tabla-scroll {
+  overflow-x: auto;
 }

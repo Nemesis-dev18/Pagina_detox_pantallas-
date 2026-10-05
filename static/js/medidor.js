@@ -1,14 +1,14 @@
 (function () {
   var autorCita = document.getElementById('autor_cita');
   if (autorCita) {
-    var autores = ['-Michel Jackson', '-Batman'];
+    var autores = ['-Michel Jackson', '-Batman ( LEGO Batman: la película 2017 ) '];
     var indiceAutor = 0;
     window.setInterval(function () {
       indiceAutor = (indiceAutor + 1) % autores.length;
       autorCita.textContent = autores[indiceAutor];
     }, 5000);
   }
-  
+
 
   var rango = document.getElementById('horas_dia');
   var rejilla = document.getElementById('rejilla_horas');
