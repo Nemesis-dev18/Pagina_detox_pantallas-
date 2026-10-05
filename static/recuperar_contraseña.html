@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Recuperar contraseña | DETOX_WEB</title>
+    <script src="../static/js/csrf.js"></script>
+        <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="inicio_sesion">
+    <!-- Cabecera -->
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+            </div>
+            <div class="hero-center">
+                <h1>DETOX_WEB</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Formulario de recuperación -->
+    <section class="texto_sesion">
+        <div class="registro-cuenta">
+            <h2 class="titulo_recuperar">Recuperar contraseña</h2>
+            <form class="formulario-cuenta" action="/recuperar" method="POST" data-ajax>
+                <label for="correo">Correo electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="CORREO ELECTRÓNICO" required>
+
+                <button class="boton-cuenta" type="submit">Enviar enlace</button>
+            </form>
+            <p class="mensaje_form" role="alert" hidden></p>
+            <p class="enlace-cuenta"><a href="inicio_sesion.html">Volver a iniciar sesión</a></p>
+        </div>
+
+     
+    </section>
+
+    <!-- Pie de página -->
+    <footer id="contacto" class="pie_pagina">
+        <div class="pie_contenido">
+            <div class="pie_col pie_marca">
+                <h2 class="pie_titulo">DETOX_WEB</h2>
+                <p>Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.</p>
+                <p class="pie_suave">Parte del Proyecto Esperanza (nombre provisional: <em>Preventiva</em>).</p>
+            </div>
+
+
+        </div>
+
+        <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento. Su finalidad es exclusivamente preventiva, educativa y de concientización.</p>
+
+        <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
+    </footer>
+    <script src="../static/js/formularios.js" defer></script>
+</body>
+</html>

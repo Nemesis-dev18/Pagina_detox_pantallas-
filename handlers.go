@@ -222,17 +222,24 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 
 	var usuarioID string
 	err := pool.QueryRow(r.Context(), "SELECT id FROM usuarios WHERE correo = $1", correo).Scan(&usuarioID)
-	if err == nil {
-		if err := enviarEnlaceRecuperacion(r.Context(), usuarioID, correo); err != nil {
-			log.Println("recuperación:", err)
-		}
-	} else if !errors.Is(err, pgx.ErrNoRows) {
+	if errors.Is(err, pgx.ErrNoRows) {
+		http.Error(w, "no existe una cuenta con ese correo electrónico", http.StatusNotFound)
+		return
+	}
+	if err != nil {
 		log.Println("recuperación:", err)
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
 	}
 
-	// Siempre la misma respuesta, exista o no el correo
+	if err := enviarEnlaceRecuperacion(r.Context(), usuarioID, correo); err != nil {
+		log.Println("recuperación:", err)
+		http.Error(w, "no pudimos enviar el correo, intenta de nuevo en unos minutos", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, " te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada ")
+	fmt.Fprint(w, "Te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.")
 }
 
 func restablecer(w http.ResponseWriter, r *http.Request) {
@@ -304,9 +311,6 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 // ---------- Login y sesiones ----------
 
-// Se usa cuando el correo no existe, para que el login tarde lo mismo
-var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
-
 type Usuario struct {
 	ID      string
 	Alias   string
@@ -342,23 +346,30 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	correo := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
 	password := r.FormValue("password")
 
+	if bloq, restante := bloqueado(correo); bloq {
+		minutos := int(restante.Minutes()) + 1
+		http.Error(w, fmt.Sprintf("demasiados intentos fallidos, intenta de nuevo en %d minutos", minutos), http.StatusTooManyRequests)
+		return
+	}
+
 	var id, hash string
-	encontrado := true
 	err := pool.QueryRow(r.Context(),
 		"SELECT id, password_hash FROM usuarios WHERE correo = $1", correo).Scan(&id, &hash)
 	if errors.Is(err, pgx.ErrNoRows) {
-		encontrado = false
-		hash = string(hashFalso)
-	} else if err != nil {
+		http.Error(w, "no tienes una cuenta con ese correo, regístrate para continuar", http.StatusNotFound)
+		return
+	}
+	if err != nil {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
 	}
 
-	coincide := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
-	if !encontrado || !coincide {
-		http.Error(w, "correo o contraseña incorrectos", http.StatusUnauthorized)
+	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) != nil {
+		registrarFallo(correo)
+		http.Error(w, "contraseña incorrecta", http.StatusUnauthorized)
 		return
 	}
+	limpiarIntentos(correo)
 
 	token, err := generarToken()
 	if err != nil {
