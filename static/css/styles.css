@@ -551,7 +551,7 @@ footer.pie_pagina .pies {
   min-width: 0;
   margin: clamp(10px, 2vw, 20px);
   padding: clamp(20px, 3vw, 30px) clamp(12px, 2vw, 20px);
-  background-color: var(---fondo);
+  background-color: var(--fondo);
   border-radius: 10px;
 }
 
@@ -951,7 +951,8 @@ footer.pie_pagina .pies {
 }
 
 /* Título de la barra superior de Nosotros */
-.hero_nosotros h1 {
+.hero_nosotros h1,
+.hero_nosotros .marca {
   width: auto;
   margin-left: clamp(20px, 5vw, 50px);
   color: #000;

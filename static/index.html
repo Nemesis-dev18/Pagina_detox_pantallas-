@@ -2,83 +2,86 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DETOX_WEB</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DETOX_WEB | Mide tu tiempo en el celular y encuentra apoyo anónimo</title>
+    <meta name="description" content="Calcula cuánto de tu día pasas en el celular, entiende el hábito y comparte con otras personas en una comunidad anónima. Un espacio preventivo en Bogotá.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:site_name" content="DETOX_WEB">
+    <meta property="og:title" content="DETOX_WEB | Mide tu tiempo en el celular y encuentra apoyo anónimo">
+    <meta property="og:description" content="Calcula cuánto de tu día pasas en el celular y comparte con otras personas en una comunidad anónima.">
+    <link rel="preload" href="fuentes/Anton/Anton-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mejoras.css">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"DETOX_WEB","inLanguage":"es-CO","description":"Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular."}</script>
 </head>
 <body class="index">
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
     <!-- Cabecera -->
     <header class="cabecera">
         <div class="hero">
                    <div class="hero-left" id="logo">
-                <a href="comunidad.html" aria-label="Ir al inicio">
-                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB" width="80" height="70">
                 </a>
             </div>
             <div class="hero-center">
-                <h1>TEXTO DE REFERENCIA POR AHORA</h1>
+                <p class="marca">DETOX_WEB</p>
             </div>
             <div class="hero-right">
+                <div class="contenedor_menu"><aside id="menu_lateral"><button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable"><span class="texto_menu_letras">Opciones</span><span class="flecha" aria-hidden="true"></span></button></aside><nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal"><ul><li><a href="index.html" aria-current="page">Inicio</a></li><li><a href="nosotros.html">Nosotros</a></li><li><a href="comunidad.html">Comunidad</a></li><li><a href="mapa.html">Mapa</a></li></ul></nav></div>
                 <a href="inicio_sesion.html" class="btn">Iniciar Sesión</a>
             </div>
         </div>
    </header>
 
-    <!-- Menú lateral con menú desplegable -->
-    <section class="contenedor_menu">
-        <aside id="menu_lateral">
-            <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
-                <span class="texto_menu_letras">OPCIONES</span>
-                <span class="flecha" aria-hidden="true"></span>
-            </button>
-        </aside>
-
-        <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
-            <ul>
-                <li><a href="index.html" aria-current="page">Inicio</a></li>
-                <li><a href="nosotros.html">Nosotros</a></li>
-                <li><a href="comunidad.html">Comunidad</a></li>
-                <li><a href="mapa.html">Mapa</a></li>
-                <li class="separador" role="separator"></li>
-               <!--  <li><a href="inicio_sesion.html">Iniciar sesión</a></li>  <li><a href="registro.html">Crear cuenta</a></li> --> 
-            </ul>
-        </nav>
-    </section>
-
     <!-- Contenido principal -->
-    <section class="contenido">
+    <section class="contenido" id="contenido">
         <div class="contenido-encabezado">
             <main class="contenido-principal">
                 <h1 class="titulo">¿Cuánto CONTROL TIENES SOBRE TU VIDA DIGITAL?</h1>
                 <p class="subtitulo">Una herramienta para conocerte, informarte y encontrar apoyo</p>
+                <div class="acciones">
+                    <a href="#medidor" class="btn_primario">Medir mi tiempo</a>
+                    <a href="comunidad.html" class="btn">Entrar a la comunidad</a>
+                </div>
             </main>
 
-            <div class="imagen2" id="imagen2">
-                <img src="img/img1.jpeg" alt="imagen provisional 2">
-            </div>
+            <section class="espejo" id="medidor" aria-labelledby="medidor_titulo">
+                <h2 id="medidor_titulo">Tu día en horas de pantalla</h2>
+                <div>
+                    <label for="horas_dia">Horas al día en el celular: <output id="valor_horas" for="horas_dia">5 horas</output></label>
+                    <input type="range" id="horas_dia" min="0" max="16" step="1" value="5">
+                </div>
+                <div id="rejilla_horas" class="horas" aria-hidden="true"></div>
+                <p class="leyenda">Cada cuadro es una de las 24 horas de tu día.</p>
+                <p id="resultado" class="resultado" aria-live="polite"></p>
+                <p class="nota">No es un diagnóstico: es un espejo para que decidas si quieres cambiar algo.</p>
+            </section>
         </div>
 
-        <div class="bloques">
-           <article class="contenedor_1">
-               <span>01</span>
-               <h2>CONOCETE</h2>
-           </article>
-
-           <article class="contenedor_2">
-               <span>02</span>
-               <h2>ENTIENDETE</h2>
-           </article>
-
-           <article class="contenedor_3">
-               <span>03</span>
-               <h2>ACTUA</h2>
-           </article>
-        </div>
+        <section class="pasos_seccion" aria-labelledby="pasos_titulo">
+            <h2 id="pasos_titulo">Cómo usar DETOX_WEB</h2>
+            <ol class="pasos">
+                <li>
+                    <h3>Conócete</h3>
+                    <p>Mide cuántas horas pasas en el celular y cuánto suman en un año.</p>
+                    <a href="#medidor">Hacer la medición</a>
+                </li>
+                <li>
+                    <h3>Entiéndete</h3>
+                    <p>Conoce el proyecto y por qué existe este espacio preventivo.</p>
+                    <a href="nosotros.html">Leer sobre el proyecto</a>
+                </li>
+                <li>
+                    <h3>Actúa</h3>
+                    <p>Cuenta tu experiencia o haz una pregunta, sin mostrar quién eres.</p>
+                    <a href="comunidad.html">Ir a la comunidad</a>
+                </li>
+            </ol>
+        </section>
    </section>
-
-
 
     <footer id="contacto" class="pie_pagina">
         <div class="pie_contenido">
@@ -108,6 +111,7 @@
  
    <script src="../static/js/csrf.js"></script>
    <script src="../static/js/menu_desplegable.js"></script>
+    <script src="../static/js/medidor.js" defer></script>
     <script src="../static/js/auth.js" defer></script>
 </body>
 </html>
