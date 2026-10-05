@@ -2,11 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">  
-    <title>DETOX_WEB</title>
+    <title>Nosotros | DETOX_WEB</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+    <link rel="stylesheet" href="../static/css/mejoras.css">
+      
+    <meta name="description" content="Conoce el proyecto Esperanza y al equipo de Teinco detrás de DETOX_WEB, un espacio preventivo sobre el uso excesivo del celular.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:title" content="Nosotros | DETOX_WEB">
+    <meta property="og:locale" content="es_CO">
 </head>
 <body class="nosotros">
     <!-- Cabecera y navegación principal -->
@@ -20,14 +24,10 @@
             </div>
             </div>
             <div class="hero-center_nosotros">
-                <h1>TEXTO DE REFERENCIA POR AHORA</h1>
+                <p class="marca">DETOX_WEB</p>
             </div>
             <div class="linkeo">
-                <nav aria-label="Navegación principal">
-                    <a href="index.html">inicio</a>
-                    <a href="comunidad.html">comunidad</a>
-                    <a href="mapa.html">mapa</a>
-                </nav>
+                <div class="contenedor_menu"><aside id="menu_lateral"><button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable"><span class="texto_menu_letras">Opciones</span><span class="flecha" aria-hidden="true"></span></button></aside><nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal"><ul><li><a href="index.html">Inicio</a></li><li><a href="nosotros.html" aria-current="page">Nosotros</a></li><li><a href="comunidad.html">Comunidad</a></li><li><a href="mapa.html">Mapa</a></li></ul></nav></div>
             </div>
         </div>
     </header>
@@ -35,9 +35,6 @@
 
     <!-- Imagen y texto informativo -->
     <section class="informacion_relativa">
-        <div class="imagen2_nosotros">
-            <img src="../static/img/img1.jpeg" alt="Imagen informativa">
-        </div>
 
         <div class="texto_nosotros">
             <div class="titulo_nosotros">
@@ -50,13 +47,13 @@
         <!-- Bloques de beneficios -->
         <article class="bloques_nosotros">
             <div class="bloque_1">
-                <p>Razones y beneficios de que exista la plataforma.</p>
+                <p><strong>Anonimato real.</strong> Participas con un alias, sin mostrar quién eres.</p>
             </div>
             <div class="bloque_2">
-                <p>Razones y beneficios de que exista la plataforma.</p>
+                <p><strong>Solo prevención.</strong> No diagnostica ni reemplaza a profesionales de la salud.</p>
             </div>
             <div class="bloque_3">
-                <p>Razones y beneficios de que exista la plataforma.</p>
+                <p><strong>Comunidad.</strong> Lees y respondes a personas que viven algo parecido.</p>
             </div>
         </article>
     </section>
@@ -86,7 +83,8 @@
 
         <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>
-    <script src="../static/js/csrf.js"></script>
+    <script src="../static/js/menu_desplegable.js"></script>
+<script src="../static/js/csrf.js"></script>
     <script src="../static/js/auth.js" defer></script>
 </body>
 </html>
