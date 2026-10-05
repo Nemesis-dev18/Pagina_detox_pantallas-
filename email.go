@@ -14,7 +14,6 @@ import (
 
 var clienteHTTP = &http.Client{Timeout: 15 * time.Second}
 
-
 // enviarCorreo manda un correo de texto a CUALQUIER dirección (gmail, hotmail,
 // outlook, yahoo...). El proveedor del destinatario no importa: siempre sale
 // desde un mismo remitente.
