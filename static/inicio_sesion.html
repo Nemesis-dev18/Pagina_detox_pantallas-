@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DETOX_WEB</title>
+    <link rel="stylesheet" href="../static/css/mejoras.css">
+        <title>Iniciar sesión | DETOX_WEB</title>
+    <meta name="description" content="Inicia sesión en DETOX_WEB para publicar y responder en la comunidad con tu alias.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:title" content="Iniciar sesión | DETOX_WEB">
+    <meta property="og:locale" content="es_CO">
+    <meta name="robots" content="noindex, follow">
 </head>
 <body class="inicio_sesion">
     <!-- Cabecera -->
     <header class="cabecera">
         <div class="hero">
             <div class="hero-left" id="logo">
-                <img src="../static/img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                <a href="index.html" aria-label="Ir al inicio"><img src="../static/img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB"></a>
             </div>
             <div class="hero-center">
-                <h1>TEXTO DE REFERENCIA POR AHORA</h1>
+                <p class="marca">DETOX_WEB</p>
             </div>
         </div>
     </header>
@@ -24,13 +28,13 @@
     <!-- Formulario de inicio de sesión -->
 <section class="texto_sesion">
   <div class="registro">
-    <h2 class="titulo">Bienvenido de nuevo</h2>
+    <h1 class="titulo">Bienvenido de nuevo</h1>
     <form class="sesion" action="/login" method="POST" data-ajax>
       <div class="user">
-        <input type="email" placeholder="CORREO ELECTRÓNICO" id="correo" name="username" required>
+        <input type="email" placeholder="Correo electrónico" id="correo" name="username" required>
       </div>
       <div class="contraseña">
-        <input type="password" placeholder="CONTRASEÑA" id="password" name="password" required>
+        <input type="password" placeholder="Contraseña" id="password" name="password" required>
       </div>
       <div class="boton_sesion">
         <button class="boton_s" type="submit">Iniciar Sesión</button>
@@ -41,10 +45,6 @@
                 <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
                 <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
             </div>
-        </div>
-
-        <div class="imagen2_sesion">
-            <img src="../static/img/img1.jpeg" alt="imagen provisional 2">
         </div>
     </section>
 
