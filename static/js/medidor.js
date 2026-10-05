@@ -8,6 +8,7 @@
       autorCita.textContent = autores[indiceAutor];
     }, 5000);
   }
+  
 
   var rango = document.getElementById('horas_dia');
   var rejilla = document.getElementById('rejilla_horas');
