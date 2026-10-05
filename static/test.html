@@ -2,13 +2,180 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
-    <link rel="stylesheet" href="../static/css/mejoras.css">
-        <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test de hábitos digitales | DETOX_WEB</title>
+    <meta name="description" content="Reflexiona sobre tus hábitos de uso del celular con una autoevaluación breve y orientativa.">
+    <meta name="theme-color" content="#111111">
+    <link rel="preload" href="fuentes/Anton/Anton-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="test">
-    <!-- Página de pruebas -->
+<body class="index pagina-test">
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB" width="80" height="70">
+                </a>
+            </div>
+            <div class="hero-center">
+                <p class="marca">DETOX_WEB</p>
+            </div>
+            <div class="hero-right">
+                <div class="contenedor_menu">
+                    <aside id="menu_lateral">
+                        <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
+                            <span class="texto_menu_letras">Opciones</span>
+                            <span class="flecha" aria-hidden="true"></span>
+                        </button>
+                    </aside>
+                    <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
+                        <ul>
+                            <li><a href="index.html">Inicio</a></li>
+                            <li><a href="nosotros.html">Nosotros</a></li>
+                            <li><a href="comunidad.html">Comunidad</a></li>
+                            <li><a href="mapa.html">Mapa</a></li>
+                            <li><a href="test.html" aria-current="page">Test</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <a href="inicio_sesion.html" class="btn">Iniciar sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="contenido" id="contenido">
+        <div class="contenido-encabezado test-encabezado">
+            <section class="contenido-principal">
+                <p class="test-etiqueta">Autoevaluación · 2 minutos</p>
+                <h1 class="titulo">¿Cómo es tu relación con el celular?</h1>
+                <p class="subtitulo">Responde pensando en las últimas dos semanas. No hay respuestas buenas o malas: es una pausa para observar tus hábitos.</p>
+                <div class="acciones">
+                    <a href="#cuestionario" class="btn_primario">Empezar el test</a>
+                    <a href="index.html" class="btn">Volver al inicio</a>
+                </div>
+            </section>
+
+            <aside class="espejo test-intro" aria-labelledby="test-intro-titulo">
+                <h2 id="test-intro-titulo">Una herramienta para conocerte</h2>
+                <p>Este cuestionario no mide una enfermedad ni reemplaza la orientación profesional. Al final encontrarás una reflexión basada únicamente en tus respuestas.</p>
+                <p class="nota">Tus respuestas se procesan en esta página y no se envían.</p>
+            </aside>
+        </div>
+
+        <section class="test-seccion" id="cuestionario" aria-labelledby="cuestionario-titulo">
+            <div class="test-cabecera">
+                <div>
+                    <p class="test-etiqueta">Sección 01</p>
+                    <h2 id="cuestionario-titulo">Tus hábitos digitales</h2>
+                </div>
+                <p class="test-progreso" id="test_progreso" aria-live="polite">0 de 6 respondidas</p>
+            </div>
+
+            <form id="form_test" class="test-formulario">
+                <fieldset>
+                    <legend>1. Cojo el celular sin tener claro para qué.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta1" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta1" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta1" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta1" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>2. Me cuesta dejar el celular cuando intento concentrarme o descansar.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta2" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta2" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta2" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta2" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>3. Reviso notificaciones mientras hago otra actividad.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta3" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta3" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta3" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta3" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>4. El uso del celular afecta mi sueño, estudio, trabajo o tiempo con otras personas.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta4" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta4" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta4" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta4" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>5. Siento inquietud cuando no tengo el celular cerca o no puedo usarlo.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta5" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta5" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta5" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta5" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>6. He intentado reducir el tiempo de uso y me cuesta mantenerlo.</legend>
+                    <div class="test-opciones">
+                        <label><input type="radio" name="pregunta6" value="0" required> Nunca</label>
+                        <label><input type="radio" name="pregunta6" value="1"> Rara vez</label>
+                        <label><input type="radio" name="pregunta6" value="2"> A veces</label>
+                        <label><input type="radio" name="pregunta6" value="3"> Frecuentemente</label>
+                    </div>
+                </fieldset>
+
+                <div class="test-acciones">
+                    <button type="submit" class="btn_primario">Ver reflexión</button>
+                    <button type="reset" class="test-reiniciar">Borrar respuestas</button>
+                </div>
+            </form>
+
+            <section id="resultado_test" class="test-resultado" aria-labelledby="resultado-titulo" aria-live="polite" hidden>
+                <p class="test-etiqueta">Tu reflexión</p>
+                <h2 id="resultado-titulo">Resultado</h2>
+                <p id="resultado_mensaje"></p>
+                <p class="test-aviso">Este resultado es orientativo y no constituye un diagnóstico. Si el uso del celular te genera malestar o afecta tu vida diaria, considera hablar con alguien de confianza o con un profesional.</p>
+                <a href="comunidad.html" class="btn">Conocer la comunidad</a>
+                <aside class="test-recurso" aria-label="Evaluación externa">
+                    <div class="test-recurso-texto">
+                        <p class="test-etiqueta">Recurso externo</p>
+                        <h3>¿Quieres consultar otra evaluación?</h3>
+                        <p>Encuentra el cuestionario SAS-SV en el sitio de Valencia Adicciones.</p>
+                    </div>
+                    <a class="test-recurso-enlace" href="https://www.valenciaadicciones.es/test/test-de-adiccion-al-movil/" target="_blank" rel="noopener noreferrer">Abrir cuestionario SAS-SV <span aria-hidden="true">↗</span></a>
+                </aside>
+            </section>
+        </section>
+    </main>
+
+    <footer class="pie_pagina">
+        <div class="pie_contenido">
+            <div class="pie_col pie_marca">
+                <h2 class="pie_titulo">DETOX_WEB</h2>
+                <p>Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.</p>
+                <p class="pie_suave">Parte del Proyecto Esperanza (nombre provisional: <em>Preventiva</em>).</p>
+            </div>
+            <nav class="pie_col" aria-label="Enlaces del pie de página">
+                <h3>Explorar</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="comunidad.html">Comunidad</a></li>
+                    <li><a href="mapa.html">Mapa</a></li>
+                    <li><a href="test.html" aria-current="page">Test</a></li>
+                </ul>
+            </nav>
+        </div>
+        <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento. Su finalidad es exclusivamente preventiva, educativa y de concientización.</p>
+        <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
+    </footer>
+
+    <script src="../static/js/csrf.js"></script>
+    <script src="../static/js/menu_desplegable.js"></script>
+    <script src="../static/js/test.js" defer></script>
 </body>
 </html>
