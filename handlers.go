@@ -239,7 +239,8 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.")
+	fmt.Fprint(w, "Te enviamos un enlace para restablecer tu contraseña. 
+	Revisa tu bandeja de entrada.")
 }
 
 func restablecer(w http.ResponseWriter, r *http.Request) {
