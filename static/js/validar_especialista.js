@@ -12,7 +12,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const reCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const limpio = (s) => s.trim().replace(/\s+/g, ' ');
-    const campo = (nombre) => form.elements.namedItem(nombre);
+    // Algunos nombres se repiten (otros_centros): se toma el primero, nunca una lista
+    const campo = (nombre) => {
+        const el = form.elements.namedItem(nombre);
+        return el && el.tagName === undefined ? el[0] : el;
+    };
+
+    // Contenedor visual de un campo; crea el mensaje de error si hace falta
+    function mensajeDe(el) {
+        const caja = el.closest('.rx-campo') || el.parentElement;
+        let msg = caja.querySelector('.rx-msg');
+        if (!msg) {
+            msg = document.createElement('p');
+            msg.className = 'rx-msg';
+            msg.setAttribute('role', 'alert');
+            caja.append(msg);
+        }
+        return { caja, msg };
+    }
+
+    function marcar(el, texto) {
+        const { caja, msg } = mensajeDe(el);
+        msg.textContent = texto;
+        msg.hidden = false;
+        caja.classList.add('rx-con-error');
+        el.setAttribute('aria-invalid', 'true');
+    }
+
+    function limpiarMarca(el) {
+        const { caja, msg } = mensajeDe(el);
+        msg.hidden = true;
+        caja.classList.remove('rx-con-error');
+        el.removeAttribute('aria-invalid');
+    }
+
+    // Obligatorios vacíos: lo primero que se revisa
+    function vacios() {
+        return [...form.querySelectorAll('[required]')].filter(el => {
+            if (el.type === 'checkbox') return !el.checked;
+            return el.value.trim() === '';
+        });
+    }
 
     function reglas() {
         const v = (n) => limpio(campo(n).value);
@@ -21,41 +61,53 @@ document.addEventListener('DOMContentLoaded', () => {
         const extras = [...form.querySelectorAll('input[name="otros_centros"]')].map(i => limpio(i.value)).filter(Boolean);
 
         return [
-            [!reNombre.test(v('nombres')), 'nombres', 'Escribe tus nombres (solo letras, 2 a 80 caracteres).'],
-            [!reNombre.test(v('primer_apellido')), 'primer_apellido', 'Escribe tu primer apellido (solo letras, 2 a 80 caracteres).'],
+            [!reNombre.test(v('nombres')), 'nombres', 'Escribe tus nombres: solo letras, de 2 a 80 caracteres.'],
+            [!reNombre.test(v('primer_apellido')), 'primer_apellido', 'Escribe tu primer apellido: solo letras, de 2 a 80 caracteres.'],
             [v('segundo_apellido') !== '' && !reNombre.test(v('segundo_apellido')), 'segundo_apellido', 'El segundo apellido solo puede llevar letras.'],
-            [!reAlias.test(v('alias')), 'alias', 'El alias debe tener 3 a 30 caracteres (letras, números, espacio, punto o guion).'],
-            [!reCorreo.test(v('correo')), 'correo', 'El correo electrónico no es válido.'],
-            [campo('password').value.length < 8, 'password', 'La contraseña debe tener mínimo 8 caracteres.'],
+            [!reAlias.test(v('alias')), 'alias', 'De 3 a 30 caracteres: letras, números, espacio, punto o guion.'],
+            [!reCorreo.test(v('correo')), 'correo', 'Escribe un correo electrónico válido.'],
+            [campo('password').value.length < 8, 'password', 'La contraseña debe tener al menos 8 caracteres.'],
             [campo('password').value !== campo('confirmar_password').value, 'confirmar_password', 'Las contraseñas no coinciden.'],
-            [campo('tipo_documento').value === '', 'tipo_documento', 'Elige el tipo de documento.'],
-            [!reDocumento.test(doc), 'numero_documento', 'El número de documento no es válido (solo letras y números).'],
-            [campo('profesion').value === '', 'profesion', 'Elige una profesión de la lista.'],
-            [!reRegistro.test(v('numero_registro')), 'numero_registro', 'El número de tarjeta o registro profesional no es válido.'],
-            [v('especialidad').length < 3, 'especialidad', 'La especialidad debe tener 3 a 100 caracteres.'],
-            [v('institucion').length < 3, 'institucion', 'La institución debe tener 3 a 150 caracteres.'],
-            [nit !== '' && !reNIT.test(nit), 'institucion_nit', 'El NIT debe tener solo números, sin dígito de verificación.'],
-            [extras.some(e => e.length < 3), 'otros_centros', 'Cada centro adicional debe tener 3 a 150 caracteres.'],
-            [!campo('acepta_datos').checked, 'acepta_datos', 'Debes autorizar el tratamiento de tus datos.'],
-            [!campo('acepta_perfil').checked, 'acepta_perfil', 'Debes aceptar que tu perfil sea público si te aprueban.'],
+            [!reDocumento.test(doc), 'numero_documento', 'Solo letras y números, de 5 a 15 caracteres.'],
+            [!reRegistro.test(v('numero_registro')), 'numero_registro', 'Solo letras, números, puntos, guiones o barras, de 3 a 30 caracteres.'],
+            [v('especialidad').length < 3, 'especialidad', 'La especialidad debe tener de 3 a 100 caracteres.'],
+            [v('institucion').length < 3, 'institucion', 'La institución debe tener de 3 a 150 caracteres.'],
+            [nit !== '' && !reNIT.test(nit), 'institucion_nit', 'Solo números, sin dígito de verificación (6 a 10 cifras).'],
+            [extras.some(e => e.length < 3), 'otros_centros', 'Cada centro adicional debe tener de 3 a 150 caracteres.'],
         ];
     }
 
+    // Quitar la marca al corregir: se revisa mientras la persona escribe
+    form.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('input', () => { if (el.getAttribute('aria-invalid')) limpiarMarca(el); });
+        el.addEventListener('change', () => { if (el.getAttribute('aria-invalid')) limpiarMarca(el); });
+    });
+
     form.addEventListener('submit', (e) => {
-        const errores = reglas().filter(r => r[0]);
-        const caja = form.parentElement.querySelector('.mensaje_form');
-        if (errores.length === 0) return; // pasa a formularios.js, que envía al servidor
+        form.querySelectorAll('[aria-invalid]').forEach(limpiarMarca);
+
+        const faltan = vacios();
+        faltan.forEach(el => marcar(el, el.type === 'checkbox'
+            ? 'Debes marcar esta casilla para continuar.'
+            : 'Este campo es obligatorio.'));
+
+        const errores = reglas().filter(r => r[0] && campo(r[1]).value.trim() !== '');
+        errores.forEach(([, nombre, texto]) => marcar(campo(nombre), texto));
+
+        const todos = [...faltan.map(el => el.name), ...errores.map(r => r[1])];
+        if (todos.length === 0) return; // pasa a formularios.js, que envía al servidor
 
         e.preventDefault();
-        e.stopImmediatePropagation(); // no enviar: el servidor también lo rechazaría
-        const primero = errores[0];
+        e.stopImmediatePropagation();
+        const primero = campo(todos[0]);
+        if (primero && primero.focus) primero.focus();
+
+        const caja = form.parentElement.querySelector('.mensaje_form');
         if (caja) {
-            caja.textContent = primero[2];
+            caja.textContent = 'Revisa los campos marcados en rojo (' + todos.length + ').';
             caja.classList.add('error');
             caja.classList.remove('ok');
             caja.hidden = false;
         }
-        const el = campo(primero[1]);
-        if (el && el.focus) el.focus();
     }, true);
 });
