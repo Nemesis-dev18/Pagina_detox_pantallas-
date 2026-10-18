@@ -1,5 +1,5 @@
 // Aviso motivacional en la esquina inferior derecha. Aparece cada 20 segundos y se
-// oculta a los 5 segundos. No bloquea la página. Los mensajes son de apoyo general:
+// oculta a los 7 segundos. No bloquea la página. Los mensajes son de apoyo general:
 // no diagnostican ni reemplazan a un profesional.
 const MENSAJES = {
     inicio: [
@@ -179,7 +179,7 @@ const GENERAL = [
 
     const titulo = document.createElement('p');
     titulo.className = 'popup_titulo';
-    titulo.textContent = 'Un recordatorio para ti';
+    titulo.textContent = 'Un recordatorio para ti (att:Hey Ya!)';
     const texto = document.createElement('p');
     texto.className = 'popup_texto';
     const cerrar = document.createElement('button');
