@@ -8,6 +8,19 @@
     let profesion = '';
     let temporizador;
 
+    // Icono de verificado (estilo check azul de Twitter, en el rojo de DETOX_WEB).
+    // El SVG es fijo, nunca viene de usuarios.
+    const SVG_VERIFICADO = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#d11c1c"/><path d="M7 12.5l3.2 3.1L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    function crearInsignia() {
+        const s = document.createElement('span');
+        s.className = 'insignia_verificada';
+        s.setAttribute('role', 'img');
+        s.setAttribute('aria-label', 'Profesional verificado');
+        s.title = 'Profesional verificado';
+        s.innerHTML = SVG_VERIFICADO;
+        return s;
+    }
+
     function elemento(etiqueta, clase, texto) {
         const el = document.createElement(etiqueta);
         if (clase) el.className = clase;
@@ -25,12 +38,12 @@
 
         const info = elemento('div', 'pub_info');
         const nombre = elemento('p', 'pub_titulo', e.nombre);
-        const insignia = elemento('span', 'insignia', '✓ Profesional verificado');
+        nombre.append(crearInsignia());
         const meta = elemento('p', 'meta');
         meta.textContent = e.profesion + ' · ' + e.especialidad;
         const institucion = elemento('p', 'meta', 'Institución: ' + e.institucion);
         const alias = elemento('p', 'meta', 'En la comunidad: ' + e.alias);
-        info.append(nombre, insignia, meta, institucion, alias);
+        info.append(nombre, meta, institucion, alias);
 
         cabecera.append(avatar, info);
         art.append(cabecera);
