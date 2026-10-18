@@ -84,6 +84,10 @@ func rutas() http.Handler {
 	mux.HandleFunc("POST /admin/especialistas/{id}/consultar-institucion", exigirCSRF(consultarInstitucionEspecialista))
 	mux.HandleFunc("POST /admin/especialistas/{id}/revisar", exigirCSRF(revisarEspecialista))
 
+	// Gestión de cuentas (solo administradores)
+	mux.HandleFunc("GET /admin/cuentas", listarCuentas)
+	mux.HandleFunc("DELETE /admin/cuentas/{id}", exigirCSRF(borrarCuenta))
+
 	// Acompañamiento voluntario
 	mux.HandleFunc("POST /acompanamientos", exigirCSRF(solicitarAcompanamiento))
 	mux.HandleFunc("GET /acompanamientos", listarAcompanamientos)
