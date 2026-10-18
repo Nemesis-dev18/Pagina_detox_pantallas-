@@ -75,6 +75,8 @@ func rutas() http.Handler {
 	// Especialistas verificados
 	mux.HandleFunc("/registro-especialista", exigirCSRF(registrarEspecialista))
 	mux.HandleFunc("GET /yo/especialista", miSolicitudEspecialista)
+	mux.HandleFunc("GET /yo/especialista/perfil", miPerfilEspecialista)
+	mux.HandleFunc("PUT /yo/especialista/perfil", exigirCSRF(editarMiPerfilEspecialista))
 	mux.HandleFunc("GET /especialistas", listarEspecialistas)
 	mux.HandleFunc("GET /especialistas/{id}", verEspecialista)
 
