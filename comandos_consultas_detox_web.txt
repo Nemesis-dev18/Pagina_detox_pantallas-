@@ -1,5 +1,5 @@
 =====================================================================
- DETOX_WEB - COMANDOS Y CONSULTAS PARA VER LA BASE DE DATOS (PostgreSQL)
+ R-HOPE - COMANDOS Y CONSULTAS PARA VER LA BASE DE DATOS (PostgreSQL)
 =====================================================================
 Cómo leer este archivo:
   - Las líneas que empiezan con  #   son comandos para la TERMINAL (bash).

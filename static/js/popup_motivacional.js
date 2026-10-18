@@ -34,7 +34,7 @@
             'Tómate tu tiempo. Un resultado no define quién eres; solo te muestra un punto de partida.',
         ],
         nosotros: [
-            'DETOX_WEB nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
+            'R-HOPE nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
             'El objetivo es preventivo: que tengas más control sobre tu vida digital, sin presiones.',
         ],
         perfil: [
