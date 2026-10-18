@@ -3259,7 +3259,7 @@ header .menu_desplegable a[aria-current="page"] {
   right: 16px;
   bottom: 16px;
   z-index: 1000;
-  width: min(360px, calc(100vw - 32px));
+  width: min(420px, calc(100vw - 32px));
   padding: 14px 40px 14px 16px;
   background: var(--superficie);
   color: var(--texto-suave);
