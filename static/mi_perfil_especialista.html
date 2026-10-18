@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../static/css/styles.css">
+	<title>Mi perfil de especialista | DETOX_WEB</title>
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="theme-color" content="#111111">
+</head>
+<body class="registro-pagina">
+	<header class="cabecera">
+		<div class="hero">
+			<div class="hero-left" id="logo">
+				<a href="index.html" aria-label="Ir al inicio"><img src="../static/img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB"></a>
+			</div>
+			<div class="hero-center">
+				<p class="marca">DETOX_WEB</p>
+			</div>
+		</div>
+	</header>
+
+	<main class="registro-especialista" style="max-width:580px;margin:0 auto;padding:40px 20px">
+		<h1 class="titulo">Mi perfil de especialista</h1>
+		<p id="estado-cuenta" class="nota" aria-live="polite"></p>
+		<p id="ediciones" class="nota" aria-live="polite"></p>
+
+		<form id="form-perfil" class="formulario-cuenta" novalidate hidden>
+			<div class="campo_perfil">
+				<label for="especialidad">Especialidad o área <span aria-hidden="true">*</span></label>
+				<input type="text" id="especialidad" name="especialidad" maxlength="100" required>
+				<p class="mensaje_campo" hidden></p>
+			</div>
+			<div class="campo_perfil">
+				<label for="descripcion">Presentación (opcional, máximo 600 caracteres)</label>
+				<textarea id="descripcion" name="descripcion" rows="5" maxlength="600"></textarea>
+				<p class="mensaje_campo" hidden></p>
+			</div>
+			<button type="submit" class="boton-cuenta" id="guardar">Guardar cambios</button>
+		</form>
+		<p id="aviso" class="mensaje_form" role="alert" hidden></p>
+		<p class="nota">Puedes editar tu especialidad y tu presentación dos veces al mes. Para cambiar tu profesión, institución o registro, escribe al equipo: esos datos se verifican de nuevo.</p>
+	</main>
+
+	<script src="../static/js/csrf.js"></script>
+	<script src="../static/js/mi_perfil_especialista.js" defer></script>
+</body>
+</html>

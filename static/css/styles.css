@@ -1249,16 +1249,18 @@ footer.pie_pagina .pies {
   min-width: 0;
 }
 
+/* Cada publicación es una tarjeta independiente, separada de las demás */
 .lista_pub {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.publicacion {
   overflow: hidden;
   background-color: var(--fondo-campo);
   border: 2px solid var(--borde);
   border-radius: 18px;
-}
-
-/* Línea entre publicaciones visibles (ignora las ocultas por el filtro) */
-.publicacion:not([hidden]) ~ .publicacion:not([hidden]) {
-  border-top: 2px solid var(--borde);
 }
 
 /* Fila superior de cada publicación: avatar, título y acciones */
@@ -3229,3 +3231,75 @@ header .menu_desplegable a[aria-current="page"] {
   line-height: 0;
 }
 .insignia_verificada svg { display: block; }
+
+/* ---------- Edición de perfil de especialista ---------- */
+.campo_perfil { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.campo_perfil label { font-size: 0.9rem; color: var(--texto-suave); }
+.campo_perfil textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font: inherit;
+  color: var(--texto-suave);
+  background: var(--fondo-campo);
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  resize: vertical;
+}
+.campo_perfil textarea:focus,
+.campo_perfil input:focus { outline: none; border-color: var(--rojo); box-shadow: 0 0 0 3px var(--rojo-halo); }
+.campo_perfil input[aria-invalid="true"],
+.campo_perfil textarea[aria-invalid="true"] { border-color: var(--rojo); }
+.mensaje_campo { margin: 0; font-size: 0.85rem; color: var(--rojo-claro); }
+.mensaje_campo[hidden] { display: none; }
+
+/* ---------- Aviso motivacional (esquina inferior derecha) ---------- */
+.popup_motivacional {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px 40px 14px 16px;
+  background: var(--superficie);
+  color: var(--texto-suave);
+  border: 2px solid var(--rojo);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.popup_motivacional[hidden] { display: none; }
+.popup_motivacional.entrar { animation: popup_entrada 0.3s ease-out; }
+@keyframes popup_entrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.popup_motivacional .popup_titulo {
+  margin: 0 0 4px;
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+.popup_motivacional .popup_texto { margin: 0; }
+.popup_motivacional .popup_cerrar {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--texto-tenue);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.popup_motivacional .popup_cerrar:hover { color: #fff; background: var(--gris-oscuro); }
+@media (prefers-reduced-motion: reduce) {
+  .popup_motivacional.entrar { animation: none; }
+}
