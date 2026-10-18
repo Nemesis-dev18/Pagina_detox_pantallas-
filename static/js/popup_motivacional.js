@@ -1,3 +1,4 @@
+(() => {
 // Aviso motivacional en la esquina inferior derecha. Aparece cada 20 segundos y se
 // oculta a los 7 segundos. No bloquea la página. Los mensajes son de apoyo general:
 // no diagnostican ni reemplazan a un profesional.
@@ -165,47 +166,58 @@ const GENERAL = [
 ];
 
     const DURACION_VISIBLE = 7000;   // ms que se ve el aviso
-    const CADA = 20000;              // ms entre avisos
+    const CADA = 10000;              // ms entre avisos
 
-    const script = document.currentScript || document.querySelector('script[data-pagina]');
-    const pagina = (script && script.dataset.pagina) || 'general';
-    const lista = MENSAJES[pagina] || GENERAL;
+    function iniciarPopup() {
+        const script = document.querySelector('script[data-pagina][src*="popup_motivacional.js"]') || document.currentScript;
+        const pagina = (script && script.dataset.pagina) || 'general';
+        const lista = MENSAJES[pagina] || GENERAL;
 
-    const aviso = document.createElement('aside');
-    aviso.className = 'popup_motivacional';
-    aviso.setAttribute('role', 'status');
-    aviso.setAttribute('aria-live', 'polite');
-    aviso.hidden = true;
+        if (document.querySelector('.popup_motivacional')) return;
 
-    const titulo = document.createElement('p');
-    titulo.className = 'popup_titulo';
-    titulo.textContent = 'Un recordatorio para ti (att:Hey Ya!)';
-    const texto = document.createElement('p');
-    texto.className = 'popup_texto';
-    const cerrar = document.createElement('button');
-    cerrar.type = 'button';
-    cerrar.className = 'popup_cerrar';
-    cerrar.setAttribute('aria-label', 'Cerrar recordatorio');
-    cerrar.textContent = '×';
-    aviso.append(titulo, texto, cerrar);
-    document.body.append(aviso);
-
-    let temporizador;
-    function ocultar() {
-        clearTimeout(temporizador);
+        const aviso = document.createElement('aside');
+        aviso.className = 'popup_motivacional';
+        aviso.setAttribute('role', 'status');
+        aviso.setAttribute('aria-live', 'polite');
         aviso.hidden = true;
-    }
-    function mostrar() {
-        if (document.hidden) return; // pestaña en segundo plano: no se muestra
-        texto.textContent = lista[Math.floor(Math.random() * lista.length)];
-        aviso.classList.remove('entrar');
-        void aviso.offsetWidth; // reinicia la animación
-        aviso.classList.add('entrar');
-        aviso.hidden = false;
-        clearTimeout(temporizador);
-        temporizador = setTimeout(ocultar, DURACION_VISIBLE);
+
+        const titulo = document.createElement('p');
+        titulo.className = 'popup_titulo';
+        titulo.textContent = 'Un recordatorio para ti (att:Hey Ya!)';
+        const texto = document.createElement('p');
+        texto.className = 'popup_texto';
+        const cerrar = document.createElement('button');
+        cerrar.type = 'button';
+        cerrar.className = 'popup_cerrar';
+        cerrar.setAttribute('aria-label', 'Cerrar recordatorio');
+        cerrar.textContent = '×';
+        aviso.append(titulo, texto, cerrar);
+        document.body.append(aviso);
+
+        let temporizador;
+        function ocultar() {
+            clearTimeout(temporizador);
+            aviso.hidden = true;
+        }
+        function mostrar() {
+            if (document.hidden) return; // pestaña en segundo plano: no se muestra
+            texto.textContent = lista[Math.floor(Math.random() * lista.length)];
+            aviso.classList.remove('entrar');
+            void aviso.offsetWidth; // reinicia la animación
+            aviso.classList.add('entrar');
+            aviso.hidden = false;
+            clearTimeout(temporizador);
+            temporizador = setTimeout(ocultar, DURACION_VISIBLE);
+        }
+
+        cerrar.addEventListener('click', ocultar);
+        mostrar();
+        setInterval(mostrar, CADA);
     }
 
-    cerrar.addEventListener('click', ocultar);
-    setInterval(mostrar, CADA);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciarPopup, { once: true });
+    } else {
+        iniciarPopup();
+    }
 })();
