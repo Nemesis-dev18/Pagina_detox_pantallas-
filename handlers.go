@@ -38,29 +38,38 @@ type Publicacion struct {
 	// Solo se llenan si el autor es un especialista APROBADO en la base (ver especialistas.go)
 	NombreReal string `json:"nombre_real,omitempty"`
 	Verificado bool   `json:"profesional_verificado,omitempty"`
+	Likes      int    `json:"likes"`
+	MeGusta    bool   `json:"me_gusta"`
 }
 
 func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
+	u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
+	// Visitantes: uid nil, así "me gusta" sale en falso
+	var uid *string
+	if haySesion {
+		uid = &u.ID
+	}
+
 	rows, err := pool.Query(r.Context(), `
-		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en, `+columnasInsignia+`
+		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en, `+columnasInsignia+`,
+			(SELECT COUNT(*) FROM me_gusta g WHERE g.publicacion_id = p.id),
+			EXISTS (SELECT 1 FROM me_gusta g WHERE g.publicacion_id = p.id AND g.usuario_id = $1)
 		FROM publicaciones p
 		JOIN usuarios u ON u.id = p.autor_id
 		`+unirPerfilAprobado+`
 		ORDER BY p.creado_en DESC
-		LIMIT 50`)
+		LIMIT 50`, uid)
 	if err != nil {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	u, errSesion := usuarioActual(r)
-	haySesion := errSesion == nil
-
 	publicaciones := []Publicacion{}
 	for rows.Next() {
 		var p Publicacion
-		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn, &p.NombreReal, &p.Verificado); err != nil {
+		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn, &p.NombreReal, &p.Verificado, &p.Likes, &p.MeGusta); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
@@ -461,6 +470,8 @@ type Comentario struct {
 	CreadoEn          time.Time `json:"creado_en"`
 	NombreReal        string    `json:"nombre_real,omitempty"`
 	Verificado        bool      `json:"profesional_verificado,omitempty"`
+	Likes             int       `json:"likes"`
+	MeGusta           bool      `json:"me_gusta"`
 }
 
 func listarComentarios(w http.ResponseWriter, r *http.Request) {
@@ -470,26 +481,32 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
+	var uid *string
+	if haySesion {
+		uid = &u.ID
+	}
+
 	rows, err := pool.Query(r.Context(), `
-		SELECT c.id, u.alias, c.contenido, c.creado_en, `+columnasInsignia+`
+		SELECT c.id, u.alias, c.contenido, c.creado_en, `+columnasInsignia+`,
+			(SELECT COUNT(*) FROM me_gusta g WHERE g.comentario_id = c.id),
+			EXISTS (SELECT 1 FROM me_gusta g WHERE g.comentario_id = c.id AND g.usuario_id = $1)
 		FROM comentarios c
 		JOIN usuarios u ON u.id = c.autor_id
 		`+unirPerfilAprobado+`
-		WHERE c.publicacion_id = $1
-		ORDER BY c.creado_en ASC`, id)
+		WHERE c.publicacion_id = $2
+		ORDER BY c.creado_en ASC`, uid, id)
 	if err != nil {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	u, errSesion := usuarioActual(r)
-	haySesion := errSesion == nil
-
 	comentarios := []Comentario{}
 	for rows.Next() {
 		var c Comentario
-		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn, &c.NombreReal, &c.Verificado); err != nil {
+		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn, &c.NombreReal, &c.Verificado, &c.Likes, &c.MeGusta); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}

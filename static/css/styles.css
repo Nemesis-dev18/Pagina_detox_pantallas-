@@ -1330,6 +1330,29 @@ footer.pie_pagina .pies {
   transform: translateY(-2px);
 }
 
+/* Me gusta (corazón) con contador, en publicaciones y comentarios */
+.me_gusta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  background: none;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color var(--transicion), border-color var(--transicion);
+}
+
+.me_gusta:hover { color: #fff; border-color: var(--rojo); }
+.me_gusta[aria-pressed="true"] { color: var(--rojo); border-color: var(--rojo); }
+.me_gusta[aria-pressed="true"] svg { fill: currentColor; }
+.me_gusta:disabled { opacity: 0.6; cursor: wait; }
+.me_gusta:focus-visible { outline: 2px solid var(--rojo); outline-offset: 2px; }
+.comentario > .me_gusta { margin-top: 0.4rem; }
+
 /* Contenido desplegado de una publicación */
 .pub_detalle {
   padding: 0 1rem 1.1rem calc(var(--avatar) + 2rem);
@@ -2651,6 +2674,38 @@ header .menu_desplegable a[aria-current="page"] {
   color: var(--texto-suave);
 }
 
+/* Enlace discreto para profesionales en el login */
+.enlaces-sesion .verificacion_pro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.6rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--borde);
+}
+
+.enlaces-sesion .verificacion_pro_titulo {
+  font: 400 1.15rem var(--fuente-titulo);
+  color: var(--texto-suave);
+  margin: 0;
+}
+
+.enlaces-sesion .verificacion_pro_boton {
+  font: 600 0.8rem var(--fuente-texto);
+  color: var(--texto-suave);
+  text-decoration: none;
+  padding: 4px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+}
+
+.enlaces-sesion .verificacion_pro_boton:hover {
+  color: #fff;
+  border-color: var(--rojo);
+}
+
 .mensaje_form {
   margin-top: 1rem;
   font-size: 0.95rem;
@@ -3259,7 +3314,7 @@ header .menu_desplegable a[aria-current="page"] {
   right: 16px;
   bottom: 16px;
   z-index: 1000;
-  width: min(420px, calc(100vw - 32px));
+  width: min(320px, calc(100vw - 32px));
   padding: 14px 40px 14px 16px;
   background: var(--superficie);
   color: var(--texto-suave);

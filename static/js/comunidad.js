@@ -53,6 +53,49 @@
         return boton;
     }
 
+    // Botón de "me gusta" con su contador. obj trae "likes" y "me_gusta" del servidor.
+    const ICONO_CORAZON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+    function crearBotonMeGusta(obj, ruta) {
+        const boton = crearElemento('button', 'me_gusta');
+        boton.type = 'button';
+        boton.innerHTML = ICONO_CORAZON;   // SVG fijo de arriba, nunca texto de usuarios
+        const numero = crearElemento('span', 'me_gusta_numero');
+        boton.append(numero);
+
+        function pintar() {
+            numero.textContent = obj.likes > 0 ? String(obj.likes) : '';
+            boton.setAttribute('aria-pressed', String(obj.me_gusta));
+            const texto = (obj.me_gusta ? 'Quitar me gusta' : 'Dar me gusta') + ' (' + obj.likes + ')';
+            boton.setAttribute('aria-label', texto);
+            boton.title = texto;
+        }
+
+        boton.addEventListener('click', async () => {
+            if (!haySesion) {
+                avisar('Inicia sesión para dar me gusta');
+                return;
+            }
+            boton.disabled = true;
+            try {
+                const res = await fetch(ruta, { method: obj.me_gusta ? 'DELETE' : 'PUT' });
+                if (!res.ok) {
+                    avisar(await res.text());
+                    return;
+                }
+                obj.me_gusta = !obj.me_gusta;
+                obj.likes += obj.me_gusta ? 1 : -1;
+                pintar();
+            } catch (err) {
+                avisar('No hay conexión con el servidor.');
+            } finally {
+                boton.disabled = false;
+            }
+        });
+
+        pintar();
+        return boton;
+    }
+
     function formatearFecha(iso) {
         return new Date(iso).toLocaleString('es-CO');
     }
@@ -171,6 +214,7 @@
                 + (c.editado_en ? ' · editado' : '')));
             const cuerpo = crearElemento('p', 'cuerpo', c.contenido);
             item.append(meta, cuerpo);
+            item.append(crearBotonMeGusta(c, '/publicaciones/' + publicacionId + '/comentarios/' + c.id + '/me-gusta'));
 
             // El autor del comentario (o un admin) puede editarlo o borrarlo
             if (haySesion && (c.alias === miAlias.textContent || soyAdmin)) {
@@ -316,7 +360,8 @@
     btnResponder.setAttribute('aria-expanded', 'false');
     btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
     const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
-    acciones.append(btnResponder, btnCompartir);
+    const btnMeGusta = crearBotonMeGusta(p, '/publicaciones/' + p.id + '/me-gusta');
+    acciones.append(btnMeGusta, btnResponder, btnCompartir);
 
     cabecera.append(avatar, info, acciones);
 
