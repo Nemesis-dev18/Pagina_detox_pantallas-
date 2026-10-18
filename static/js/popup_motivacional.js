@@ -183,7 +183,7 @@ const GENERAL = [
 
         const titulo = document.createElement('p');
         titulo.className = 'popup_titulo';
-        titulo.textContent = 'Un recordatorio para ti (att: stand Hey Ya!)';
+        titulo.textContent = 'Un recordatorio para ti     (att: stand-Hey Ya!)';
         const texto = document.createElement('p');
         texto.className = 'popup_texto';
         const cerrar = document.createElement('button');
