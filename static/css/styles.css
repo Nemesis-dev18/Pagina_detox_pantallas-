@@ -3198,3 +3198,24 @@ header .menu_desplegable a[aria-current="page"] {
 .admin .tabla-scroll {
   overflow-x: auto;
 }
+/* ---------- Especialistas verificados ---------- */
+.insignia {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #e6f6ea;
+  color: #1e6b34;
+  border: 1px solid #a8dbb5;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.autor strong { font-weight: 600; }
+.especialista_cargo { font-size: 0.85rem; opacity: 0.8; margin: 2px 0; }
+.directorio_filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.directorio_filtros input, .directorio_filtros select { padding: 8px 10px; font: inherit; border: 1px solid #ccc; border-radius: 6px; }
+.directorio_lista { list-style: none; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.directorio_lista li { border: 1px solid #ddd; border-radius: 10px; padding: 14px; background: #fff; color: #111; }
+.directorio_lista h3 { margin: 0 0 6px; }
+.directorio_lista p { margin: 4px 0; font-size: 0.92rem; }

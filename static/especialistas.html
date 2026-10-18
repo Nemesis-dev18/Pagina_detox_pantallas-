@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Especialistas verificados | DETOX_WEB</title>
+    <meta name="description" content="Consulta especialistas verificados en psicología, salud mental y áreas afines, con su institución y especialidad.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:title" content="Especialistas verificados | DETOX_WEB">
+    <meta property="og:locale" content="es_CO">
+</head>
+<body class="comunidad">
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                </a>
+            </div>
+            <div class="hero-center">
+                <h1>DETOX_WEB</h1>
+            </div>
+            <div class="hero-right">
+                <a href="comunidad.html" class="btn">comunidad</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="foro">
+        <h2 class="foro_titulo">Especialistas verificados</h2>
+        <p class="nota">Estas personas fueron revisadas por el equipo. Esta lista no es un servicio de urgencias: si estás en crisis, busca ayuda inmediata.</p>
+
+        <div class="directorio_filtros">
+            <label class="solo_lectores" for="filtro-profesion">Profesión</label>
+            <select id="filtro-profesion">
+                <option value="">Todas las profesiones</option>
+                <option value="psicologia">Psicología</option>
+                <option value="psiquiatria">Psiquiatría</option>
+                <option value="medicina">Medicina</option>
+                <option value="enfermeria">Enfermería</option>
+                <option value="trabajo_social">Trabajo social</option>
+                <option value="terapia_ocupacional">Terapia ocupacional</option>
+            </select>
+            <label class="solo_lectores" for="buscar-especialista">Buscar</label>
+            <input type="search" id="buscar-especialista" placeholder="Nombre, especialidad o institución" maxlength="80" autocomplete="off">
+        </div>
+
+        <p id="estado" class="vacio" aria-live="polite"></p>
+        <ul id="lista" class="directorio_lista"></ul>
+    </main>
+
+    <footer id="contacto" class="pie_pagina">
+        <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento.</p>
+        <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
+    </footer>
+
+    <script src="../static/js/especialistas.js" defer></script>
+</body>
+</html>

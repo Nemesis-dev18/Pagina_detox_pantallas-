@@ -40,10 +40,18 @@
       </div>
     </form>
     <p class="mensaje_form" role="alert" hidden></p>
+            <p id="aviso_registro" class="mensaje_form ok" role="status" hidden>Recibimos tu solicitud. Puedes iniciar sesión mientras la revisamos; la insignia de profesional aparece solo cuando sea aprobada.</p>
             <div class="enlaces-sesion">
                 <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
                 <p>¿No tienes una cuenta? <a class="linkeo" href="registro.html">Crear cuenta</a></p>
+                <p>¿Eres profesional de salud? <a class="linkeo" href="registro_especialista.html">Solicita tu verificación</a></p>
             </div>
+            <script>
+                // Tras enviar el registro de especialista, el servidor vuelve aquí con ?registro=ok
+                if (new URLSearchParams(location.search).get('registro') === 'ok') {
+                    document.getElementById('aviso_registro').hidden = false;
+                }
+            </script>
         </div>
     </section>
 

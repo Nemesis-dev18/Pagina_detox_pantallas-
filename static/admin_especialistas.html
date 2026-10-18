@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitudes de especialistas · DETOX_WEB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <script src="../static/js/csrf.js"></script>
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+<main class="admin">
+    <p><a href="/static/index.html">&larr; Volver al inicio</a></p>
+    <h1>Solicitudes de especialistas</h1>
+    <p>Solo un administrador puede ver esta página. Cada decisión queda registrada en el servidor.
+       Para aprobar, la credencial y la institución deben estar verificadas. La evidencia de datos.gov.co solo muestra que la institución existe; la credencial se revisa en el ReTHUS.</p>
+
+    <p id="aviso" class="aviso" role="status"></p>
+
+    <label for="filtro-estado">Estado</label>
+    <select id="filtro-estado">
+        <option value="pendiente">Pendientes</option>
+        <option value="">Todas</option>
+        <option value="aprobado">Aprobadas</option>
+        <option value="rechazado">Rechazadas</option>
+        <option value="suspendido">Suspendidas</option>
+    </select>
+
+    <div class="tabla-scroll"><table>
+        <thead><tr><th>Nombre</th><th>Profesión</th><th>Institución</th><th>Estado</th><th>Credencial</th><th>Institución</th><th></th></tr></thead>
+        <tbody id="lista-solicitudes"></tbody>
+    </table></div>
+
+    <section id="detalle" hidden>
+        <h2 id="detalle-nombre"></h2>
+        <dl id="detalle-datos"></dl>
+        <p><a id="enlace-rethus" href="#" target="_blank" rel="noopener">Abrir consulta pública del ReTHUS</a></p>
+
+        <h3>Evidencia en datos.gov.co</h3>
+        <button type="button" class="btn" id="btn-consultar">Consultar institución</button>
+        <pre id="evidencia" class="tabla-scroll"></pre>
+
+        <h3>Revisión</h3>
+        <form id="form-revision">
+            <label for="credencial">Credencial</label>
+            <select id="credencial" name="credencial">
+                <option value="pendiente">Pendiente</option>
+                <option value="verificada">Verificada</option>
+                <option value="rechazada">Rechazada</option>
+            </select>
+
+            <label for="institucion">Institución</label>
+            <select id="institucion" name="institucion">
+                <option value="pendiente">Pendiente</option>
+                <option value="verificada">Verificada</option>
+                <option value="rechazada">Rechazada</option>
+            </select>
+
+            <label for="notas">Notas internas (no se muestran al público)</label>
+            <textarea id="notas" name="notas" rows="3" maxlength="1000"></textarea>
+
+            <label for="motivo">Motivo (obligatorio para rechazar o suspender)</label>
+            <input type="text" id="motivo" name="motivo" maxlength="500">
+
+            <p>
+                <button type="button" class="btn" id="btn-guardar">Guardar verificaciones</button>
+                <button type="button" class="btn" id="btn-aprobar">Aprobar</button>
+                <button type="button" class="btn" id="btn-rechazar">Rechazar</button>
+                <button type="button" class="btn" id="btn-suspender">Suspender</button>
+                <button type="button" class="btn" id="btn-reabrir">Reabrir</button>
+            </p>
+        </form>
+    </section>
+</main>
+<script src="../static/js/admin_especialistas.js" defer></script>
+</body>
+</html>

@@ -84,26 +84,12 @@
                 <p id="vacio" class="vacio" hidden></p>
             </section>
 
-            <!-- Especialistas (contenido de ejemplo, todavía sin base de datos) -->
+            <!-- Especialistas aprobados: los llena comunidad.js desde /especialistas -->
             <aside class="especialistas" aria-label="Especialistas verificadas">
                 <h3>Especialistas verificadas</h3>
-                <ul>
-                    <li class="especialista">
-                        <div class="avatar" aria-hidden="true">L</div>
-                        <div>
-                            <p class="especialista_nombre">Laura Gimenez</p>
-                            <p class="especialista_cargo">Psicóloga</p>
-                        </div>
-                    </li>
-                    <li class="especialista">
-                        <div class="avatar" aria-hidden="true">L</div>
-                        <div>
-                            <p class="especialista_nombre">Laura Gimenez</p>
-                            <p class="especialista_cargo">Psicóloga</p>
-                        </div>
-                    </li>
-                </ul>
-                <p class="ver_todos">Ver todos</p>
+                <ul id="lista_especialistas"></ul>
+                <p id="sin_especialistas" class="vacio" hidden>Aún no hay especialistas aprobados.</p>
+                <p class="ver_todos"><a href="especialistas.html">Ver todos</a></p>
             </aside>
         </div>
     </main>

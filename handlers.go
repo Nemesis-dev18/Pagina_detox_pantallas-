@@ -35,13 +35,17 @@ type Publicacion struct {
 	CreadoEn          time.Time `json:"creado_en"`
 	TituloOriginal    string    `json:"titulo_original,omitempty"`
 	ContenidoOriginal string    `json:"contenido_original,omitempty"`
+	// Solo se llenan si el autor es un especialista APROBADO en la base (ver especialistas.go)
+	NombreReal string `json:"nombre_real,omitempty"`
+	Verificado bool   `json:"profesional_verificado,omitempty"`
 }
 
 func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 	rows, err := pool.Query(r.Context(), `
-		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en
+		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en, `+columnasInsignia+`
 		FROM publicaciones p
 		JOIN usuarios u ON u.id = p.autor_id
+		`+unirPerfilAprobado+`
 		ORDER BY p.creado_en DESC
 		LIMIT 50`)
 	if err != nil {
@@ -56,7 +60,7 @@ func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
 	publicaciones := []Publicacion{}
 	for rows.Next() {
 		var p Publicacion
-		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn); err != nil {
+		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn, &p.NombreReal, &p.Verificado); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
@@ -315,6 +319,7 @@ type Usuario struct {
 	ID      string
 	Alias   string
 	EsAdmin bool
+	Tipo    string // "usuario" o "especialista"
 }
 
 // Devuelve quién es el usuario según la cookie, o un error si no hay sesión válida
@@ -326,11 +331,11 @@ func usuarioActual(r *http.Request) (*Usuario, error) {
 
 	var u Usuario
 	err = pool.QueryRow(r.Context(),
-		`SELECT u.id, u.alias, u.es_admin
+		`SELECT u.id, u.alias, u.es_admin, u.tipo
 		 FROM sesiones s
 		 JOIN usuarios u ON u.id = s.usuario_id
 		 WHERE s.token_hash = $1 AND s.expira_en > now()`,
-		hashToken(c.Value)).Scan(&u.ID, &u.Alias, &u.EsAdmin)
+		hashToken(c.Value)).Scan(&u.ID, &u.Alias, &u.EsAdmin, &u.Tipo)
 	if err != nil {
 		return nil, err
 	}
@@ -371,6 +376,12 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	}
 	limpiarIntentos(correo)
 
+	abrirSesion(w, r, id, "/static/index.html")
+}
+
+// abrirSesion crea la sesión en la base, pone la cookie y redirige a destino.
+// La comparten el inicio de sesión normal y el de especialistas.
+func abrirSesion(w http.ResponseWriter, r *http.Request, usuarioID, destino string) {
 	token, err := generarToken()
 	if err != nil {
 		http.Error(w, "error interno", http.StatusInternalServerError)
@@ -378,7 +389,7 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = pool.Exec(r.Context(),
 		"INSERT INTO sesiones (token_hash, usuario_id, expira_en) VALUES ($1, $2, now() + interval '30 days')",
-		hashToken(token), id)
+		hashToken(token), usuarioID)
 	if err != nil {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
@@ -391,9 +402,9 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(30 * 24 * time.Hour), // los mismos 30 días de la base
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		// Secure: true, // activar cuando el sitio se publique con HTTPS
+		Secure:   cookieSegura(),
 	})
-	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+	http.Redirect(w, r, destino, http.StatusSeeOther)
 }
 
 func cerrarSesion(w http.ResponseWriter, r *http.Request) {
@@ -410,6 +421,7 @@ func cerrarSesion(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   -1, // le dice al navegador que borre la cookie
 		HttpOnly: true,
+		Secure:   cookieSegura(),
 	})
 	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
 }
@@ -422,10 +434,19 @@ func yo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	datos := map[string]interface{}{
 		"alias":    u.Alias,
 		"es_admin": u.EsAdmin,
-	})
+		"tipo":     u.Tipo,
+	}
+	if u.Tipo == "especialista" {
+		// El estado sale siempre de la base; el navegador no puede decidirlo
+		var estado string
+		pool.QueryRow(r.Context(), "SELECT estado FROM perfiles_especialistas WHERE usuario_id = $1", u.ID).Scan(&estado)
+		datos["especialista_estado"] = estado
+		datos["profesional_verificado"] = estado == "aprobado"
+	}
+	json.NewEncoder(w).Encode(datos)
 }
 
 // ---------- Comentarios ----------
@@ -438,6 +459,8 @@ type Comentario struct {
 	Contenido         string    `json:"contenido"`
 	ContenidoOriginal string    `json:"contenido_original,omitempty"`
 	CreadoEn          time.Time `json:"creado_en"`
+	NombreReal        string    `json:"nombre_real,omitempty"`
+	Verificado        bool      `json:"profesional_verificado,omitempty"`
 }
 
 func listarComentarios(w http.ResponseWriter, r *http.Request) {
@@ -448,9 +471,10 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := pool.Query(r.Context(), `
-		SELECT c.id, u.alias, c.contenido, c.creado_en
+		SELECT c.id, u.alias, c.contenido, c.creado_en, `+columnasInsignia+`
 		FROM comentarios c
 		JOIN usuarios u ON u.id = c.autor_id
+		`+unirPerfilAprobado+`
 		WHERE c.publicacion_id = $1
 		ORDER BY c.creado_en ASC`, id)
 	if err != nil {
@@ -465,7 +489,7 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 	comentarios := []Comentario{}
 	for rows.Next() {
 		var c Comentario
-		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn); err != nil {
+		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn, &c.NombreReal, &c.Verificado); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}

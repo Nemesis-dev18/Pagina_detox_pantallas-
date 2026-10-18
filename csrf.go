@@ -5,9 +5,16 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"net/http"
+	"strings"
 )
 
 const cookieCSRF = "csrf_token"
+
+// cookieSegura marca las cookies como Secure (solo viajan por HTTPS) cuando
+// BASE_URL empieza con https://. En local (http) todo queda igual que antes.
+func cookieSegura() bool {
+	return strings.HasPrefix(strings.ToLower(baseURL()), "https://")
+}
 
 func generarTokenCSRF() (string, error) {
 	b := make([]byte, 32)
@@ -30,7 +37,7 @@ func conCSRF(siguiente http.Handler) http.Handler {
 					Value:    token,
 					Path:     "/",
 					SameSite: http.SameSiteLaxMode,
-					// Secure: true, // activar cuando el sitio use HTTPS
+					Secure:   cookieSegura(),
 				})
 			}
 		}
