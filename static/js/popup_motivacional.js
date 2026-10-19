@@ -103,7 +103,7 @@
         'Recuerda que una notificación no decide por ti cuándo atenderla.',
     ];
 
-    const DURACION_VISIBLE = 5000;   // ms que se ve el aviso
+    const DURACION_VISIBLE = 8000;   // ms que se ve el aviso
     const CADA = 20000;              // ms entre avisos
 
     const script = document.currentScript || document.querySelector('script[data-pagina]');
