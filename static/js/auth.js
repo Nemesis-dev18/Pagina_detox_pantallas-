@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         zona = document.createElement('div');
         zona.className = 'hero-right';
         cabecera.appendChild(zona);
-        
     }
 
     // Ya hay sesión: se quita el enlace "Iniciar Sesión"

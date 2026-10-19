@@ -46,7 +46,6 @@
         'Respira. Estás haciendo algo bueno por ti al entrar aquí.',
         'Pequeños pasos también cuentan. Hoy basta con uno.',
     ];
-    
 
     const DURACION_VISIBLE = 5000;   // ms que se ve el aviso
     const CADA = 20000;              // ms entre avisos
