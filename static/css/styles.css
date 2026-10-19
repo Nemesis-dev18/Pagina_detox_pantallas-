@@ -3337,6 +3337,7 @@ header .menu_desplegable a[aria-current="page"] {
   letter-spacing: 0.5px;
   color: #fff;
 }
+.popup_motivacional .popup_atribucion { font-size: 0.72em; }
 .popup_motivacional .popup_texto { margin: 0; }
 .popup_motivacional .popup_cerrar {
   position: absolute;

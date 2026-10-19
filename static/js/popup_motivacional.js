@@ -66,7 +66,7 @@
             'Lo importante es conocerte un poco mejor, no obtener una calificación.',
         ],
         nosotros: [
-            'DETOX_WEB nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
+            'R-HOPE nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
             'El objetivo es preventivo: que tengas más control sobre tu vida digital, sin presiones.',
             'La prevención también empieza con información clara y decisiones propias.',
             'Cada persona puede encontrar un equilibrio distinto con la tecnología.',
@@ -118,7 +118,11 @@
 
     const titulo = document.createElement('p');
     titulo.className = 'popup_titulo';
-    titulo.textContent = 'Un recordatorio para ti (att: Hey Ya!, "Stand")';
+    titulo.append('Un recordatorio para ti ');
+    const atribucion = document.createElement('span');
+    atribucion.className = 'popup_atribucion';
+    atribucion.textContent = '(att: Hey Ya!, "Stand")';
+    titulo.append(atribucion);
     const texto = document.createElement('p');
     texto.className = 'popup_texto';
     const cerrar = document.createElement('button');
