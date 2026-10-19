@@ -1,4 +1,4 @@
-# Foro Anónimo Esperanza
+# R-HOPE
 
 > Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.
 > Componente del **Proyecto Esperanza** (nombre provisional: *Preventiva*).
@@ -12,7 +12,7 @@
 
 ## Estado actual de la implementación
 
-**Stack:** Go (`net/http` + `pgx`) con PostgreSQL; frontend en HTML/CSS/JS puro dentro de `static/`.
+**Stack:** Go (`net/http` + `pgx`) con PostgreSQL; frontend en HTML/CSS/JS dentro de `static/`.
 
 | Funcionalidad | Estado |
 |---|---|
@@ -24,12 +24,16 @@
 | Filtro de palabras prohibidas y panel de administración | Hecho |
 | Antispam y protección CSRF | Hecho |
 | Mapa, test y páginas informativas | Hecho |
+| Directorio, registro y perfiles de especialistas | Hecho |
+| Acompañamiento voluntario y mensajería privada | Hecho |
+| Administración de cuentas y solicitudes de especialistas | Hecho |
 
 ### Ejecutar en local
 
-1. Copia `.env.example` a `.env` y completa `DATABASE_URL`.
-2. Crea las tablas con `schema.sql` (y opcionalmente `prohibidas.sql`).
-3. `go run .` y abre `http://localhost:8080`.
+1. Instala Go 1.26.8 y PostgreSQL, y crea una base de datos para el proyecto.
+2. Copia `.env.example` a `.env` y configura `DATABASE_URL` para esa base de datos. `PORT` es opcional; por defecto se usa `8080`.
+3. Ejecuta `go mod download` y luego `go run .`.
+4. Abre `http://localhost:8080`. Al iniciar, la aplicación ejecuta automáticamente las migraciones de `migraciones/`.
 
 > Nunca subas `.env` ni el binario compilado: ya están en `.gitignore`.
 
@@ -37,14 +41,16 @@
 
 ## Tabla de contenidos
 
-- [Foro Anónimo Esperanza](#foro-anónimo-esperanza)
+- [R-HOPE](#r-hope)
+  - [Estado actual de la implementación](#estado-actual-de-la-implementación)
+    - [Ejecutar en local](#ejecutar-en-local)
   - [Tabla de contenidos](#tabla-de-contenidos)
   - [Sobre el proyecto](#sobre-el-proyecto)
   - [Objetivos](#objetivos)
     - [Objetivo general](#objetivo-general)
     - [Objetivos específicos](#objetivos-específicos)
   - [Alcance](#alcance)
-  - [Arquitectura por capas](#arquitectura-por-capas)
+  - [Arquitectura](#arquitectura)
   - [Requisitos funcionales](#requisitos-funcionales)
   - [Requisitos no funcionales](#requisitos-no-funcionales)
   - [Metodología de trabajo](#metodología-de-trabajo)
@@ -59,11 +65,13 @@
 
 El uso excesivo del teléfono celular es cada vez más común, especialmente entre jóvenes y adultos jóvenes, y con frecuencia pasa desapercibido porque no existe un espacio adecuado para reflexionar sobre estos hábitos ni para compartirlos con otras personas en situaciones similares.
 
-**Foro Anónimo Esperanza** es la propuesta de un foro/comunidad anónima dentro de la plataforma **Esperanza**, donde los usuarios pueden:
+**R-HOPE** es una plataforma preventiva para reflexionar sobre los hábitos digitales y encontrar espacios de apoyo. En la comunidad, las personas pueden:
 
 - Crear publicaciones y compartir experiencias sin exponer su identidad.
 - Formular preguntas relacionadas con el uso del celular.
 - Consultar y responder publicaciones de otros usuarios.
+- Explorar recursos, realizar un test orientativo y encontrar especialistas verificados.
+- Solicitar acompañamiento voluntario y conversar mediante mensajería privada.
 
 El **anonimato** es la característica central del espacio: busca que las personas participen con mayor confianza, sin necesidad de revelar quiénes son.
 
@@ -72,25 +80,25 @@ El **anonimato** es la característica central del espacio: busca que las person
 ##  Objetivos
 
 ### Objetivo general
-Diseñar y estructurar una propuesta de foro o comunidad anónima para la plataforma Esperanza, que permita a los usuarios compartir experiencias y reflexionar sobre el uso del teléfono celular, desarrollada bajo una arquitectura por capas.
+Mantener una plataforma preventiva que permita a las personas reflexionar sobre el uso del teléfono celular, compartir experiencias de forma anónima y consultar recursos de apoyo.
 
 ### Objetivos específicos
-- Analizar las necesidades y características que debe tener un espacio de participación anónima dentro de Esperanza.
-- Diseñar la estructura general del foro: creación y consulta de publicaciones, preguntas y experiencias entre usuarios.
-- Estructurar el sistema mediante una arquitectura por capas que separe presentación, lógica de negocio y almacenamiento.
-- Desarrollar una propuesta técnica y metodológica basada en **Scrum** que oriente la futura implementación.
+- Facilitar la creación, consulta y moderación de publicaciones y comentarios.
+- Proteger las cuentas y los datos mediante controles de acceso, sesiones y medidas de seguridad.
+- Ofrecer recursos preventivos, perfiles de especialistas y opciones de acompañamiento.
+- Mejorar la plataforma de forma incremental y mantener información clara sobre su alcance.
 
 ---
 
 ##  Alcance
 
 **Incluye:**
-- Diseño de un foro/comunidad anónima integrado a la plataforma Esperanza.
-- Creación y consulta de publicaciones por parte de los usuarios.
-- Planteamiento de preguntas, narración de experiencias e intercambio de consejos.
-- Interacción básica entre usuarios mediante respuestas a publicaciones.
-- Gestión y almacenamiento de publicaciones y respuestas en base de datos.
-- Desarrollo bajo arquitectura por capas.
+- Comunidad anónima con publicaciones, comentarios, reacciones y moderación.
+- Cuentas de usuario, administración y recuperación de contraseña.
+- Directorio, verificación y perfiles de especialistas.
+- Mapa, test orientativo y páginas informativas.
+- Solicitudes de acompañamiento voluntario y mensajería privada.
+- Almacenamiento en PostgreSQL y migraciones de esquema versionadas.
 
 **No incluye:**
 - Diagnósticos médicos o psicológicos.
@@ -101,33 +109,26 @@ Diseñar y estructurar una propuesta de foro o comunidad anónima para la plataf
 
 ---
 
-## Arquitectura por capas
+## Arquitectura
 
-El sistema se organiza en tres capas, donde cada una se comunica únicamente con la capa inmediatamente adyacente:
+La aplicación usa una arquitectura cliente-servidor: las páginas estáticas se sirven desde Go, los handlers atienden las rutas HTTP y `pgx` conecta el backend con PostgreSQL. Las migraciones SQL versionadas se ejecutan al iniciar la aplicación.
 
 ```mermaid
-flowchart TD
-    U[" Usuario"] --> P
-    subgraph P["Capa de Presentación"]
-        P1["Interfaz del foro: crear, ver y responder publicaciones"]
-    end
-    subgraph L["Capa de Lógica de Negocio"]
-        L1["Validación de datos y reglas del foro (anonimato, moderación)"]
-    end
-    subgraph D["Capa de Datos"]
-        D1["Base de datos: usuarios, publicaciones, respuestas"]
-    end
-    P --> L --> D
-    D -.respuesta.-> L -.respuesta.-> P -.muestra.-> U
+flowchart LR
+  U["Navegador<br/>HTML, CSS y JavaScript"] -->|HTTP| S["Servidor Go<br/>net/http y handlers"]
+  S -->|pgx| D["PostgreSQL"]
+  S -->|sirve| U
+  M["migraciones/*.sql"] -->|al iniciar| D
 ```
 
-| Capa | Responsabilidad |
+| Componente | Responsabilidad |
 |---|---|
-| **Presentación** | Interfaz con la que el usuario interactúa: formularios para crear publicaciones, visualización de publicaciones y respuestas. |
-| **Lógica de negocio** | Procesa las solicitudes de la capa de presentación, valida la información y aplica reglas del foro (anonimato, moderación básica). |
-| **Datos** | Almacenamiento y consulta en base de datos de usuarios, publicaciones y respuestas. |
+| **Frontend** | Páginas y recursos estáticos en `static/`; se comunica con el servidor mediante HTTP y JavaScript. |
+| **Servidor Go** | Sirve las páginas, registra las rutas y ejecuta la lógica de autenticación, comunidad, administración y acompañamiento. |
+| **PostgreSQL** | Guarda cuentas, publicaciones, comentarios y demás datos de la aplicación. |
+| **Migraciones** | Los archivos SQL de `migraciones/` actualizan el esquema de forma versionada al iniciar el servidor. |
 
-El flujo de información sigue siempre el mismo camino: el usuario interactúa con la presentación → la solicitud pasa a la lógica de negocio, que la valida → la lógica se comunica con la capa de datos para guardar o consultar información → la respuesta recorre el camino inverso hasta el usuario. Esta separación permite que cambios en una capa (p. ej. la interfaz) no afecten directamente a las demás.
+El flujo principal es: navegador → ruta HTTP de Go → PostgreSQL cuando la operación requiere datos → respuesta al navegador.
 
 ---
 
