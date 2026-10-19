@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/mail"
 	"os"
 	"regexp"
 	"strings"
@@ -35,28 +36,41 @@ type Publicacion struct {
 	CreadoEn          time.Time `json:"creado_en"`
 	TituloOriginal    string    `json:"titulo_original,omitempty"`
 	ContenidoOriginal string    `json:"contenido_original,omitempty"`
+	// Solo se llenan si el autor es un especialista APROBADO en la base (ver especialistas.go)
+	NombreReal string `json:"nombre_real,omitempty"`
+	Verificado bool   `json:"profesional_verificado,omitempty"`
+	Likes      int    `json:"likes"`
+	MeGusta    bool   `json:"me_gusta"`
 }
 
 func listarPublicaciones(w http.ResponseWriter, r *http.Request) {
+	u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
+	// Visitantes: uid nil, así "me gusta" sale en falso
+	var uid *string
+	if haySesion {
+		uid = &u.ID
+	}
+
 	rows, err := pool.Query(r.Context(), `
-		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en
+		SELECT p.id, u.alias, p.titulo, p.contenido, COALESCE(p.categoria, ''), p.creado_en, `+columnasInsignia+`,
+			(SELECT COUNT(*) FROM me_gusta g WHERE g.publicacion_id = p.id),
+			EXISTS (SELECT 1 FROM me_gusta g WHERE g.publicacion_id = p.id AND g.usuario_id = $1)
 		FROM publicaciones p
 		JOIN usuarios u ON u.id = p.autor_id
+		`+unirPerfilAprobado+`
 		ORDER BY p.creado_en DESC
-		LIMIT 50`)
+		LIMIT 50`, uid)
 	if err != nil {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	u, errSesion := usuarioActual(r)
-	haySesion := errSesion == nil
-
 	publicaciones := []Publicacion{}
 	for rows.Next() {
 		var p Publicacion
-		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn); err != nil {
+		if err := rows.Scan(&p.ID, &p.Alias, &p.Titulo, &p.Contenido, &p.Categoria, &p.CreadoEn, &p.NombreReal, &p.Verificado, &p.Likes, &p.MeGusta); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}
@@ -148,6 +162,19 @@ func registrar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "la contraseña debe tener mínimo 8 caracteres", http.StatusBadRequest)
 		return
 	}
+	// Validación del servidor (antes solo la tenía el navegador)
+	if !reAlias.MatchString(alias) {
+		http.Error(w, "el alias debe tener entre 3 y 30 caracteres (letras, números, espacio, punto, guion)", http.StatusBadRequest)
+		return
+	}
+	if a, err := mail.ParseAddress(correo); err != nil || a.Address != correo || len(correo) > 254 {
+		http.Error(w, "el correo electrónico no es válido", http.StatusBadRequest)
+		return
+	}
+	if len(password) > 72 { // límite de bcrypt: más allá, el hash no sirve
+		http.Error(w, "la contraseña es muy larga (máximo 72 caracteres)", http.StatusBadRequest)
+		return
+	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -222,17 +249,29 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 
 	var usuarioID string
 	err := pool.QueryRow(r.Context(), "SELECT id FROM usuarios WHERE correo = $1", correo).Scan(&usuarioID)
-	if err == nil {
-		if err := enviarEnlaceRecuperacion(r.Context(), usuarioID, correo); err != nil {
-			log.Println("recuperación:", err)
-		}
-	} else if !errors.Is(err, pgx.ErrNoRows) {
+	// Si el correo no tiene cuenta, la respuesta es la misma: no revelamos qué correos están registrados
+	if errors.Is(err, pgx.ErrNoRows) {
+		responderRecuperacion(w)
+		return
+	}
+	if err != nil {
 		log.Println("recuperación:", err)
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
 	}
 
-	// Siempre la misma respuesta, exista o no el correo
+	if err := enviarEnlaceRecuperacion(r.Context(), usuarioID, correo); err != nil {
+		log.Println("recuperación:", err)
+		http.Error(w, "no pudimos enviar el correo, intenta de nuevo en unos minutos", http.StatusInternalServerError)
+		return
+	}
+
+	responderRecuperacion(w)
+}
+
+func responderRecuperacion(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, " te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada ")
+	fmt.Fprint(w, "Si el correo está registrado, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.")
 }
 
 func restablecer(w http.ResponseWriter, r *http.Request) {
@@ -247,6 +286,10 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 	if token == "" || password == "" {
 		http.Error(w, "faltan datos", http.StatusBadRequest)
+		return
+	}
+	if len(password) > 72 { // límite de bcrypt
+		http.Error(w, "la contraseña es muy larga (máximo 72 caracteres)", http.StatusBadRequest)
 		return
 	}
 	if password != confirmar {
@@ -304,13 +347,11 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 // ---------- Login y sesiones ----------
 
-// Se usa cuando el correo no existe, para que el login tarde lo mismo
-var hashFalso, _ = bcrypt.GenerateFromPassword([]byte("contraseña-falsa"), bcrypt.DefaultCost)
-
 type Usuario struct {
 	ID      string
 	Alias   string
 	EsAdmin bool
+	Tipo    string // "usuario" o "especialista"
 }
 
 // Devuelve quién es el usuario según la cookie, o un error si no hay sesión válida
@@ -322,16 +363,21 @@ func usuarioActual(r *http.Request) (*Usuario, error) {
 
 	var u Usuario
 	err = pool.QueryRow(r.Context(),
-		`SELECT u.id, u.alias, u.es_admin
+		`SELECT u.id, u.alias, u.es_admin, u.tipo
 		 FROM sesiones s
 		 JOIN usuarios u ON u.id = s.usuario_id
 		 WHERE s.token_hash = $1 AND s.expira_en > now()`,
-		hashToken(c.Value)).Scan(&u.ID, &u.Alias, &u.EsAdmin)
+		hashToken(c.Value)).Scan(&u.ID, &u.Alias, &u.EsAdmin, &u.Tipo)
 	if err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
+
+// hashRelleno se compara cuando el correo no existe, para que la respuesta
+// tarde lo mismo que con una cuenta real (no se revela qué correos existen).
+var hashRelleno, _ = bcrypt.GenerateFromPassword([]byte("relleno-sin-uso"), bcrypt.DefaultCost)
+
 func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
@@ -342,24 +388,38 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	correo := strings.ToLower(strings.TrimSpace(r.FormValue("username")))
 	password := r.FormValue("password")
 
+	if bloq, restante := bloqueado(correo); bloq {
+		minutos := int(restante.Minutes()) + 1
+		http.Error(w, fmt.Sprintf("demasiados intentos fallidos, intenta de nuevo en %d minutos", minutos), http.StatusTooManyRequests)
+		return
+	}
+
 	var id, hash string
-	encontrado := true
 	err := pool.QueryRow(r.Context(),
 		"SELECT id, password_hash FROM usuarios WHERE correo = $1", correo).Scan(&id, &hash)
-	if errors.Is(err, pgx.ErrNoRows) {
-		encontrado = false
-		hash = string(hashFalso)
-	} else if err != nil {
+	existe := err == nil
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
 	}
+	if !existe {
+		hash = string(hashRelleno)
+	}
 
-	coincide := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
-	if !encontrado || !coincide {
+	// Correo inexistente o contraseña mal: mismo mensaje, mismo tiempo y mismo contador de intentos
+	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) != nil || !existe {
+		registrarFallo(correo)
 		http.Error(w, "correo o contraseña incorrectos", http.StatusUnauthorized)
 		return
 	}
+	limpiarIntentos(correo)
 
+	abrirSesion(w, r, id, "/static/index.html")
+}
+
+// abrirSesion crea la sesión en la base, pone la cookie y redirige a destino.
+// La comparten el inicio de sesión normal y el de especialistas.
+func abrirSesion(w http.ResponseWriter, r *http.Request, usuarioID, destino string) {
 	token, err := generarToken()
 	if err != nil {
 		http.Error(w, "error interno", http.StatusInternalServerError)
@@ -367,7 +427,7 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = pool.Exec(r.Context(),
 		"INSERT INTO sesiones (token_hash, usuario_id, expira_en) VALUES ($1, $2, now() + interval '30 days')",
-		hashToken(token), id)
+		hashToken(token), usuarioID)
 	if err != nil {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
@@ -380,9 +440,9 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(30 * 24 * time.Hour), // los mismos 30 días de la base
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		// Secure: true, // activar cuando el sitio se publique con HTTPS
+		Secure:   cookieSegura(),
 	})
-	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
+	http.Redirect(w, r, destino, http.StatusSeeOther)
 }
 
 func cerrarSesion(w http.ResponseWriter, r *http.Request) {
@@ -399,6 +459,7 @@ func cerrarSesion(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   -1, // le dice al navegador que borre la cookie
 		HttpOnly: true,
+		Secure:   cookieSegura(),
 	})
 	http.Redirect(w, r, "/static/index.html", http.StatusSeeOther)
 }
@@ -411,10 +472,19 @@ func yo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	datos := map[string]interface{}{
 		"alias":    u.Alias,
 		"es_admin": u.EsAdmin,
-	})
+		"tipo":     u.Tipo,
+	}
+	if u.Tipo == "especialista" {
+		// El estado sale siempre de la base; el navegador no puede decidirlo
+		var estado string
+		pool.QueryRow(r.Context(), "SELECT estado FROM perfiles_especialistas WHERE usuario_id = $1", u.ID).Scan(&estado)
+		datos["especialista_estado"] = estado
+		datos["profesional_verificado"] = estado == "aprobado"
+	}
+	json.NewEncoder(w).Encode(datos)
 }
 
 // ---------- Comentarios ----------
@@ -427,6 +497,10 @@ type Comentario struct {
 	Contenido         string    `json:"contenido"`
 	ContenidoOriginal string    `json:"contenido_original,omitempty"`
 	CreadoEn          time.Time `json:"creado_en"`
+	NombreReal        string    `json:"nombre_real,omitempty"`
+	Verificado        bool      `json:"profesional_verificado,omitempty"`
+	Likes             int       `json:"likes"`
+	MeGusta           bool      `json:"me_gusta"`
 }
 
 func listarComentarios(w http.ResponseWriter, r *http.Request) {
@@ -436,25 +510,32 @@ func listarComentarios(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u, errSesion := usuarioActual(r)
+	haySesion := errSesion == nil
+	var uid *string
+	if haySesion {
+		uid = &u.ID
+	}
+
 	rows, err := pool.Query(r.Context(), `
-		SELECT c.id, u.alias, c.contenido, c.creado_en
+		SELECT c.id, u.alias, c.contenido, c.creado_en, `+columnasInsignia+`,
+			(SELECT COUNT(*) FROM me_gusta g WHERE g.comentario_id = c.id),
+			EXISTS (SELECT 1 FROM me_gusta g WHERE g.comentario_id = c.id AND g.usuario_id = $1)
 		FROM comentarios c
 		JOIN usuarios u ON u.id = c.autor_id
-		WHERE c.publicacion_id = $1
-		ORDER BY c.creado_en ASC`, id)
+		`+unirPerfilAprobado+`
+		WHERE c.publicacion_id = $2
+		ORDER BY c.creado_en ASC`, uid, id)
 	if err != nil {
 		http.Error(w, "error consultando la base", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	u, errSesion := usuarioActual(r)
-	haySesion := errSesion == nil
-
 	comentarios := []Comentario{}
 	for rows.Next() {
 		var c Comentario
-		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn); err != nil {
+		if err := rows.Scan(&c.ID, &c.Alias, &c.Contenido, &c.CreadoEn, &c.NombreReal, &c.Verificado, &c.Likes, &c.MeGusta); err != nil {
 			http.Error(w, "error leyendo datos", http.StatusInternalServerError)
 			return
 		}

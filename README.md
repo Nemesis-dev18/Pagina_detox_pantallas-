@@ -3,10 +3,35 @@
 > Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.
 > Componente del **Proyecto Esperanza** (nombre provisional: *Preventiva*).
 
-![Estado](https://img.shields.io/badge/estado-en%20dise%C3%B1o-yellow)
+![Estado](https://img.shields.io/badge/estado-en%20desarrollo-green)
 ![Metodología](https://img.shields.io/badge/metodolog%C3%ADa-Scrum-blue)
 ![Arquitectura](https://img.shields.io/badge/arquitectura-por%20capas-informational)
 ![Licencia](https://img.shields.io/badge/licencia-por%20definir-lightgrey)
+
+---
+
+## Estado actual de la implementación
+
+**Stack:** Go (`net/http` + `pgx`) con PostgreSQL; frontend en HTML/CSS/JS puro dentro de `static/`.
+
+| Funcionalidad | Estado |
+|---|---|
+| Registro e inicio de sesión (contraseñas con bcrypt, sesiones por cookie) | Hecho |
+| Aviso claro cuando el correo no tiene cuenta (login y recuperar contraseña) | Hecho |
+| Bloqueo temporal tras 4 intentos fallidos de login (15 min) | Hecho |
+| Recuperar / restablecer contraseña por correo (enlace válido 30 min) | Hecho |
+| Publicaciones y comentarios (crear, listar, editar, borrar) | Hecho |
+| Filtro de palabras prohibidas y panel de administración | Hecho |
+| Antispam y protección CSRF | Hecho |
+| Mapa, test y páginas informativas | Hecho |
+
+### Ejecutar en local
+
+1. Copia `.env.example` a `.env` y completa `DATABASE_URL`.
+2. Crea las tablas con `schema.sql` (y opcionalmente `prohibidas.sql`).
+3. `go run .` y abre `http://localhost:8080`.
+
+> Nunca subas `.env` ni el binario compilado: ya están en `.gitignore`.
 
 ---
 

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../static/css/styles.css">
+	<title>Registro de especialistas | DETOX_WEB</title>
+	<meta name="description" content="Solicita tu verificación como profesional de psicología, salud mental u otras áreas relacionadas en DETOX_WEB.">
+	<meta name="theme-color" content="#111111">
+	<meta property="og:title" content="Registro de especialistas | DETOX_WEB">
+	<meta property="og:locale" content="es_CO">
+	<meta name="robots" content="noindex, follow">
+	<style>
+		/* Estilo sobrio con la paleta de DETOX_WEB (variables de styles.css).
+		   Solo afecta a esta página. */
+		body.registro-pagina {
+			background: var(--fondo);
+			color: var(--texto-suave);
+			font-family: var(--fuente-texto);
+			-webkit-font-smoothing: antialiased;
+			margin: 0;
+		}
+
+		/* Cabecera */
+		.rx-cabecera {
+			position: sticky;
+			top: 0;
+			z-index: 10;
+			background: var(--superficie-2);
+			border-bottom: 1px solid var(--borde-suave);
+		}
+		.rx-cabecera-interna {
+			max-width: 1024px;
+			margin: 0 auto;
+			padding: 14px 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.rx-cabecera-interna a {
+			color: var(--texto-suave);
+			text-decoration: none;
+			font-family: var(--fuente-titulo);
+			letter-spacing: 0.04em;
+		}
+		.rx-cabecera-interna .rx-volver {
+			font-family: var(--fuente-texto);
+			font-size: 0.9rem;
+			color: var(--texto-tenue);
+		}
+		.rx-cabecera-interna .rx-volver:hover { color: #fff; }
+
+		/* Contenido */
+		.rx-contenido {
+			max-width: 580px;
+			margin: 0 auto;
+			padding: 48px 20px 40px;
+		}
+		.rx-titulo {
+			font-family: var(--fuente-titulo);
+			font-size: clamp(2rem, 6vw, 2.8rem);
+			font-weight: 400;
+			letter-spacing: 0.02em;
+			line-height: 1.1;
+			color: #fff;
+			margin: 0 0 12px;
+		}
+		.rx-intro {
+			font-size: 1rem;
+			line-height: 1.55;
+			color: var(--texto-tenue);
+			margin: 0 0 32px;
+		}
+		.rx-leyenda {
+			font-size: 0.85rem;
+			color: var(--texto-tenue);
+			margin: 0 0 16px;
+		}
+		.rx-leyenda .rx-req { color: var(--rojo-claro); }
+
+		/* Secciones */
+		.rx-seccion {
+			background: var(--superficie);
+			border: 1px solid var(--borde-suave);
+			border-radius: 14px;
+			padding: 22px;
+			margin: 0 0 14px;
+		}
+		.rx-seccion legend {
+			font-family: var(--fuente-titulo);
+			font-size: 1.15rem;
+			letter-spacing: 0.03em;
+			color: #fff;
+			padding: 0 6px 0 0;
+			margin-bottom: 12px;
+		}
+
+		.rx-fila {
+			display: grid;
+			gap: 16px;
+			grid-template-columns: 1fr;
+		}
+		@media (min-width: 560px) {
+			.rx-fila { grid-template-columns: 1fr 1fr; }
+		}
+		.rx-campo {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			margin-bottom: 16px;
+		}
+		.rx-fila > .rx-campo,
+		.rx-seccion > .rx-campo:last-child { margin-bottom: 0; }
+		.rx-seccion .rx-fila + .rx-campo,
+		.rx-seccion .rx-fila + .rx-fila { margin-top: 16px; }
+
+		.rx-campo > label {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: var(--texto-suave);
+		}
+		.rx-campo > label .rx-req { color: var(--rojo-claro); margin-left: 2px; }
+		.rx-campo > label .rx-opcional { font-weight: 400; color: var(--texto-tenue); }
+
+		.registro-pagina .rx-campo input:not([type="checkbox"]),
+		.registro-pagina .rx-campo select,
+		.registro-pagina .rx-campo textarea {
+			width: 100%;
+			box-sizing: border-box;
+			height: 48px;
+			padding: 10px 14px;
+			font: inherit;
+			font-size: 0.975rem;
+			color: var(--texto-suave);
+			background: var(--fondo-campo);
+			border: 1px solid var(--borde);
+			border-radius: 10px;
+			outline: none;
+			transition: border-color var(--transicion), box-shadow var(--transicion);
+		}
+		.registro-pagina .rx-campo textarea { height: auto; min-height: 104px; resize: vertical; }
+		.registro-pagina .rx-campo select { appearance: auto; }
+		.registro-pagina .rx-campo input:hover,
+		.registro-pagina .rx-campo select:hover,
+		.registro-pagina .rx-campo textarea:hover { border-color: var(--texto-tenue); }
+		.registro-pagina .rx-campo input:focus,
+		.registro-pagina .rx-campo select:focus,
+		.registro-pagina .rx-campo textarea:focus {
+			border-color: var(--rojo);
+			box-shadow: 0 0 0 3px var(--rojo-halo);
+		}
+
+		/* Estado de error por campo */
+		.registro-pagina .rx-campo.rx-con-error input:not([type="checkbox"]),
+		.registro-pagina .rx-campo.rx-con-error select,
+		.registro-pagina .rx-campo.rx-con-error textarea {
+			border-color: var(--rojo);
+			background: color-mix(in srgb, var(--rojo) 8%, var(--fondo-campo));
+		}
+		.rx-msg {
+			font-size: 0.8rem;
+			color: var(--rojo-claro);
+			margin: 0;
+		}
+		.rx-msg[hidden] { display: none; }
+
+		.rx-ayuda {
+			font-size: 0.8rem;
+			color: var(--texto-tenue);
+			margin: 0;
+		}
+
+		/* Autorizaciones */
+		.rx-autorizacion {
+			display: flex;
+			gap: 12px;
+			align-items: flex-start;
+			font-size: 0.9rem;
+			line-height: 1.5;
+			color: var(--texto-suave);
+			cursor: pointer;
+			margin-bottom: 14px;
+		}
+		.rx-autorizacion:last-of-type { margin-bottom: 0; }
+		.rx-autorizacion input {
+			width: 18px;
+			height: 18px;
+			margin: 2px 0 0;
+			accent-color: var(--rojo);
+			flex-shrink: 0;
+		}
+		.rx-seccion.rx-con-error-grupo { border-color: var(--rojo); }
+		.rx-autorizacion.rx-con-error { color: var(--rojo-claro); }
+
+		/* Botón principal */
+		.rx-boton {
+			display: block;
+			width: 100%;
+			height: 54px;
+			margin-top: 24px;
+			font: inherit;
+			font-size: 1rem;
+			font-weight: 600;
+			color: #fff;
+			background: var(--rojo);
+			border: 2px solid #fff;
+			border-radius: 10px;
+			cursor: pointer;
+			transition: background-color var(--transicion), transform var(--transicion);
+		}
+		.rx-boton:hover { background: var(--rojo-hover); transform: translateY(-2px); }
+		.rx-boton:disabled { opacity: .5; cursor: default; transform: none; }
+
+		/* Mensaje general (servidor o validación) */
+		.registro-pagina .mensaje_form {
+			margin: 18px 0 0;
+			padding: 12px 14px;
+			border-radius: 10px;
+			font-size: 0.9rem;
+			line-height: 1.4;
+			text-align: left;
+		}
+		.registro-pagina .mensaje_form.error {
+			background: color-mix(in srgb, var(--rojo) 14%, var(--superficie));
+			color: var(--rojo-claro);
+			border: 1px solid var(--rojo-oscuro);
+		}
+
+		.rx-pie-enlace {
+			text-align: center;
+			font-size: 0.9rem;
+			color: var(--texto-tenue);
+			margin: 26px 0 0;
+		}
+		.rx-pie-enlace a { color: var(--rojo-claro); text-decoration: none; }
+		.rx-pie-enlace a:hover { color: #fff; text-decoration: underline; }
+
+		.rx-pie {
+			max-width: 580px;
+			margin: 0 auto;
+			padding: 0 20px 40px;
+			font-size: 0.8rem;
+			line-height: 1.55;
+			color: var(--texto-tenue);
+		}
+		.rx-pie p { margin: 0 0 8px; }
+	</style>
+</head>
+<body class="registro-pagina">
+	<header class="rx-cabecera">
+		<div class="rx-cabecera-interna">
+			<a href="index.html">DETOX_WEB</a>
+			<a class="rx-volver" href="registro.html">Cuenta normal</a>
+		</div>
+	</header>
+
+	<main class="rx-contenido">
+		<h1 class="rx-titulo">Registro de especialistas</h1>
+		<p class="rx-intro">Revisamos cada solicitud. Solo las personas aprobadas aparecen con la insignia «Profesional verificado».</p>
+		<p class="rx-leyenda"><span class="rx-req">*</span> Campo obligatorio</p>
+
+		<form class="formulario-cuenta" action="/registro-especialista" method="POST" data-ajax novalidate>
+
+			<fieldset class="rx-seccion">
+				<legend>Cuenta</legend>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="alias">Alias en la comunidad <span class="rx-req">*</span></label>
+						<input type="text" id="alias" name="alias" minlength="3" maxlength="30" autocomplete="username" required>
+					</div>
+					<div class="rx-campo">
+						<label for="correo">Correo electrónico <span class="rx-req">*</span></label>
+						<input type="email" id="correo" name="correo" maxlength="254" autocomplete="email" required>
+					</div>
+				</div>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="password">Contraseña <span class="rx-req">*</span></label>
+						<input type="password" id="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+						<p class="rx-ayuda">Mínimo 8 caracteres.</p>
+					</div>
+					<div class="rx-campo">
+						<label for="confirmar-password">Confirmar contraseña <span class="rx-req">*</span></label>
+						<input type="password" id="confirmar-password" name="confirmar_password" minlength="8" maxlength="72" autocomplete="new-password" required>
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="rx-seccion">
+				<legend>Datos personales</legend>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="nombres">Nombres <span class="rx-req">*</span></label>
+						<input type="text" id="nombres" name="nombres" maxlength="80" autocomplete="given-name" required>
+					</div>
+					<div class="rx-campo">
+						<label for="primer_apellido">Primer apellido <span class="rx-req">*</span></label>
+						<input type="text" id="primer_apellido" name="primer_apellido" maxlength="80" autocomplete="family-name" required>
+					</div>
+				</div>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="segundo_apellido">Segundo apellido <span class="rx-opcional">(opcional)</span></label>
+						<input type="text" id="segundo_apellido" name="segundo_apellido" maxlength="80">
+					</div>
+					<div class="rx-campo">
+						<label for="tipo_documento">Tipo de documento <span class="rx-req">*</span></label>
+						<select id="tipo_documento" name="tipo_documento" required>
+							<option value="">Elige una opción</option>
+							<option value="CC">Cédula de ciudadanía</option>
+							<option value="CE">Cédula de extranjería</option>
+							<option value="PPT">Permiso por protección temporal</option>
+						</select>
+					</div>
+				</div>
+				<div class="rx-campo">
+					<label for="numero_documento">Número de documento <span class="rx-req">*</span></label>
+					<input type="text" id="numero_documento" name="numero_documento" maxlength="15" required>
+				</div>
+			</fieldset>
+
+			<fieldset class="rx-seccion">
+				<legend>Credencial profesional</legend>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="profesion">Profesión <span class="rx-req">*</span></label>
+						<select id="profesion" name="profesion" required>
+							<option value="">Elige una opción</option>
+							<option value="psicologia">Psicología</option>
+							<option value="psiquiatria">Psiquiatría</option>
+							<option value="medicina">Medicina</option>
+							<option value="enfermeria">Enfermería</option>
+							<option value="trabajo_social">Trabajo social</option>
+							<option value="terapia_ocupacional">Terapia ocupacional</option>
+						</select>
+					</div>
+					<div class="rx-campo">
+						<label for="numero_registro">Número de tarjeta o registro profesional <span class="rx-req">*</span></label>
+						<input type="text" id="numero_registro" name="numero_registro" maxlength="30" required>
+					</div>
+				</div>
+				<div class="rx-campo">
+					<label for="especialidad">Especialidad o área <span class="rx-req">*</span></label>
+					<input type="text" id="especialidad" name="especialidad" maxlength="100" required>
+				</div>
+			</fieldset>
+
+			<fieldset class="rx-seccion">
+				<legend>Institución</legend>
+				<div class="rx-fila">
+					<div class="rx-campo">
+						<label for="institucion">Institución principal <span class="rx-req">*</span></label>
+						<input type="text" id="institucion" name="institucion" maxlength="150" required>
+					</div>
+					<div class="rx-campo">
+						<label for="institucion_nit">NIT <span class="rx-opcional">(opcional, sin dígito de verificación)</span></label>
+						<input type="text" id="institucion_nit" name="institucion_nit" inputmode="numeric" maxlength="12">
+					</div>
+				</div>
+				<div class="rx-campo">
+					<label for="otros_centros_1">Otros centros donde trabajas <span class="rx-opcional">(opcional, hasta 2)</span></label>
+					<input type="text" id="otros_centros_1" name="otros_centros" maxlength="150">
+				</div>
+				<div class="rx-campo">
+					<input type="text" id="otros_centros_2" name="otros_centros" maxlength="150" aria-label="Segundo centro adicional (opcional)">
+				</div>
+			</fieldset>
+
+			<fieldset class="rx-seccion">
+				<legend>Presentación</legend>
+				<div class="rx-campo">
+					<label for="descripcion">Breve descripción <span class="rx-opcional">(opcional, máximo 600 caracteres)</span></label>
+					<textarea id="descripcion" name="descripcion" rows="4" maxlength="600"></textarea>
+				</div>
+			</fieldset>
+
+			<fieldset class="rx-seccion">
+				<legend>Autorizaciones</legend>
+				<label class="rx-autorizacion">
+					<input type="checkbox" name="acepta_datos" value="1" required>
+					<span>Autorizo el tratamiento de mis datos personales para verificar mi perfil (Ley 1581 de 2012). <span class="rx-req">*</span></span>
+				</label>
+				<label class="rx-autorizacion">
+					<input type="checkbox" name="acepta_perfil" value="1" required>
+					<span>Acepto que, si me aprueban, mi nombre y mis datos profesionales sean públicos. <span class="rx-req">*</span></span>
+				</label>
+			</fieldset>
+
+			<button class="rx-boton" type="submit">Enviar solicitud</button>
+		</form>
+
+		<p class="mensaje_form" role="alert" hidden></p>
+		<p class="rx-pie-enlace">¿Eres usuario de la comunidad? <a href="registro.html">Crear cuenta normal</a></p>
+	</main>
+
+	<footer class="rx-pie">
+		<p><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento.</p>
+		<p>&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
+	</footer>
+
+	<script src="../static/js/csrf.js"></script>
+	<script src="../static/js/formularios.js" defer></script>
+	<script src="../static/js/mostrar_contrasena.js" defer></script>
+	<script src="../static/js/validar_especialista.js" defer></script>
+</body>
+</html>

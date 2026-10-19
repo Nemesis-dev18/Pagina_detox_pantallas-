@@ -41,6 +41,12 @@ func registrarFallo(clave string) {
 	intentosMu.Lock()
 	defer intentosMu.Unlock()
 
+	// shortcut: tope de memoria simple (se reinicia el conteo si hay muchos correos distintos);
+	// subir a un almacén compartido (Redis o la base) si hay varias instancias.
+	if len(intentos) >= 50000 {
+		intentos = map[string]*intentoLogin{}
+	}
+
 	i, existe := intentos[clave]
 	if !existe {
 		i = &intentoLogin{}

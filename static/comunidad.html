@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-      
-    </style>
     <title>Comunidad | DETOX_WEB</title>
+    <meta name="description" content="Comparte experiencias, preguntas y consejos sobre el uso del celular en un foro anónimo y respetuoso.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:title" content="Comunidad | DETOX_WEB">
+    <meta property="og:locale" content="es_CO">
 </head>
 <body class="comunidad">
     <header class="cabecera">
@@ -23,35 +22,41 @@
                 <h1>DETOX_WEB</h1>
             </div>
               <div class="hero-right">
+                <div class="contenedor_menu">
+                    <aside id="menu_lateral">
+                        <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
+                            <span class="texto_menu_letras">Opciones</span>
+                            <span class="flecha" aria-hidden="true">
+
+                            </span>
+                        </button>
+                    </aside>
+                    <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
+                        <ul>
+                            <li>
+                                <a href="index.html">Inicio</a>
+                            </li>
+                            <li>
+                                <a href="nosotros.html">Nosotros</a>
+                            </li>
+                            <li>
+                                <a href="comunidad.html" aria-current="page">Comunidad</a>
+                            </li>
+                            <li>
+                                <a href="mapa.html">Mapa</a>
+                            </li>
+                            <li>
+                                <a href="test.html">Test</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
                 <a href="index.html" class="btn">inicio</a>
             </div>
         </div>
     </header>
 
-       <!-- Menú lateral con menú desplegable -->
-    <section class="contenedor_menu">
-        <aside id="menu_lateral">
-            <button type="button" id="boton_menu" class="texto_menu" aria-expanded="false" aria-controls="menu_desplegable">
-                <span class="texto_menu_letras">OPCIONES</span>
-                <span class="flecha" aria-hidden="true"></span>
-            </button>
-        </aside>
-
-        <nav id="menu_desplegable" class="menu_desplegable" aria-label="Menú principal">
-            <ul>
-                <li><a href="index.html" aria-current="page">Inicio</a></li>
-                <li><a href="nosotros.html">Nosotros</a></li>
-                <li><a href="comunidad.html">Comunidad</a></li>
-                <li><a href="mapa.html">Mapa</a></li>
-                <li class="separador" role="separator"></li>
-               <!--  <li><a href="inicio_sesion.html">Iniciar sesión</a></li>  <li><a href="registro.html">Crear cuenta</a></li> --> 
-            </ul>
-        </nav>
-    </section>
-
-
-
-    <main class="foro">
+       <main class="foro">
         <h2 class="foro_titulo">Comunidad</h2>
 
         <div class="foro_rejilla">
@@ -79,26 +84,12 @@
                 <p id="vacio" class="vacio" hidden></p>
             </section>
 
-            <!-- Especialistas (contenido de ejemplo, todavía sin base de datos) -->
+            <!-- Especialistas aprobados: los llena comunidad.js desde /especialistas -->
             <aside class="especialistas" aria-label="Especialistas verificadas">
                 <h3>Especialistas verificadas</h3>
-                <ul>
-                    <li class="especialista">
-                        <div class="avatar" aria-hidden="true">L</div>
-                        <div>
-                            <p class="especialista_nombre">Laura Gimenez</p>
-                            <p class="especialista_cargo">Psicóloga</p>
-                        </div>
-                    </li>
-                    <li class="especialista">
-                        <div class="avatar" aria-hidden="true">L</div>
-                        <div>
-                            <p class="especialista_nombre">Laura Gimenez</p>
-                            <p class="especialista_cargo">Psicóloga</p>
-                        </div>
-                    </li>
-                </ul>
-                <p class="ver_todos">Ver todos</p>
+                <ul id="lista_especialistas"></ul>
+                <p id="sin_especialistas" class="vacio" hidden>Aún no hay especialistas aprobados.</p>
+                <p class="ver_todos"><a href="especialistas.html">Ver todos</a></p>
             </aside>
         </div>
     </main>
@@ -167,5 +158,6 @@
 <script src="../static/js/menu_desplegable.js"></script>
 <script src="../static/js/comunidad.js"></script>
 <script src="../static/js/auth.js" defer></script>
+<script src="../static/js/popup_motivacional.js" data-pagina="comunidad" defer></script>
 </body>
 </html>

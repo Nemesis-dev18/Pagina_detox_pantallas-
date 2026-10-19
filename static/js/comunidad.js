@@ -53,6 +53,49 @@
         return boton;
     }
 
+    // Botón de "me gusta" con su contador. obj trae "likes" y "me_gusta" del servidor.
+    const ICONO_CORAZON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+    function crearBotonMeGusta(obj, ruta) {
+        const boton = crearElemento('button', 'me_gusta');
+        boton.type = 'button';
+        boton.innerHTML = ICONO_CORAZON;   // SVG fijo de arriba, nunca texto de usuarios
+        const numero = crearElemento('span', 'me_gusta_numero');
+        boton.append(numero);
+
+        function pintar() {
+            numero.textContent = obj.likes > 0 ? String(obj.likes) : '';
+            boton.setAttribute('aria-pressed', String(obj.me_gusta));
+            const texto = (obj.me_gusta ? 'Quitar me gusta' : 'Dar me gusta') + ' (' + obj.likes + ')';
+            boton.setAttribute('aria-label', texto);
+            boton.title = texto;
+        }
+
+        boton.addEventListener('click', async () => {
+            if (!haySesion) {
+                avisar('Inicia sesión para dar me gusta');
+                return;
+            }
+            boton.disabled = true;
+            try {
+                const res = await fetch(ruta, { method: obj.me_gusta ? 'DELETE' : 'PUT' });
+                if (!res.ok) {
+                    avisar(await res.text());
+                    return;
+                }
+                obj.me_gusta = !obj.me_gusta;
+                obj.likes += obj.me_gusta ? 1 : -1;
+                pintar();
+            } catch (err) {
+                avisar('No hay conexión con el servidor.');
+            } finally {
+                boton.disabled = false;
+            }
+        });
+
+        pintar();
+        return boton;
+    }
+
     function formatearFecha(iso) {
         return new Date(iso).toLocaleString('es-CO');
     }
@@ -67,6 +110,64 @@
         const d = Math.floor(h / 24);
         if (d < 7) return 'Hace ' + d + (d === 1 ? ' día' : ' días');
         return new Date(iso).toLocaleDateString('es-CO');
+    }
+
+    // Autor de una publicación o comentario. Si el servidor marca "profesional_verificado"
+    // (solo para especialistas APROBADOS), se muestra el nombre real y la insignia.
+    // Icono de verificado (estilo check azul de Twitter, en el rojo de DETOX_WEB).
+    // El SVG es fijo, nunca viene de usuarios.
+    const SVG_VERIFICADO = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#d11c1c"/><path d="M7 12.5l3.2 3.1L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    function crearInsignia() {
+        const s = document.createElement('span');
+        s.className = 'insignia_verificada';
+        s.setAttribute('role', 'img');
+        s.setAttribute('aria-label', 'Profesional verificado');
+        s.title = 'Profesional verificado';
+        s.innerHTML = SVG_VERIFICADO;
+        return s;
+    }
+
+    function crearAutor(obj) {
+        const span = crearElemento('span', 'autor');
+        if (obj.profesional_verificado) {
+            span.append(
+                crearElemento('strong', '', obj.nombre_real),
+                crearInsignia(),
+                document.createTextNode(' (' + obj.alias + ')')
+            );
+        } else {
+            span.textContent = obj.alias;
+        }
+        return span;
+    }
+
+    // Columna derecha: solo especialistas APROBADOS (lo decide el servidor en /especialistas)
+    async function cargarEspecialistas() {
+        const lista = document.getElementById('lista_especialistas');
+        const sinEspecialistas = document.getElementById('sin_especialistas');
+        if (!lista) return;
+        try {
+            const res = await fetch('/especialistas');
+            if (!res.ok) throw new Error(res.status);
+            const todos = (await res.json()) || [];
+            const algunos = todos.slice(0, 5);
+            sinEspecialistas.hidden = algunos.length > 0;
+            lista.replaceChildren(...algunos.map(e => {
+                const li = crearElemento('li', 'especialista');
+                const avatar = crearElemento('div', 'avatar', (e.nombre || '?').charAt(0).toUpperCase());
+                avatar.setAttribute('aria-hidden', 'true');
+                const texto = crearElemento('div');
+                texto.append(
+                    crearElemento('p', 'especialista_nombre', e.nombre),
+                    crearElemento('p', 'especialista_cargo', e.profesion + ' · ' + e.especialidad),
+                    crearElemento('p', 'especialista_cargo', e.institucion)
+                );
+                li.append(avatar, texto);
+                return li;
+            }));
+        } catch (err) {
+            sinEspecialistas.hidden = false;
+        }
     }
 
     function normalizar(texto) {
@@ -108,10 +209,12 @@
         }
         for (const c of comentarios) {
             const item = crearElemento('div', 'comentario');
-            const meta = crearElemento('p', 'meta',
-                c.alias + ' · ' + formatearFecha(c.creado_en) + (c.editado_en ? ' · editado' : ''));
+            const meta = crearElemento('p', 'meta');
+            meta.append(crearAutor(c), document.createTextNode(' · ' + formatearFecha(c.creado_en)
+                + (c.editado_en ? ' · editado' : '')));
             const cuerpo = crearElemento('p', 'cuerpo', c.contenido);
             item.append(meta, cuerpo);
+            item.append(crearBotonMeGusta(c, '/publicaciones/' + publicacionId + '/comentarios/' + c.id + '/me-gusta'));
 
             // El autor del comentario (o un admin) puede editarlo o borrarlo
             if (haySesion && (c.alias === miAlias.textContent || soyAdmin)) {
@@ -257,7 +360,8 @@
     btnResponder.setAttribute('aria-expanded', 'false');
     btnResponder.setAttribute('aria-controls', 'detalle-' + p.id);
     const btnCompartir = crearBotonIcono('Copiar enlace', ICONO_COMPARTIR);
-    acciones.append(btnResponder, btnCompartir);
+    const btnMeGusta = crearBotonMeGusta(p, '/publicaciones/' + p.id + '/me-gusta');
+    acciones.append(btnMeGusta, btnResponder, btnCompartir);
 
     cabecera.append(avatar, info, acciones);
 
@@ -271,8 +375,8 @@
 
     const entrada = { id: p.id, art: art, categoria: p.categoria, texto: '', alternar: null };
     function pintarMeta() {
-        meta.textContent = p.alias + ' · ' + (ETIQUETAS[p.categoria] || p.categoria) + ' · ' + hace(p.creado_en)
-            + (p.editado_en ? ' · editado' : '');
+        meta.replaceChildren(crearAutor(p), document.createTextNode(' · ' + (ETIQUETAS[p.categoria] || p.categoria)
+            + ' · ' + hace(p.creado_en) + (p.editado_en ? ' · editado' : '')));
         entrada.categoria = p.categoria;
         entrada.texto = normalizar(p.titulo + ' ' + p.contenido + ' ' + p.alias);
     }
@@ -499,5 +603,6 @@ async function cargarPublicaciones() {
     // Primero sabemos si hay sesión, después dibujamos las publicaciones
     (async function iniciar() {
         await comprobarSesion();
+        cargarEspecialistas();
         await cargarPublicaciones();
     })();

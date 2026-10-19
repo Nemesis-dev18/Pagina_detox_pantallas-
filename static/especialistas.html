@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Especialistas verificados | DETOX_WEB</title>
+    <meta name="description" content="Consulta especialistas verificados en psicología, salud mental y áreas afines, con su institución y especialidad.">
+    <meta name="theme-color" content="#111111">
+    <meta property="og:title" content="Especialistas verificados | DETOX_WEB">
+    <meta property="og:locale" content="es_CO">
+</head>
+<body class="comunidad">
+    <header class="cabecera">
+        <div class="hero">
+            <div class="hero-left" id="logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="img/cirno-cirno-fumo.gif" alt="Logo DETOX_WEB">
+                </a>
+            </div>
+            <div class="hero-center">
+                <h1>DETOX_WEB</h1>
+            </div>
+            <div class="hero-right">
+                <a href="comunidad.html" class="btn">comunidad</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="foro">
+        <h2 class="foro_titulo">Especialistas verificados</h2>
+
+        <!-- Filtros por profesión (mismo estilo que los de Comunidad) -->
+        <nav class="filtros" aria-label="Filtrar por profesión">
+            <button type="button" class="filtro activo" data-profesion="" aria-pressed="true">Todas</button>
+            <button type="button" class="filtro" data-profesion="psicologia" aria-pressed="false">Psicología</button>
+            <button type="button" class="filtro" data-profesion="psiquiatria" aria-pressed="false">Psiquiatría</button>
+            <button type="button" class="filtro" data-profesion="medicina" aria-pressed="false">Medicina</button>
+            <button type="button" class="filtro" data-profesion="enfermeria" aria-pressed="false">Enfermería</button>
+            <button type="button" class="filtro" data-profesion="trabajo_social" aria-pressed="false">Trabajo social</button>
+            <button type="button" class="filtro" data-profesion="terapia_ocupacional" aria-pressed="false">Terapia ocupacional</button>
+        </nav>
+
+        <div class="barra" style="margin-top:1.25rem">
+            <label for="buscar-especialista" class="solo_lectores">Buscar especialistas</label>
+            <input type="search" id="buscar-especialista" class="buscador" placeholder="Nombre, especialidad o institución" maxlength="80" autocomplete="off">
+        </div>
+
+        <p class="aviso_login">Solo aparecen especialistas revisados por el equipo. Si estás en crisis, busca ayuda inmediata.</p>
+
+        <section class="zona_lista" aria-label="Especialistas">
+            <div id="lista" class="lista_pub"></div>
+            <p id="vacio" class="vacio" hidden></p>
+        </section>
+    </main>
+
+    <footer id="contacto" class="pie_pagina">
+        <div class="pie_contenido">
+            <div class="pie_col pie_marca">
+                <h2 class="pie_titulo">DETOX_WEB</h2>
+                <p>Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.</p>
+            </div>
+        </div>
+        <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento.</p>
+        <p class="pies">&copy; 2026 DETOX_WEB · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
+    </footer>
+
+    <script src="../static/js/especialistas.js" defer></script>
+<script src="../static/js/popup_motivacional.js" data-pagina="especialistas" defer></script>
+</body>
+</html>
