@@ -319,13 +319,13 @@ func avisarDecision(correo, decision, motivo string) {
 	var asunto, cuerpo string
 	switch decision {
 	case "aprobar":
-		asunto = "Tu perfil de especialista fue aprobado | R-HOPE "
+		asunto = "Tu perfil de especialista fue aprobado | DETOX_WEB"
 		cuerpo = "Hola,\n\nTu solicitud fue aprobada. Desde ahora tu nombre y la insignia de «Profesional verificado» aparecen junto a tus publicaciones y comentarios.\n"
 	case "rechazar":
-		asunto = "Tu solicitud de especialista no fue aprobada | R-HOPE "
+		asunto = "Tu solicitud de especialista no fue aprobada | DETOX_WEB"
 		cuerpo = "Hola,\n\nPor ahora no pudimos aprobar tu solicitud.\nMotivo: " + motivo + "\n\nSi crees que es un error, responde a este correo.\n"
 	case "suspender":
-		asunto = "Tu perfil de especialista fue suspendido | R-HOPE "
+		asunto = "Tu perfil de especialista fue suspendido | DETOX_WEB"
 		cuerpo = "Hola,\n\nTu insignia de «Profesional verificado» fue retirada temporalmente.\nMotivo: " + motivo + "\n"
 	}
 	if err := enviarCorreo(correo, asunto, cuerpo); err != nil {

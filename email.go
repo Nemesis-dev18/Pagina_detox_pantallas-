@@ -35,7 +35,7 @@ func enviarPorBrevo(clave, destino, asunto, cuerpo string) error {
 	}
 	nombre := os.Getenv("EMAIL_NOMBRE")
 	if nombre == "" {
-		nombre = "R-HOPE"
+		nombre = "DETOX_WEB"
 	}
 
 	datos := map[string]any{

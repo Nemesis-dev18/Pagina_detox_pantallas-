@@ -14,11 +14,14 @@ RUN CGO_ENABLED=0 go build -o /src/server .
 FROM alpine:3.20
 RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
+# El servidor no necesita root: se ejecuta con un usuario sin privilegios
+RUN adduser -D -u 10001 app
 
 # Copia el proyecto completo (HTML, CSS, JS, fuentes, imágenes) + el ejecutable.
 # Se hace así para que las rutas relativas de tu código sigan funcionando.
 COPY --from=build /src /app
 
 # El puerto lo define la plataforma con la variable PORT (tu código debe leerla)
+USER app
 CMD ["./server"]
 

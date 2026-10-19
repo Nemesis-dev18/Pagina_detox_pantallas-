@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/mail"
 	"os"
 	"regexp"
 	"strings"
@@ -161,6 +162,19 @@ func registrar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "la contraseña debe tener mínimo 8 caracteres", http.StatusBadRequest)
 		return
 	}
+	// Validación del servidor (antes solo la tenía el navegador)
+	if !reAlias.MatchString(alias) {
+		http.Error(w, "el alias debe tener entre 3 y 30 caracteres (letras, números, espacio, punto, guion)", http.StatusBadRequest)
+		return
+	}
+	if a, err := mail.ParseAddress(correo); err != nil || a.Address != correo || len(correo) > 254 {
+		http.Error(w, "el correo electrónico no es válido", http.StatusBadRequest)
+		return
+	}
+	if len(password) > 72 { // límite de bcrypt: más allá, el hash no sirve
+		http.Error(w, "la contraseña es muy larga (máximo 72 caracteres)", http.StatusBadRequest)
+		return
+	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -222,7 +236,7 @@ func enviarEnlaceRecuperacion(ctx context.Context, usuarioID, correo string) err
 	enlace := baseURL() + "/static/restablecer.html?token=" + token
 	cuerpo := "Hola,\n\nPara elegir una nueva contraseña entra a este enlace (vale 30 minutos):\n\n" +
 		enlace + "\n\nSi no fuiste tú, ignora este mensaje.\n"
-	return enviarCorreo(correo, "Recuperar contraseña | R-HOPE", cuerpo)
+	return enviarCorreo(correo, "Recuperar contraseña | DETOX_WEB", cuerpo)
 }
 
 func recuperar(w http.ResponseWriter, r *http.Request) {
@@ -235,8 +249,9 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 
 	var usuarioID string
 	err := pool.QueryRow(r.Context(), "SELECT id FROM usuarios WHERE correo = $1", correo).Scan(&usuarioID)
+	// Si el correo no tiene cuenta, la respuesta es la misma: no revelamos qué correos están registrados
 	if errors.Is(err, pgx.ErrNoRows) {
-		http.Error(w, "no existe una cuenta con ese correo electrónico", http.StatusNotFound)
+		responderRecuperacion(w)
 		return
 	}
 	if err != nil {
@@ -251,8 +266,12 @@ func recuperar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responderRecuperacion(w)
+}
+
+func responderRecuperacion(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.")
+	fmt.Fprint(w, "Si el correo está registrado, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.")
 }
 
 func restablecer(w http.ResponseWriter, r *http.Request) {
@@ -267,6 +286,10 @@ func restablecer(w http.ResponseWriter, r *http.Request) {
 
 	if token == "" || password == "" {
 		http.Error(w, "faltan datos", http.StatusBadRequest)
+		return
+	}
+	if len(password) > 72 { // límite de bcrypt
+		http.Error(w, "la contraseña es muy larga (máximo 72 caracteres)", http.StatusBadRequest)
 		return
 	}
 	if password != confirmar {
@@ -350,6 +373,11 @@ func usuarioActual(r *http.Request) (*Usuario, error) {
 	}
 	return &u, nil
 }
+
+// hashRelleno se compara cuando el correo no existe, para que la respuesta
+// tarde lo mismo que con una cuenta real (no se revela qué correos existen).
+var hashRelleno, _ = bcrypt.GenerateFromPassword([]byte("relleno-sin-uso"), bcrypt.DefaultCost)
+
 func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "método no permitido", http.StatusMethodNotAllowed)
@@ -369,18 +397,19 @@ func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 	var id, hash string
 	err := pool.QueryRow(r.Context(),
 		"SELECT id, password_hash FROM usuarios WHERE correo = $1", correo).Scan(&id, &hash)
-	if errors.Is(err, pgx.ErrNoRows) {
-		http.Error(w, "no tienes una cuenta con ese correo, regístrate para continuar", http.StatusNotFound)
-		return
-	}
-	if err != nil {
+	existe := err == nil
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
 	}
+	if !existe {
+		hash = string(hashRelleno)
+	}
 
-	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) != nil {
+	// Correo inexistente o contraseña mal: mismo mensaje, mismo tiempo y mismo contador de intentos
+	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) != nil || !existe {
 		registrarFallo(correo)
-		http.Error(w, "contraseña incorrecta", http.StatusUnauthorized)
+		http.Error(w, "correo o contraseña incorrectos", http.StatusUnauthorized)
 		return
 	}
 	limpiarIntentos(correo)
