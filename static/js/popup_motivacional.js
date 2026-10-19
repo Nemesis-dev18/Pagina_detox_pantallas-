@@ -90,5 +90,9 @@
     }
 
     cerrar.addEventListener('click', ocultar);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && aviso.hidden) mostrar();
+    });
+    mostrar();
     setInterval(mostrar, CADA);
 })();
