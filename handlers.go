@@ -236,7 +236,7 @@ func enviarEnlaceRecuperacion(ctx context.Context, usuarioID, correo string) err
 	enlace := baseURL() + "/static/restablecer.html?token=" + token
 	cuerpo := "Hola,\n\nPara elegir una nueva contraseña entra a este enlace (vale 30 minutos):\n\n" +
 		enlace + "\n\nSi no fuiste tú, ignora este mensaje.\n"
-	return enviarCorreo(correo, "Recuperar contraseña | DETOX_WEB", cuerpo)
+	return enviarCorreo(correo, "Recuperar contraseña | R-HOPEcuerpo)
 }
 
 func recuperar(w http.ResponseWriter, r *http.Request) {
