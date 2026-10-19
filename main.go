@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -38,7 +39,17 @@ func main() {
 	}
 
 	fmt.Println("Servidor escuchando en el puerto " + puerto)
-	log.Fatal(http.ListenAndServe(":"+puerto, rutas()))
+	// Timeouts: evitan que conexiones lentas dejen el servidor sin atender (Slowloris)
+	srv := &http.Server{
+		Addr:              ":" + puerto,
+		Handler:           conCabeceras(rutas()),
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 16,
+	}
+	log.Fatal(srv.ListenAndServe())
 }
 
 // rutas arma todas las rutas del sitio (antes estaban dentro de main; así las

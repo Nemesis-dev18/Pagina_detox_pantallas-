@@ -2687,9 +2687,8 @@ header .menu_desplegable a[aria-current="page"] {
 }
 
 .enlaces-sesion .verificacion_pro_titulo {
-  font: 400 1.15rem var(--fuente-titulo);
+  font: 400 0.85rem var(--fuente-texto);
   color: var(--texto-suave);
-  margin: 0;
 }
 
 .enlaces-sesion .verificacion_pro_boton {
