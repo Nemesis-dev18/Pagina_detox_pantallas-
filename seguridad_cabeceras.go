@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 // conCabeceras añade cabeceras de seguridad a todas las respuestas.
 // Son cabeceras que no rompen el sitio actual (no bloquean scripts ni estilos):
@@ -17,7 +20,13 @@ func conCabeceras(siguiente http.Handler) http.Handler {
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("Referrer-Policy", "strict-origin-when-cross-origin")
 		h.Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-		h.Set("Content-Security-Policy", "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'")
+		if strings.HasPrefix(r.URL.Path, "/static/docs/") {
+			// Los PDFs del proyecto se ven incrustados en nosotros.html (mismo sitio).
+			h.Set("X-Frame-Options", "SAMEORIGIN")
+			h.Set("Content-Security-Policy", "frame-ancestors 'self'; base-uri 'self'")
+		} else {
+			h.Set("Content-Security-Policy", "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'")
+		}
 		if cookieSegura() {
 			h.Set("Strict-Transport-Security", "max-age=31536000")
 		}
