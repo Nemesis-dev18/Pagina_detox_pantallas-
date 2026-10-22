@@ -345,7 +345,7 @@ footer.pie_pagina {
 
 .pie_pagina ul { padding: 0; margin: 0; }
 .pie_pagina li { margin-bottom: 6px; overflow-wrap: anywhere; }
-.pie_suave { margin-top: 6px; opacity: 0.75; }
+.pie_suave { margin-top: 6px; opacity: 0.75; text-align: center; }
 
 .pie_pagina a { color: #fff; }
 
