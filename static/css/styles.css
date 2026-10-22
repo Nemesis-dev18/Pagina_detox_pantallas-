@@ -45,27 +45,27 @@
 /* ---- Variables globales (colores y medidas usados en todas las páginas) ---- */
 :root {
   /* Rojos */
-  --rojo: #d11c1c;
-  --rojo-fuerte: rgb(203, 11, 11);
-  --rojo-hover: #a80f0f;
-  --rojo-oscuro: #7d1212;
-  --rojo-claro: #ff8a8a;      /* textos de error / enlaces sobre fondo oscuro */
-  --rojo-halo: rgba(209, 28, 28, 0.4); /* resplandor al enfocar campos */
+  --rojo: #bdbdbd;
+  --rojo-fuerte: #3d3d3d;
+  --rojo-hover: #555555;
+  --rojo-oscuro: #262626;
+  --rojo-claro: #e0e0e0;      /* textos de error / enlaces sobre fondo oscuro */
+  --rojo-halo: rgba(255, 255, 255, 0.35); /* resplandor al enfocar campos */
 
   /* Fondos y superficies */
   --fondo: #111;
   --fondo-campo: #0d0d0d;     /* fondo de inputs y listas */
-  --superficie: #262323;
-  --superficie-2: rgb(23, 23, 21);
-  --superficie-3: rgb(40, 40, 29);
+  --superficie: #262626;
+  --superficie-2: #171717;
+  --superficie-3: #282828;
   --gris: #5f5f5f;
   --gris-oscuro: #2e2e2e;
 
   /* Bordes y textos */
   --borde: #666;
   --borde-suave: #333;
-  --texto-suave: #d9d4c9;
-  --texto-tenue: #918c80;
+  --texto-suave: #d6d6d6;
+  --texto-tenue: #8f8f8f;
 
   /* Tipografías */
   --fuente-titulo: "Anton", Impact, sans-serif;
@@ -214,6 +214,7 @@ button:focus-visible {
 
 .btn:hover {
   background-color: var(--rojo);
+  color: #111;
   border-color: var(--rojo);
   transform: translateY(-2px);
 }
@@ -421,7 +422,7 @@ footer.pie_pagina .pies {
   margin: clamp(10px, 2vw, 20px);
   padding: clamp(10px, 2vw, 20px) 0;
   background-color: var(--rojo-fuerte);
-  border: 6px solid rgb(10, 7, 7);
+  border: 6px solid #0a0a0a;
   border-radius: 20px;
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
@@ -429,7 +430,7 @@ footer.pie_pagina .pies {
 #menu_lateral:hover,
 .contenedor_menu.abierto #menu_lateral {
   background-color: var(--rojo);
-  box-shadow: 0 0 0 3px rgba(209, 28, 28, 0.35);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 /* Botón OPCIONES del menú lateral */
@@ -781,7 +782,7 @@ footer.pie_pagina .pies {
   min-height: 52px;
   padding: 10px 16px;
   background-color: var(--rojo);
-  color: #fff;
+  color: #111;
   border: 2px solid #fff;
   border-radius: 6px;
   font: inherit;
@@ -882,7 +883,7 @@ footer.pie_pagina .pies {
   height: 56px;
   margin-top: 1rem;
   background-color: var(--rojo);
-  color: #fff;
+  color: #111;
   border: 2px solid #fff;
   border-radius: 6px;
   font-family: var(--fuente-titulo);
@@ -937,7 +938,7 @@ footer.pie_pagina .pies {
    ================================================================ */
 
 /* Header exclusivo de nosotros.html */
-.cabecera_nosotros { color: #e5c7c7; }
+.cabecera_nosotros { color: #e0e0e0; }
 
 /* Barra superior de nosotros.html */
 .hero_nosotros {
@@ -947,7 +948,7 @@ footer.pie_pagina .pies {
   height: 80px;
   padding: 0 10px;
   background-color: #958e8e;
-  color: #0f0202;
+  color: #111;
 }
 
 /* Título de la barra superior de Nosotros */
@@ -1512,7 +1513,7 @@ footer.pie_pagina .pies {
 .boton_rojo {
   padding: 0.55rem 1.5rem;
   background-color: var(--rojo);
-  color: #fff;
+  color: #111;
   border: 2px solid #fff;
   border-radius: 6px;
   font-family: var(--fuente-titulo);
@@ -1596,12 +1597,12 @@ footer.pie_pagina .pies {
           font-size: clamp(1.8rem, 4vw, 2.4rem);
            margin: 0; }
         .mapa_subtitulo { 
-          color: #c9c4b8; margin: .2rem 0 0; 
+          color: #c8c8c8; margin: .2rem 0 0; 
         }
 
         .banner_crisis { 
-          background: #2a0a0a;
-           border: 1px solid #7d1212; 
+          background: #1a1a1a;
+           border: 1px solid #555; 
            border-radius: 10px;
             padding: .9rem 1.1rem; 
             display: flex;
@@ -1610,7 +1611,7 @@ footer.pie_pagina .pies {
                align-items: center;
                }
         .banner_crisis strong {
-           color: #ff6b6b; 
+           color: #e0e0e0; 
           }
         .banner_crisis a {
            color: #fff; 
@@ -1735,7 +1736,7 @@ footer.pie_pagina .pies {
   background: var(--rojo-fuerte);
   border: 2px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(203, 11, 11, 0.35);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 /* Texto "Fuente de los datos" bajo el mapa */
@@ -2122,7 +2123,7 @@ input, select, textarea, iframe, video { max-width: 100%; }
   z-index: 100;
   padding: 10px 16px;
   background: var(--rojo);
-  color: #fff;
+  color: #111;
   font-family: var(--fuente-titulo);
   border-radius: 6px;
 }
@@ -3020,7 +3021,7 @@ header .menu_desplegable a[aria-current="page"] {
 .pagina-test .test-opciones label:has(input:checked) {
   color: #fff;
   border-color: var(--rojo);
-  background: rgba(190, 35, 43, 0.16);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Radios: conserva controles nativos y adapta su tamano y color. */
@@ -3243,7 +3244,7 @@ header .menu_desplegable a[aria-current="page"] {
 }
 
 .admin .disfrazada {
-  color: #c0392b;
+  color: #444;
   font-weight: bold;
 }
 
@@ -3260,9 +3261,9 @@ header .menu_desplegable a[aria-current="page"] {
   margin-left: 4px;
   padding: 1px 8px;
   border-radius: 999px;
-  background: #e6f6ea;
-  color: #1e6b34;
-  border: 1px solid #a8dbb5;
+  background: #eee;
+  color: #222;
+  border: 1px solid #bbb;
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
