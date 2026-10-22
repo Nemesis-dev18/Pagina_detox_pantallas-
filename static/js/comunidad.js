@@ -114,7 +114,7 @@
 
     // Autor de una publicación o comentario. Si el servidor marca "profesional_verificado"
     // (solo para especialistas APROBADOS), se muestra el nombre real y la insignia.
-    // Icono de verificado (estilo check azul de Twitter, en el rojo de R-HOPE).
+    // Icono de verificado (estilo check azul de Twitter, en el rojo de R-HOPE ).
     // El SVG es fijo, nunca viene de usuarios.
     const SVG_VERIFICADO = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="#d11c1c"/><path d="M7 12.5l3.2 3.1L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     function crearInsignia() {

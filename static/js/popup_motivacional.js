@@ -66,7 +66,7 @@
             'Lo importante es conocerte un poco mejor, no obtener una calificación.',
         ],
         nosotros: [
-            'R-HOPE nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
+            'R-HOPE  nació para acompañar, no para juzgar. Cada persona llega a su propio ritmo.',
             'El objetivo es preventivo: que tengas más control sobre tu vida digital, sin presiones.',
             'La prevención también empieza con información clara y decisiones propias.',
             'Cada persona puede encontrar un equilibrio distinto con la tecnología.',

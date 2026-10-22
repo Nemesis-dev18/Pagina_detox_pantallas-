@@ -1,7 +1,7 @@
-# R-HOPE
+# R-HOPE   
 
 > Espacio anónimo de reflexión y acompañamiento sobre el uso excesivo del teléfono celular.
-> Componente del **Proyecto Esperanza** ( *R-HOPE*).
+> Componente del **Proyecto Esperanza** ( *R-HOPE   *).
 
 ![Estado](https://img.shields.io/badge/estado-en%20desarrollo-green)
 ![Metodología](https://img.shields.io/badge/metodolog%C3%ADa-Scrum-blue)
@@ -41,7 +41,7 @@
 
 ## Tabla de contenidos
 
-- [R-HOPE](#r-hope)
+- [R-HOPE   ]R-HOPE E E )
   - [Estado actual de la implementación](#estado-actual-de-la-implementación)
     - [Ejecutar en local](#ejecutar-en-local)
   - [Tabla de contenidos](#tabla-de-contenidos)
@@ -65,7 +65,7 @@
 
 El uso excesivo del teléfono celular es cada vez más común, especialmente entre jóvenes y adultos jóvenes, y con frecuencia pasa desapercibido porque no existe un espacio adecuado para reflexionar sobre estos hábitos ni para compartirlos con otras personas en situaciones similares.
 
-**R-HOPE** es una plataforma R-HOPE para reflexionar sobre los hábitos digitales y encontrar espacios de apoyo. En la comunidad, las personas pueden:
+**R-HOPE   ** es una plataformR-HOPE P E  para reflexionar sobre los hábitos digitales y encontrar espacios de apoyo. En la comunidad, las personas pueden:
 
 - Crear publicaciones y compartir experiencias sin exponer su identidad.
 - Formular preguntas relacionadas con el uso del celular.
@@ -80,7 +80,7 @@ El **anonimato** es la característica central del espacio: busca que las person
 ##  Objetivos
 
 ### Objetivo general
-Mantener una plataforma R-HOPE que permita a las personas reflexionar sobre el uso del teléfono celular, compartir experiencias de forma anónima y consultar recursos de apoyo.
+Mantener una plataforma R-HOPE    que permita a las personas reflexionar sobre el uso del teléfono celular, compartir experiencias de forma anónima y consultar recursos de apoyo.
 
 ### Objetivos específicos
 - Facilitar la creación, consulta y moderación de publicaciones y comentarios.
@@ -198,7 +198,7 @@ El desarrollo se propone bajo **Scrum**, dividiendo el trabajo en *sprints* cort
 
 ##  Aviso importante
 
-Este foro **no realiza diagnósticos médicos ni psicológicos**, **no reemplaza la atención de profesionales de la salud** y **no constituye una terapia ni un tratamiento**. Su finalidad es exclusivamente R-HOPE, educativa y de concientización.
+Este foro **no realiza diagnósticos médicos ni psicológicos**, **no reemplaza la atención de profesionales de la salud** y **no constituye una terapia ni un tratamiento**. Su finalidad es exclusivamente R-HOPE   , educativa y de concientización.
 
 ---
 
