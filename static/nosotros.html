@@ -10,6 +10,12 @@
     <meta name="theme-color" content="#111111">
     <meta property="og:title" content="Nosotros | R-HOPE">
     <meta property="og:locale" content="es_CO">
+    <style>
+        .documentos_nosotros { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+        .documentos_nosotros h2 { font-family: "Anton", Impact, sans-serif; font-weight: 400; margin-bottom: 16px; }
+        .documentos_nosotros iframe { display: block; width: 100%; height: 80vh; border: 1px solid #333; margin-bottom: 24px; }
+        .documentos_nosotros a { color: #e0e0e0; }
+    </style>
 </head>
 <body class="nosotros">
     <!-- Cabecera y navegación principal -->
@@ -57,6 +63,19 @@
         </article>
     </section>
 
+    <!-- Documentos del proyecto (visor incrustado) -->
+    <section class="documentos_nosotros" aria-labelledby="titulo_documentos">
+        <h2 id="titulo_documentos">Documentos del proyecto</h2>
+
+        <h3>Propuesta del foro anónimo</h3>
+        <iframe src="docs/Propuesta_Foro_Anonimo_Esperanza (1).pdf" title="Propuesta del foro anónimo"></iframe>
+        <p><a href="Propuesta_Foro_Anonimo_Esperanza (1).pdf" download>Descargar PDF</a></p>
+
+        <h3>Propuesta del foro anónimo (copia)</h3>
+        <iframe src="docs/DOCUMENTOPRIME.pdf" title="Investigación Prime"></iframe>
+        <p><a href="docs/DOCUMENTOPRIME.pdf" download>Descargar PDF</a></p>
+    </section>
+
     <!-- Pie de página -->
     <footer id="contacto" class="pie_pagina">
         <div class="pie_contenido">
@@ -79,6 +98,8 @@
         </div>
 
         <p class="pie_aviso"><strong>Aviso importante:</strong> este sitio no realiza diagnósticos médicos ni psicológicos, no reemplaza la atención de profesionales de la salud y no constituye una terapia ni un tratamiento. Su finalidad es exclusivamente preventiva, educativa y de concientización.</p>
+
+        <p class="pie_legal"><strong>Datos y responsabilidad:</strong> el tratamiento de datos personales se rige por el artículo 15 de la Constitución Política, la Ley 1581 de 2012 y su reglamentación aplicable, incluido el Decreto 1074 de 2015. El contenido de la comunidad es aportado por sus usuarios y no representa necesariamente al proyecto. Este aviso no limita los derechos de los usuarios ni exonera de obligaciones o responsabilidades que no puedan excluirse legalmente.</p>
 
         <p class="pies">&copy; 2026 R-HOPE · Proyecto de Desarrollo de Software, Corporación Tecnológica Industrial Colombiana (Teinco), Bogotá, Colombia.</p>
     </footer>

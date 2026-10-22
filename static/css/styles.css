@@ -363,6 +363,11 @@ footer.pie_pagina {
   background-color: rgba(255, 255, 255, 0.04);
 }
 
+.pie_legal {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
 /* Línea de derechos reservados al final del pie */
 footer.pie_pagina .pies {
   justify-content: flex-start;
